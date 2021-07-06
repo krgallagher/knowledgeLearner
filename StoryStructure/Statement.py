@@ -11,6 +11,9 @@ class Statement:
         return self.lineId
 
     def getLogicalRepresentation(self):
-        return self.logicalReprentation
+        return self.logicalRepresentation
+
+    def setLogicalRepresentation(self, logicalRepresentation):
+        self.logicalRepresentation = logicalRepresentation
 
 

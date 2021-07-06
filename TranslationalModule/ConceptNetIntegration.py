@@ -10,6 +10,8 @@ class ConceptNetIntegration:
         self.other = '&other=/c/en/'
 
     # returns a list of verbs that "cover" all of the concepts
+    # if a verb is not covered then the dictionary does nothing I guess this is okay since we might want to learn that
+    # concept later on
     def synonymFinder(self, concepts):
         relations = {}
         for concept in concepts:
@@ -23,11 +25,11 @@ class ConceptNetIntegration:
                     relations[label] += edge['weight']
 
         synonymDictionary = {}
+        #the max on the relation values is somewhat arbitrary
         while synonymDictionary.keys() != set(concepts) and max(relations.values()) > 2.0:
             maximum = max(relations, key=relations.get)
             relations.pop(maximum)
             for concept in concepts:
-                print(concept)
                 if concept not in synonymDictionary.keys() and self.isSynonym(concept, maximum):
                     synonymDictionary[concept] = maximum
         return synonymDictionary

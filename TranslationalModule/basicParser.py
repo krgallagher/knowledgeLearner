@@ -42,7 +42,7 @@ class Parser:
         fluent += "("
         fluent = formStatementFluent(fluent, root)
         fluent += ")"
-        return fluent
+        return fluent, [root.lemma_]
 
     def parseQuestion(self, question):
         doc = self.nlp(question.getText())
@@ -52,4 +52,4 @@ class Parser:
         fluent += "("
         fluent = formQuestionFluent(fluent, root)
         fluent += ")"
-        return fluent
+        return fluent, [root.lemma_]
