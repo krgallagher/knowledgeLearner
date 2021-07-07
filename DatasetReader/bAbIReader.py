@@ -1,11 +1,12 @@
+from StoryStructure.Corpus import Corpus
 from StoryStructure.Statement import Statement
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 
-#is there a better way to code this in Python?
+
 class bAbIReader:
     def __init__(self, filename):
-        self.corpus = []  # list of Stories
+        self.corpus = Corpus()
         file = open(filename, 'r')
         lines = file.readlines()
         story = Story()

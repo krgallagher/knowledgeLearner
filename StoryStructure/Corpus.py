@@ -13,6 +13,9 @@ class Corpus:
         ''' Returns the Iterator object '''
         return CorpusIterator(self)
 
+    def pop(self):
+        return self.stories.pop()
+
 
 class CorpusIterator:
     ''' Iterator class '''
