@@ -3,6 +3,22 @@ from spacy.tokens import Doc
 from StoryStructure.Statement import Statement
 
 
+def happensAt(fluent, time):
+    return "happensAt(" + fluent + "," + time + ")."
+
+
+def holdsAt(fluent: str, time: str):
+    return "holdsAt(" + fluent + "," + time + ")."
+
+
+def initiatedAt(fluent, time):
+    return "initiatedAt(" + fluent + "," + time + ")."
+
+
+def terminatedAt(fluent, time):
+    return "terminatedAt(" + fluent + "," + time + ")."
+
+
 class EventCalculusWrapper:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
@@ -14,9 +30,9 @@ class EventCalculusWrapper:
         # this is somewhat bad since it assumes that the predicate has at least one argument,
         # although there is an easy fix for this.
         if predicate.text == "be":
-            eventCalculus = "holdsAt(" + fluent + "," + str(time) + ")."
+            eventCalculus = holdsAt(fluent, time)
         else:
-            eventCalculus = "happensAt(" + fluent + "," + str(time) + ")."
+            eventCalculus = happensAt(fluent, time)
         statement.setEventCalculusRepresentation(eventCalculus)
 
 
@@ -28,7 +44,7 @@ if __name__ == '__main__':
     eventCalculusWrapper = EventCalculusWrapper()
     eventCalculusWrapper.wrap(statement1)
     eventCalculusWrapper.wrap(statement2)
-    print(statement1.getLineID(), statement1.getText(), statement1.getFluent(), statement1.getEventCalculusRepresentation())
-    print(statement2.getLineID(), statement2.getText(), statement2.getFluent(), statement1.getEventCalculusRepresentation())
-
-
+    print(statement1.getLineID(), statement1.getText(), statement1.getFluent(),
+          statement1.getEventCalculusRepresentation())
+    print(statement2.getLineID(), statement2.getText(), statement2.getFluent(),
+          statement1.getEventCalculusRepresentation())

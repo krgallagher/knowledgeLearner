@@ -2,8 +2,8 @@ class Statement:
     def __init__(self, lineId, text):
         self.text = text
         self.lineId = lineId
-        #perhaps should save the fluents and have a separate fluents and then partialASP program with event calculus?
-        self.fluent = None
+        # perhaps should save the fluents and have a separate fluents and then partialASP program with event calculus?
+        self.fluent = None  # will eventually want this to be a set
         self.eventCalculusRepresentation = None
 
     def getText(self):
@@ -23,5 +23,3 @@ class Statement:
 
     def setFluent(self, fluent):
         self.fluent = fluent
-
-

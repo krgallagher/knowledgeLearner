@@ -13,6 +13,7 @@ def formStatementFluent(fluent, root):
         fluent = formStatementFluent(fluent, child)
     return fluent
 
+
 # very ad-hoc
 def formQuestionFluent(fluent, root):
     children = root.children
@@ -28,6 +29,24 @@ def formQuestionFluent(fluent, root):
         fluent += ','
     fluent += "V1"
     return fluent
+
+
+def getRange(previousQuestion, statement, statements):
+    statementIndex = statements.index(statement)
+    previousQuestionIndex = 0
+    if previousQuestion:
+        previousQuestionIndex = statements.index(previousQuestion)
+    return previousQuestionIndex, statementIndex
+
+
+def generateBeBias(fluent):
+    pass
+    # replace all of the arguments of the fluent with unique variable names
+    # put it in place the correct event calculus wrappers
+
+
+def generateNonBeBias(fluent):
+    pass
 
 
 class BasicParser:
@@ -53,3 +72,19 @@ class BasicParser:
         fluent = formQuestionFluent(fluent, root)
         fluent += ")"
         return fluent, [root.lemma_]
+
+    def generateModeBias(self, statements, statement, previousQuestion):
+        modeBias = set()
+        previousQuestionIndex, statementIndex = getRange(previousQuestion, statement, statements)
+        for index in range(previousQuestionIndex, statementIndex):
+            fluent = statements[index].getFluent()
+            if fluent:
+                predicate = fluent.split('(')[0]
+                if predicate.text == "be":
+                    modeBias.update(generateBeBias(fluent))
+                else:
+                    modeBias.update(generateNonBeBias(fluent))
+        return modeBias
+
+
+

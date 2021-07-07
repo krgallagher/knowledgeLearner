@@ -3,6 +3,15 @@ from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 from TranslationalModule.EventCalculusWrapper import EventCalculusWrapper
 from TranslationalModule.basicParser import BasicParser
 
+#add a function here to generate the mode bias
+
+#in the code below I'm implicitly making the assumption that all stories have and end with a question
+#that is fine because you don't need to generate mode bias if you aren't going to ask any questions?
+#could fix this/other issues by adding a clause saying if it is the end of a story and the last Question is way before
+#then run those tasks to gather synonyms, etc.
+
+#might want to migrate some of the built in functions to the basicParser so that they may be used in greater generality
+
 class bAbIParser:
     def __init__(self, corpus):
         self.corpus = corpus
@@ -20,6 +29,8 @@ class bAbIParser:
                     self.synonymChecker(conceptsToExplore)
                     self.updateFluents(statements, statement, previousQuestion)
                     self.setEventCalculusRepresentation(statements, statement, previousQuestion)
+                    # add in any new mode biases that have risen since the last question
+                    self.corpus.update(self.parser.generateModeBias(statements, statement, previousQuestion))
                     previousQuestion = statement
                 else:
                     fluent, concepts = self.parser.parseStatement(statement)
