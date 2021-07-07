@@ -3,7 +3,8 @@ class Statement:
         self.text = text
         self.lineId = lineId
         #perhaps should save the fluents and have a separate fluents and then partialASP program with event calculus?
-        self.logicalRepresentation = None
+        self.fluent = None
+        self.eventCalculusRepresentation = None
 
     def getText(self):
         return self.text
@@ -11,10 +12,16 @@ class Statement:
     def getLineID(self):
         return self.lineId
 
-    def getLogicalRepresentation(self):
-        return self.logicalRepresentation
+    def getFluent(self):
+        return self.fluent
 
-    def setLogicalRepresentation(self, logicalRepresentation):
-        self.logicalRepresentation = logicalRepresentation
+    def getEventCalculusRepresentation(self):
+        return self.eventCalculusRepresentation
+
+    def setEventCalculusRepresentation(self, representation):
+        self.eventCalculusRepresentation = representation
+
+    def setFluent(self, fluent):
+        self.fluent = fluent
 
 

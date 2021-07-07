@@ -30,7 +30,7 @@ def formQuestionFluent(fluent, root):
     return fluent
 
 
-class Parser:
+class BasicParser:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
 

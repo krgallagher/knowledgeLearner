@@ -1,35 +1,34 @@
 import spacy
 from spacy.tokens import Doc
-
 from StoryStructure.Statement import Statement
 
 
-class eventCalculusWrapper:
+class EventCalculusWrapper:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
 
-    def wrap(self, statement):
-        fluent = statement.getLogicalRepresentation()
+    def wrap(self, statement: Statement):
+        fluent = statement.getFluent()
         time = statement.getLineID()
         predicate: Doc = self.nlp(fluent.split("(")[0])
         # this is somewhat bad since it assumes that the predicate has at least one argument,
         # although there is an easy fix for this.
         if predicate.text == "be":
-            eventCalculus = "holdsAt(" + fluent + "," + str(time)+ ")."
+            eventCalculus = "holdsAt(" + fluent + "," + str(time) + ")."
         else:
             eventCalculus = "happensAt(" + fluent + "," + str(time) + ")."
-        statement.setLogicalRepresentation(eventCalculus)
+        statement.setEventCalculusRepresentation(eventCalculus)
 
 
 if __name__ == '__main__':
-    statement1 = Statement(10, "Mary moved to the hallway." )
-    statement1.setLogicalRepresentation("go(mary,hallway)")
+    statement1 = Statement(10, "Mary moved to the hallway.")
+    statement1.setFluent("go(mary,hallway)")
     statement2 = Statement(10, "Where is Mary?")
-    statement2.setLogicalRepresentation("be(mary,V1)")
-    eventCalculusWrapper = eventCalculusWrapper()
+    statement2.setFluent("be(mary,V1)")
+    eventCalculusWrapper = EventCalculusWrapper()
     eventCalculusWrapper.wrap(statement1)
     eventCalculusWrapper.wrap(statement2)
-    print(statement1.getLineID(), statement1.getText(), statement1.getLogicalRepresentation())
-    print(statement2.getLineID(), statement2.getText(), statement2.getLogicalRepresentation())
+    print(statement1.getLineID(), statement1.getText(), statement1.getFluent(), statement1.getEventCalculusRepresentation())
+    print(statement2.getLineID(), statement2.getText(), statement2.getFluent(), statement1.getEventCalculusRepresentation())
 
 

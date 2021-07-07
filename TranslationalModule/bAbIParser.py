@@ -1,31 +1,30 @@
-from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from basicParser import Parser
-
+from TranslationalModule.EventCalculusWrapper import EventCalculusWrapper
+from TranslationalModule.basicParser import BasicParser
 
 class bAbIParser:
-    def __init__(self, filename):
-        self.reader = bAbIReader(filename)
-        self.parser = Parser()
+    def __init__(self, corpus):
+        self.corpus = corpus
+        self.parser = BasicParser()
         self.conceptNet = ConceptNetIntegration()
         self.synonymDictionary = {}
-        for story in self.reader.corpus:
+        self.eventCalculusWrapper = EventCalculusWrapper()
+        for story in self.corpus:
             statements = story.getSentences()
             conceptsToExplore = []
+            previousQuestion = None
             for statement in statements:
                 if isinstance(statement, Question):
                     fluent, concepts = self.parser.parseQuestion(statement)
                     self.synonymChecker(conceptsToExplore)
-                    self.updateFluents(statements, statement)
-
-                    # maybe we should not clear the concepts and only delete the ones we have linked up
-                    # might be difficult to edit the fluent later on
-                    # conceptsToExplore.clear()
+                    self.updateFluents(statements, statement, previousQuestion)
+                    self.setEventCalculusRepresentation(statements, statement, previousQuestion)
+                    previousQuestion = statement
                 else:
                     fluent, concepts = self.parser.parseStatement(statement)
                     conceptsToExplore += concepts
-                statement.setLogicalRepresentation(fluent)
+                statement.setFluent(fluent)
 
     def checkCurrentSynonyms(self, concept):
         for value in self.synonymDictionary.values():
@@ -46,28 +45,39 @@ class bAbIParser:
         self.synonymDictionary.update(learnedConcepts)
 
 
-    def updateFluents(self, statements, statement):
+    def updateFluents(self, statements, statement, previousQuestion):
         statementIndex = statements.index(statement)
-        for currentStatement in statements:
-            fluent = currentStatement.getLogicalRepresentation()
+        previousQuestionIndex = 0
+        if previousQuestion:
+            previousQuestionIndex = statements.index(previousQuestion)
+        for index in range(previousQuestionIndex, statementIndex):
+            currentStatement = statements[index]
+            fluent = currentStatement.getFluent()
             if fluent:
                 predicate = fluent.split('(')[0]
                 if predicate in self.synonymDictionary.keys():
                     fluent = self.synonymDictionary[predicate] + '(' + fluent.split('(')[1]
-                    currentStatement.setLogicalRepresentation(fluent)
-            if statements.index(currentStatement) == statementIndex:
-                return
+                    currentStatement.setFluent(fluent)
+
+    def setEventCalculusRepresentation(self, statements, statement, previousQuestion):
+        statementIndex = statements.index(statement)
+        previousQuestionIndex = 0
+        if previousQuestion:
+            previousQuestionIndex = statements.index(previousQuestion)
+        for index in range(previousQuestionIndex, statementIndex):
+            currentStatement = statements[index]
+            fluent = currentStatement.getFluent()
+            if fluent:
+                self.eventCalculusWrapper.wrap(currentStatement)
 
 
-def __str__(self):
-    for fluent in self.fluents:
-        print(fluent)
 
 
+"""
 if __name__ == '__main__':
     parser = bAbIParser("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
-    for story in parser.reader.corpus:
+    for story in parser.corpus:
         statements = story.getSentences()
         for statement in statements:
             print(statement.getLineID(), statement.getText(), statement.getLogicalRepresentation())
-
+"""

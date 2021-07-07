@@ -22,7 +22,7 @@ class bAbIReader:
 
     def createStatement(self, line):
         index = line.index(" ") + 1
-        identification = line[:index]
+        identification = line[:index - 1]
         data = line[index:].split("\t")
         text = data[0].strip()
         if len(data) == 1:
