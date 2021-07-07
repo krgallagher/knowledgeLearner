@@ -25,7 +25,9 @@ class ConceptNetIntegration:
                     relations[label] += edge['weight']
 
         synonymDictionary = {}
-        #the max on the relation values is somewhat arbitrary
+        # the max on the relation values is somewhat arbitrary
+        # might want to ensure that the number of concepts to be learned is greater than 1 so that we don't get a
+        # strong random relationship
         while synonymDictionary.keys() != set(concepts) and max(relations.values()) > 2.0:
             maximum = max(relations, key=relations.get)
             relations.pop(maximum)
