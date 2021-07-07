@@ -7,5 +7,6 @@ if __name__ == '__main__':
     for story in reader.corpus:
         statements = story.getSentences()
         for statement in statements:
-            print(statement.getLineID(), statement.getText(), statement.getFluent(), statement.getEventCalculusRepresentation())
+            print(statement.getLineID(), statement.getText(), statement.getFluent(),
+                  statement.getEventCalculusRepresentation())
 

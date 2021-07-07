@@ -1,9 +1,12 @@
-from StoryStructure import Story
+from DatasetReader.BackgroundKnowledge import eventCalculusAxioms
 
 
 class Corpus:
     def __init__(self):
         self.stories = []
+        self.backgroundKnowledge = eventCalculusAxioms() #might want to eventually set this up differently to make it more general, but fine for now
+        self.modeBias = set()
+        self.hypotheses = set()  # might want to change this to a set?
         # might want to add a variable for the hypothesis space
 
     def append(self, story):
@@ -42,3 +45,4 @@ if __name__ == "__main__":
     corpus.append("fish")
     for animal in corpus:
         print(animal)
+    print(corpus.backgroundKnowledge)

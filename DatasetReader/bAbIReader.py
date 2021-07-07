@@ -20,7 +20,6 @@ class bAbIReader:
             currentStory.addSentence(currentStatement)
             self.corpus.append(currentStory)
 
-
     def createStatement(self, line):
         index = line.index(" ") + 1
         identification = line[:index - 1]
