@@ -3,14 +3,6 @@ from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 from TranslationalModule.EventCalculus import EventCalculusWrapper
 from TranslationalModule.basicParser import BasicParser
 
-#add a function here to generate the mode bias
-
-#in the code below I'm implicitly making the assumption that all stories have and end with a question
-#that is fine because you don't need to generate mode bias if you aren't going to ask any questions?
-#could fix this/other issues by adding a clause saying if it is the end of a story and the last Question is way before
-#then run those tasks to gather synonyms, etc.
-
-#might want to migrate some of the built in functions to the basicParser so that they may be used in greater generality
 
 class bAbIParser:
     def __init__(self, corpus):
@@ -19,24 +11,25 @@ class bAbIParser:
         self.conceptNet = ConceptNetIntegration()
         self.synonymDictionary = {}
         self.eventCalculusWrapper = EventCalculusWrapper()
-        for story in self.corpus:
-            statements = story.getSentences()
-            conceptsToExplore = []
-            previousQuestion = None
-            for statement in statements:
-                if isinstance(statement, Question):
-                    fluent, concepts = self.parser.parseQuestion(statement)
-                    statement.setFluent(fluent)
-                    self.synonymChecker(conceptsToExplore)
-                    self.updateFluents(statements, statement, previousQuestion)
-                    self.setEventCalculusRepresentation(statements, statement, previousQuestion)
-                    # add in any new mode biases that have risen since the last question
-                    self.corpus.modeBias.update(self.parser.generateModeBias(statements, statement, previousQuestion))
-                    previousQuestion = statement
-                else:
-                    fluent, concepts = self.parser.parseStatement(statement)
-                    conceptsToExplore += concepts
-                    statement.setFluent(fluent)
+        self.conceptsToExplore = []
+        self.previousQuestion = None
+
+    def parse(self, statements, statement):
+        if isinstance(statement, Question):
+            fluent, concepts = self.parser.parseQuestion(statement)
+            # self.conceptsToExplore += concepts
+            # #will need to change this to be more general, but for now only want to deal with "be" verbs
+            statement.setFluent(fluent)
+            self.synonymChecker(self.conceptsToExplore)
+            self.updateFluents(statements, statement)
+            self.setEventCalculusRepresentation(statements, statement)
+            # add in any new mode biases that have risen since the last question
+            self.corpus.modeBias.update(self.parser.generateModeBias(statements, statement, self.previousQuestion))
+            self.previousQuestion = statement
+        else:
+            fluent, concepts = self.parser.parseStatement(statement)
+            self.conceptsToExplore += concepts
+            statement.setFluent(fluent)
 
     def checkCurrentSynonyms(self, concept):
         for value in self.synonymDictionary.values():
@@ -44,7 +37,6 @@ class bAbIParser:
                 self.synonymDictionary[concept] = value
                 return True
         return False
-
 
     def synonymChecker(self, concepts):
         conceptsCopy = concepts.copy()
@@ -56,12 +48,9 @@ class bAbIParser:
         learnedConcepts = self.conceptNet.synonymFinder(concepts)
         self.synonymDictionary.update(learnedConcepts)
 
-
-    def updateFluents(self, statements, statement, previousQuestion):
-        statementIndex = statements.index(statement)
-        previousQuestionIndex = 0
-        if previousQuestion:
-            previousQuestionIndex = statements.index(previousQuestion)
+    # might want to update this with the getRange function
+    def updateFluents(self, statements, statement):
+        previousQuestionIndex, statementIndex = self.getRange(statement, statements)
         for index in range(previousQuestionIndex, statementIndex):
             currentStatement = statements[index]
             fluent = currentStatement.getFluent()
@@ -71,14 +60,18 @@ class bAbIParser:
                     fluent = self.synonymDictionary[predicate] + '(' + fluent.split('(')[1]
                     currentStatement.setFluent(fluent)
 
-    def setEventCalculusRepresentation(self, statements, statement, previousQuestion):
-        statementIndex = statements.index(statement) + 1
-        previousQuestionIndex = 0
-        if previousQuestion:
-            previousQuestionIndex = statements.index(previousQuestion)
+    def setEventCalculusRepresentation(self, statements, statement):
+        previousQuestionIndex, statementIndex = self.getRange(statement, statements)
         for index in range(previousQuestionIndex, statementIndex):
             currentStatement = statements[index]
             fluent = currentStatement.getFluent()
             if fluent:
                 self.eventCalculusWrapper.wrap(currentStatement)
 
+    def getRange(self, statement, statements):
+        statementIndex = statements.index(statement) + 1
+        previousQuestionIndex = 0
+        if self.previousQuestion:
+            if self.previousQuestion in statements:
+                previousQuestionIndex = statements.index(self.previousQuestion)
+        return previousQuestionIndex, statementIndex
