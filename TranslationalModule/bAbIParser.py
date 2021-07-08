@@ -30,6 +30,7 @@ class bAbIParser:
             fluent, concepts = self.parser.parseStatement(statement)
             self.conceptsToExplore += concepts
             statement.setFluent(fluent)
+        self.addTimePredicate(statement)
 
     def checkCurrentSynonyms(self, concept):
         for value in self.synonymDictionary.values():
@@ -75,3 +76,8 @@ class bAbIParser:
             if self.previousQuestion in statements:
                 previousQuestionIndex = statements.index(self.previousQuestion)
         return previousQuestionIndex, statementIndex
+
+    def addTimePredicate(self, statement):
+        time = set()
+        time.add("time(" + str(statement.getLineID()) + ").")
+        statement.setPredicates(time)

@@ -94,9 +94,9 @@ class BasicParser:
         generalisedFluent = giveUniqueVariableNames(fluent)
         bias = set()
         time = "var(time)"
-        initiated = initiatedAt(generalisedFluent, time)
-        holds = holdsAt(generalisedFluent, time)
-        terminated = terminatedAt(generalisedFluent, time)
+        initiated = initiatedAt(generalisedFluent, time, False)
+        holds = holdsAt(generalisedFluent, time, False)
+        terminated = terminatedAt(generalisedFluent, time, False)
         bias.add(self.modehWrapping(initiated))
         bias.add(self.modehWrapping(holds))
         bias.add(self.modebWrapping(terminated))
@@ -106,7 +106,7 @@ class BasicParser:
         generalisedFluent = giveUniqueVariableNames(fluent)
         bias = set()
         time = "var(time)"
-        happens = happensAt(generalisedFluent, time)
+        happens = happensAt(generalisedFluent, time, False)
         bias.add(self.modebWrapping(happens))
         return bias
 
@@ -115,3 +115,5 @@ class BasicParser:
 
     def modebWrapping(self, predicate):
         return "#modeb(" + predicate + ")."
+
+
