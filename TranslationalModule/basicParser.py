@@ -1,7 +1,7 @@
 import spacy
+from TranslationalModule.EventCalculus import holdsAt, happensAt, initiatedAt, terminatedAt
 
 
-# might need to store timestamp with the fluents being created.
 def formStatementFluent(fluent, root):
     children = root.children
     for child in children:
@@ -39,14 +39,18 @@ def getRange(previousQuestion, statement, statements):
     return previousQuestionIndex, statementIndex
 
 
-def generateBeBias(fluent):
-    pass
-    # replace all of the arguments of the fluent with unique variable names
-    # put it in place the correct event calculus wrappers
+def giveUniqueVariableNames(fluent):
+    fluentSplitting = fluent.split('(')
+    predicate = fluentSplitting[0]
+    arguments = fluentSplitting[1].split(',')
 
-
-def generateNonBeBias(fluent):
-    pass
+    newFluent = predicate + "("
+    for i in range(0, len(arguments)):
+        if not newFluent[-1] == '(':
+            newFluent += ','
+        newFluent += "var(t)"
+    newFluent += ")"
+    return newFluent
 
 
 class BasicParser:
@@ -80,11 +84,34 @@ class BasicParser:
             fluent = statements[index].getFluent()
             if fluent:
                 predicate = fluent.split('(')[0]
-                if predicate.text == "be":
-                    modeBias.update(generateBeBias(fluent))
+                if predicate == "be":
+                    modeBias.update(self.generateBeBias(fluent))
                 else:
-                    modeBias.update(generateNonBeBias(fluent))
+                    modeBias.update(self.generateNonBeBias(fluent))
         return modeBias
 
+    def generateBeBias(self, fluent):
+        generalisedFluent = giveUniqueVariableNames(fluent)
+        bias = set()
+        time = "var(time)"
+        initiated = initiatedAt(generalisedFluent, time)
+        holds = holdsAt(generalisedFluent, time)
+        terminated = terminatedAt(generalisedFluent, time)
+        bias.add(self.modehWrapping(initiated))
+        bias.add(self.modehWrapping(holds))
+        bias.add(self.modebWrapping(terminated))
+        return bias
 
+    def generateNonBeBias(self, fluent):
+        generalisedFluent = giveUniqueVariableNames(fluent)
+        bias = set()
+        time = "var(time)"
+        happens = happensAt(generalisedFluent, time)
+        bias.add(self.modebWrapping(happens))
+        return bias
 
+    def modehWrapping(self, predicate):
+        return "#modeh(" + predicate + ")."
+
+    def modebWrapping(self, predicate):
+        return "#modeb(" + predicate + ")."

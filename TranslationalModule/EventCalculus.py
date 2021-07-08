@@ -1,22 +1,24 @@
 import spacy
-from spacy.tokens import Doc
 from StoryStructure.Statement import Statement
+
+def hello():
+    return "HELLO"
+
+
+def holdsAt(fluent, time):
+    return "holdsAt(" + fluent + "," + time + ")"
 
 
 def happensAt(fluent, time):
-    return "happensAt(" + fluent + "," + time + ")."
-
-
-def holdsAt(fluent: str, time: str):
-    return "holdsAt(" + fluent + "," + time + ")."
+    return "happensAt(" + fluent + "," + time + ")"
 
 
 def initiatedAt(fluent, time):
-    return "initiatedAt(" + fluent + "," + time + ")."
+    return "initiatedAt(" + fluent + "," + time + ")"
 
 
 def terminatedAt(fluent, time):
-    return "terminatedAt(" + fluent + "," + time + ")."
+    return "terminatedAt(" + fluent + "," + time + ")"
 
 
 class EventCalculusWrapper:
@@ -26,10 +28,10 @@ class EventCalculusWrapper:
     def wrap(self, statement: Statement):
         fluent = statement.getFluent()
         time = statement.getLineID()
-        predicate: Doc = self.nlp(fluent.split("(")[0])
+        predicate = fluent.split("(")[0]
         # this is somewhat bad since it assumes that the predicate has at least one argument,
         # although there is an easy fix for this.
-        if predicate.text == "be":
+        if predicate == "be":
             eventCalculus = holdsAt(fluent, time)
         else:
             eventCalculus = happensAt(fluent, time)

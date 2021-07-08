@@ -9,4 +9,5 @@ if __name__ == '__main__':
         for statement in statements:
             print(statement.getLineID(), statement.getText(), statement.getFluent(),
                   statement.getEventCalculusRepresentation())
+    print(reader.corpus.modeBias)
 

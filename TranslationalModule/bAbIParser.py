@@ -1,6 +1,6 @@
 from StoryStructure.Question import Question
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from TranslationalModule.EventCalculusWrapper import EventCalculusWrapper
+from TranslationalModule.EventCalculus import EventCalculusWrapper
 from TranslationalModule.basicParser import BasicParser
 
 #add a function here to generate the mode bias
@@ -26,16 +26,17 @@ class bAbIParser:
             for statement in statements:
                 if isinstance(statement, Question):
                     fluent, concepts = self.parser.parseQuestion(statement)
+                    statement.setFluent(fluent)
                     self.synonymChecker(conceptsToExplore)
                     self.updateFluents(statements, statement, previousQuestion)
                     self.setEventCalculusRepresentation(statements, statement, previousQuestion)
                     # add in any new mode biases that have risen since the last question
-                    self.corpus.update(self.parser.generateModeBias(statements, statement, previousQuestion))
+                    self.corpus.modeBias.update(self.parser.generateModeBias(statements, statement, previousQuestion))
                     previousQuestion = statement
                 else:
                     fluent, concepts = self.parser.parseStatement(statement)
                     conceptsToExplore += concepts
-                statement.setFluent(fluent)
+                    statement.setFluent(fluent)
 
     def checkCurrentSynonyms(self, concept):
         for value in self.synonymDictionary.values():
@@ -71,7 +72,7 @@ class bAbIParser:
                     currentStatement.setFluent(fluent)
 
     def setEventCalculusRepresentation(self, statements, statement, previousQuestion):
-        statementIndex = statements.index(statement)
+        statementIndex = statements.index(statement) + 1
         previousQuestionIndex = 0
         if previousQuestion:
             previousQuestionIndex = statements.index(previousQuestion)
@@ -81,14 +82,3 @@ class bAbIParser:
             if fluent:
                 self.eventCalculusWrapper.wrap(currentStatement)
 
-
-
-
-"""
-if __name__ == '__main__':
-    parser = bAbIParser("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
-    for story in parser.corpus:
-        statements = story.getSentences()
-        for statement in statements:
-            print(statement.getLineID(), statement.getText(), statement.getLogicalRepresentation())
-"""

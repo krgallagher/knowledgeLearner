@@ -34,7 +34,7 @@ class bAbIReader:
 
 
 if __name__ == "__main__":
-    reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
     for story1 in reader.corpus:
         sentences = story1.getSentences()
         for statement in sentences:
