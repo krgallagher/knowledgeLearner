@@ -4,7 +4,7 @@ class Statement:
         self.lineId = lineId
         # perhaps should save the fluents and have a separate fluents and then partialASP program with event calculus?
         self.fluent = None  # will eventually want this to be a set
-        self.eventCalculusRepresentation = set()
+        self.eventCalculusRepresentation = None
         self.predicates = set()  # may want to change this name later on, need to read more about the event calculus
 
     def getText(self):
@@ -23,7 +23,7 @@ class Statement:
         return self.predicates
 
     def setEventCalculusRepresentation(self, representation):
-        self.eventCalculusRepresentation.update(representation)
+        self.eventCalculusRepresentation = representation
 
     def setFluent(self, fluent):
         self.fluent = fluent

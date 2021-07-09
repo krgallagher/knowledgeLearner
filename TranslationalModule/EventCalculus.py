@@ -41,9 +41,7 @@ class EventCalculusWrapper:
             eventCalculus = holdsAt(fluent, time)
         else:
             eventCalculus = happensAt(fluent, time)
-        representation = set()
-        representation.add(eventCalculus)
-        statement.setEventCalculusRepresentation(representation)
+        statement.setEventCalculusRepresentation(eventCalculus)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,7 @@
 import os
 
+from pyswip import Prolog
+
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from TranslationalModule.bAbIParser import bAbIParser
@@ -36,9 +38,8 @@ class Reasoner:
         # for statement in story
         for statement in story.getSentences():
             if not isinstance(statement, Question):
-                for element in statement.getEventCalculusRepresentation():
-                    temp.write(element)
-                    temp.write('\n')
+                temp.write(statement.getEventCalculusRepresentation())
+                temp.write('\n')
             for predicate in statement.getPredicates():
                 temp.write(predicate)
                 temp.write('\n')
@@ -72,10 +73,27 @@ class Reasoner:
 
     def searchForAnswer(self, question, answerSets):
         if "where" in question.getText().lower():
-            pass
-             # search for proper unification with prolog
+            answers = []
+            for answerSet in answerSets:
+                newAnswers = self.whereSearch(question, answerSet)
+                answers += newAnswers
+            if answers:
+                return answers[0]
+            return "UNKNOWN"
 
-        pass
+    def whereSearch(self, question, answerSet):
+        prolog = Prolog()
+        for rule in answerSet:
+            prolog.assertz(rule)
+        queryPredicate = question.getEventCalculusRepresentation().strip('.')
+        prolog.assertz(self.replaceTimeStamp(queryPredicate))
+        solution = list(prolog.query(queryPredicate.strip('.')))
+        return solution
+
+    def replaceTimeStamp(self, queryPredicate):
+        tmp = queryPredicate.split(')')
+        newPredicate = tmp[0] + '),-1)'
+        return newPredicate
 
 
 if __name__ == '__main__':
@@ -90,12 +108,14 @@ if __name__ == '__main__':
         for statement in statements:
             parser.parse(statements, statement)
             if isinstance(statement, Question):
-                filename = reasoner.createLearningFile(statement, story)
-                reader = open(filename, 'r')
-                # for line in reader:
-                # print(line)
-                print(reasoner.getAnswerSets(filename))
-                os.remove(filename)
+                answer = reasoner.computeAnswer(statement, story)
+                print(answer)
+            # filename = reasoner.createLearningFile(statement, story)
+            # reader = open(filename, 'r')
+            # for line in reader:
+            #    print(line)
+            # print(reasoner.getAnswerSets(filename))
+            # os.remove(filename)
 
 # need a function which takes in a corpus and evaluates accordingly
 # takes in a corpus plus the current story, i.e. the "context"
