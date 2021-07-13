@@ -1,4 +1,6 @@
 import spacy
+
+from StoryStructure import Story
 from TranslationalModule.EventCalculus import holdsAt, happensAt, initiatedAt, terminatedAt
 
 
@@ -31,12 +33,16 @@ def formQuestionFluent(fluent, root):
     return fluent
 
 
-def getRange(previousQuestion, statement, statements):
-    statementIndex = statements.index(statement)
-    previousQuestionIndex = 0
-    if previousQuestion:
-        previousQuestionIndex = statements.index(previousQuestion)
-    return previousQuestionIndex, statementIndex
+
+
+def getRange(question, statement, story):
+    statementIndex = story.getIndex(statement)
+    try:
+        questionIndex = story.getIndex(question)
+    except:
+        questionIndex = 0
+
+    return questionIndex, statementIndex
 
 
 def giveUniqueVariableNames(fluent):
@@ -77,11 +83,10 @@ class BasicParser:
         fluent += ")"
         return fluent, [root.lemma_]
 
-    def generateModeBias(self, statements, statement, previousQuestion):
+    def generateModeBias(self, story: Story, statement, previousQuestionIndex):
         modeBias = set()
-        previousQuestionIndex, statementIndex = getRange(previousQuestion, statement, statements)
-        for index in range(previousQuestionIndex, statementIndex):
-            fluent = statements[index].getFluent()
+        for index in range(previousQuestionIndex + 1, story.getIndex(statement) + 1):
+            fluent = story.get(index).getFluent()
             if fluent:
                 predicate = fluent.split('(')[0]
                 if predicate == "be":
@@ -94,19 +99,19 @@ class BasicParser:
         generalisedFluent = giveUniqueVariableNames(fluent)
         bias = set()
         time = "var(time)"
-        initiated = initiatedAt(generalisedFluent, time, False)
-        holds = holdsAt(generalisedFluent, time, False)
-        terminated = terminatedAt(generalisedFluent, time, False)
+        initiated = initiatedAt(generalisedFluent, time)
+        holds = holdsAt(generalisedFluent, time)
+        terminated = terminatedAt(generalisedFluent, time)
         bias.add(self.modehWrapping(initiated))
-        bias.add(self.modehWrapping(holds))
-        bias.add(self.modebWrapping(terminated))
+        bias.add(self.modebWrapping(holds))
+        bias.add(self.modehWrapping(terminated))
         return bias
 
     def generateNonBeBias(self, fluent):
         generalisedFluent = giveUniqueVariableNames(fluent)
         bias = set()
         time = "var(time)"
-        happens = happensAt(generalisedFluent, time, False)
+        happens = happensAt(generalisedFluent, time)
         bias.add(self.modebWrapping(happens))
         return bias
 
@@ -115,5 +120,3 @@ class BasicParser:
 
     def modebWrapping(self, predicate):
         return "#modeb(" + predicate + ")."
-
-

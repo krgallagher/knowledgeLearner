@@ -11,11 +11,15 @@ class bAbIReader:
         lines = file.readlines()
         story = Story()
         self.corpus.append(story)
+        firstStory = True
         for line in lines:
             currentStatement = self.createStatement(line)
             if currentStatement.getLineID() == 1:
-                newStory = Story()
-                self.corpus.append(newStory)
+                if firstStory:
+                    firstStory = False
+                else:
+                    newStory = Story()
+                    self.corpus.append(newStory)
             currentStory = self.corpus.pop()
             currentStory.addSentence(currentStatement)
             self.corpus.append(currentStory)

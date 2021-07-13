@@ -4,8 +4,8 @@ from DatasetReader.BackgroundKnowledge import eventCalculusAxioms
 class Corpus:
     def __init__(self):
         self.stories = []
-        #note that the background knowledge is a set
-        self.backgroundKnowledge = eventCalculusAxioms() #might want to eventually set this up differently to make it more general, but fine for now
+        # note that the background knowledge is a set
+        self.backgroundKnowledge = eventCalculusAxioms()  # might want to eventually set this up differently to make it more general, but fine for now
         self.modeBias = set()
         self.hypotheses = set()  # might want to change this to a set?
         # might want to add a variable for the hypothesis space
@@ -19,6 +19,13 @@ class Corpus:
 
     def pop(self):
         return self.stories.pop()
+
+    def setHypotheses(self, newHypotheses):
+        self.hypotheses = newHypotheses
+
+
+    def getHypotheses(self):
+        return self.hypotheses
 
 
 class CorpusIterator:

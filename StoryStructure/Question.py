@@ -7,4 +7,24 @@ class Question(Statement):
         self.answer = answer
         self.hints = hints
 
+    def getAnswer(self):
+        return self.answer
+
+    def isCorrectAnswer(self, answer):
+        return answer == self.answer
+
+    def createPartialInterpretation(self, answer):
+        eventCalculus = self.getEventCalculusRepresentation()
+        splitting = eventCalculus.split(',')
+        for i in range(0, len(splitting)):
+            if splitting[i][0] == 'V':
+                splitting[i] = answer + ')'
+        example = '{'
+        for element in splitting:
+            if not example == '{':
+                example += ','
+            example += element
+        example += '}'
+        return example
+
 # might be able to drop the hints since they aren't very helpful

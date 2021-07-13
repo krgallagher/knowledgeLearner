@@ -2,29 +2,18 @@ import spacy
 from StoryStructure.Statement import Statement
 
 
-def holdsAt(fluent, time, period=True):
-    eventCalculus = "holdsAt(" + fluent + "," + time + ")"
-    if period:
-        eventCalculus += "."
-    return eventCalculus
+def holdsAt(fluent, time):
+    return "holdsAt(" + fluent + "," + str(time) + ")"
 
+def happensAt(fluent, time):
+    return "happensAt(" + fluent + "," + str(time) + ")"
 
-def happensAt(fluent, time, period=True):
-    eventCalculus = "happensAt(" + fluent + "," + time + ")"
-    if period:
-        eventCalculus += "."
-    return eventCalculus
-def initiatedAt(fluent, time, period=True):
-    eventCalculus = "initiatedAt(" + fluent + "," + time + ")"
-    if period:
-        eventCalculus += "."
-    return eventCalculus
+def initiatedAt(fluent, time):
+    return "initiatedAt(" + fluent + "," + str(time) + ")"
 
-def terminatedAt(fluent, time, period=True):
-    eventCalculus = "terminatedAt(" + fluent + "," + time + ")"
-    if period:
-        eventCalculus += "."
-    return eventCalculus
+def terminatedAt(fluent, time):
+    return "terminatedAt(" + fluent + "," + str(time) + ")"
+
 
 
 class EventCalculusWrapper:
