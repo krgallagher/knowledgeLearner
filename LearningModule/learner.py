@@ -27,15 +27,15 @@ class Learner:
 
             # create learning file
             filename = self.createLearningFile()
-            #temp = open(filename, 'r')
-           # for line in temp:
-             #   print(line)
+            temp = open(filename, 'r')
+            for line in temp:
+                print(line)
 
             # use ILASP to complete learning task
-            #hypotheses = self.solveILASPtask(filename)
+            hypotheses = self.solveILASPtask(filename)
 
             # add the computed hypotheses to the corpus [note that we need to give new hypotheses each time]
-            #self.corpus.setHypotheses(hypotheses)
+            self.corpus.setHypotheses(hypotheses)
 
             # delete the file
             os.remove(filename)
@@ -141,18 +141,3 @@ if __name__ == '__main__':
             if isinstance(statement, Question):
                 learner.learn(statement, story, "bedroom")
     print(corpus.getHypotheses())
-
-    # training data loop
-    """
-    for story in reader.corpus:
-        statements = story.getSentences()
-        for statement in statements:
-            parser.parse(statements, statement)
-            if isinstance(statement, Question):
-                negativeExample = learner.createNegativeExample(statement, story, "bedroom")
-                story.appendExample(negativeExample)
-    """
-    # filename = learner.createLearningFile()
-    # reader = open(filename, 'r')
-    # for line in reader:
-    #    print(line)

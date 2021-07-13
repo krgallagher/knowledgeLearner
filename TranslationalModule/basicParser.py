@@ -26,14 +26,10 @@ def formQuestionFluent(fluent, root):
                 fluent += ','
             fluent += child.lemma_.lower()
         fluent = formStatementFluent(fluent, child)
-    children = root.children
     if not fluent[-1] == '(':
         fluent += ','
     fluent += "V1"
     return fluent
-
-
-
 
 def getRange(question, statement, story):
     statementIndex = story.getIndex(statement)
@@ -49,12 +45,16 @@ def giveUniqueVariableNames(fluent):
     fluentSplitting = fluent.split('(')
     predicate = fluentSplitting[0]
     arguments = fluentSplitting[1].split(',')
-
+    # need to fix this later
     newFluent = predicate + "("
+    newFluent += 'var(t),var(s)'
+
+    '''
     for i in range(0, len(arguments)):
         if not newFluent[-1] == '(':
             newFluent += ','
         newFluent += "var(t)"
+    '''
     newFluent += ")"
     return newFluent
 
