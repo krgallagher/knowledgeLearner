@@ -2,7 +2,7 @@ import os
 
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
-from TranslationalModule.bAbIParser import bAbIParser
+from TranslationalModule.basicParser import BasicParser
 
 
 class Learner:
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     corpus = reader.corpus
 
     # initialise parser
-    parser = bAbIParser(corpus)
+    parser = BasicParser(corpus)
 
     # learner
     learner = Learner(corpus)

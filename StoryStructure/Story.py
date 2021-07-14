@@ -24,6 +24,8 @@ class Story:
     def size(self):
         return len(self.sentences)
 
+
+
     # the story class does not need to worry about how to create a positive/negative example,
     # it only needs to worry about how to store it
     def appendExample(self, example):

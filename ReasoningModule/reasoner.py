@@ -114,7 +114,7 @@ class Reasoner:
             temp.write('\n')
 
         # add in the statements from the story
-        for statement in story.getSentences():
+        for statement in story:
             if not isinstance(statement, Question):
                 temp.write(statement.getEventCalculusRepresentation())
                 temp.write('.\n')

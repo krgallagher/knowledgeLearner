@@ -23,9 +23,11 @@ class Corpus:
     def setHypotheses(self, newHypotheses):
         self.hypotheses = newHypotheses
 
-
     def getHypotheses(self):
         return self.hypotheses
+
+    def updateModeBias(self, modeBias):
+        self.modeBias.update(modeBias)
 
 
 class CorpusIterator:

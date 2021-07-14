@@ -1,62 +1,10 @@
 import spacy
+from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure import Story
 from StoryStructure.Question import Question
+from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 from TranslationalModule.EventCalculus import holdsAt, happensAt, initiatedAt, terminatedAt, EventCalculusWrapper
-
-
-def formStatementFluent(fluent, root):
-    children = root.children
-    for child in children:
-        partOfSpeech = child.tag_
-        if 'NN' in partOfSpeech:
-            if not fluent[-1] == '(':
-                fluent += ','
-            fluent += child.lemma_.lower()
-        fluent = formStatementFluent(fluent, child)
-    return fluent
-
-def formQuestionFluent(fluent, root):
-    children = root.children
-    for child in children:
-        partOfSpeech = child.tag_
-        if 'NN' in partOfSpeech:
-            if not fluent[-1] == '(':
-                fluent += ','
-            fluent += child.lemma_.lower()
-        fluent = formStatementFluent(fluent, child)
-    if not fluent[-1] == '(':
-        fluent += ','
-    fluent += "V1"
-    return fluent
-
-
-# TODO combine the getRange function into a helper functions or utilities module
-def getRange(question, statement, story):
-    statementIndex = story.getIndex(statement)
-    try:
-        questionIndex = story.getIndex(question)
-    except:
-        questionIndex = 0
-    return questionIndex, statementIndex
-
-
-# TODO fix the mode bias generation so that it relies more on part of speech rather than being arbitrary
-def giveUniqueVariableNames(fluent):
-    fluentSplitting = fluent.split('(')
-    predicate = fluentSplitting[0]
-    arguments = fluentSplitting[1].split(',')
-    # need to fix this later
-    newFluent = predicate + "("
-    newFluent += 'var(t),var(s)'
-    '''
-    for i in range(0, len(arguments)):
-        if not newFluent[-1] == '(':
-            newFluent += ','
-        newFluent += "var(t)"
-    '''
-    newFluent += ")"
-    return newFluent
 
 
 def modeHWrapping(predicate):
@@ -67,31 +15,76 @@ def modeBWrapping(predicate):
     return "#modeb(" + predicate + ")."
 
 
-def generateNonBeBias(fluent):
-    generalisedFluent = giveUniqueVariableNames(fluent)
+def varWrapping(tag):
+    return "var(" + tag + ")"
+
+
+def generateNonBeBias(modeBiasFluent):
     bias = set()
-    time = "var(time)"
-    happens = happensAt(generalisedFluent, time)
+    time = varWrapping("time")
+    happens = happensAt(modeBiasFluent, time)
     bias.add(modeBWrapping(happens))
     return bias
 
 
-def generateBeBias(fluent):
-    generalisedFluent = giveUniqueVariableNames(fluent)
+def generateBeBias(modeBiasFluent):
     bias = set()
-    time = "var(time)"
-    initiated = initiatedAt(generalisedFluent, time)
-    holds = holdsAt(generalisedFluent, time)
-    terminated = terminatedAt(generalisedFluent, time)
+    time = varWrapping("time")
+    initiated = initiatedAt(modeBiasFluent, time)
+    holds = holdsAt(modeBiasFluent, time)
+    terminated = terminatedAt(modeBiasFluent, time)
     bias.add(modeHWrapping(initiated))
     bias.add(modeBWrapping(holds))
     bias.add(modeHWrapping(terminated))
     return bias
 
-def addTimePredicate(statement):
-    time = set()
-    time.add("time(" + str(statement.getLineID()) + ")")
-    statement.setPredicates(time)
+
+def timePredicate(statement: Statement):
+    time = "time(" + str(statement.getLineID()) + ")"
+    return time
+
+
+def formStatementFluent(statement: Statement, fluent, modeBiasFluent, root):
+    children = root.children
+    for child in children:
+        tag = child.tag_.lower()
+        lemma = child.lemma_.lower()
+        if 'nn' in tag:
+            if not fluent[-1] == '(':
+                fluent += ','
+                modeBiasFluent += ','
+            fluent += lemma
+            modeBiasFluent += varWrapping(tag)
+            # add tag predicates
+            relevantPredicate = tag + '(' + lemma + ')'
+            statement.addPredicate(relevantPredicate)
+        fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, child)
+    return fluent, modeBiasFluent
+
+
+def formQuestionFluent(question: Question, fluent, modeBiasFluent, root):
+    children = root.children
+    for child in children:
+        tag = child.tag_.lower()
+        lemma = child.lemma_.lower()
+        if 'nn' in tag:
+            if not fluent[-1] == '(':
+                fluent += ','
+            fluent += lemma
+            modeBiasFluent += varWrapping(tag)
+            # add tag predicates
+            relevantPredicate = tag + '(' + lemma + ')'
+            question.addPredicate(relevantPredicate)
+        fluent, modeBiasFluent = formStatementFluent(question, fluent, modeBiasFluent, child)
+    if not fluent[-1] == '(':
+        fluent += ','
+        modeBiasFluent += ','
+    fluent += "V1"
+    modeBiasFluent += varWrapping('nn')
+    # might want to add multiple options here
+    return fluent, modeBiasFluent
+
+
 
 class BasicParser:
     def __init__(self, corpus):
@@ -103,25 +96,14 @@ class BasicParser:
         self.conceptsToExplore = set()
         self.corpus = corpus
 
-    def parse(self, story, statement):
+    def parse(self, story: Story, statement: Statement):
         if isinstance(statement, Question):
-            # might be able to combine some of these steps
             self.parseQuestion(statement, story)
-
-            # add in any new mode biases that have risen since the last question
-            self.corpus.modeBias.update(self.generateModeBias(story, statement))
-            index = story.getIndex(statement)
-            if index + 1 == story.size():
-                self.previousQuestionIndex = -1
-            else:
-                self.previousQuestionIndex = index
         else:
             self.parseStatement(statement)
-        addTimePredicate(statement)
+        statement.addPredicate(timePredicate(statement))
 
-
-    # TODO can add predicates here dealing with the part of speech?
-    def parseStatement(self, statement):
+    def parseStatement(self, statement: Statement):
         doc = self.nlp(statement.getText())
         fluent = ""
         root = [token for token in doc if token.head == token][0]
@@ -132,61 +114,74 @@ class BasicParser:
         conceptsToExplore = set()
         conceptsToExplore.add(fluent)
         fluent += "("
-        fluent = formStatementFluent(fluent, root)
+        modeBiasFluent = fluent
+        fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, root)
         fluent += ")"
+        modeBiasFluent += ")"
         statement.setFluent(fluent)
+        statement.setModeBiasFluent(modeBiasFluent)
         self.conceptsToExplore.update(conceptsToExplore)
-        # do not need a return value now
 
-    # TODO can add predicates here dealing with the part of speech?
     def parseQuestion(self, question: Question, story: Story):
         doc = self.nlp(question.getText())
         fluent = ""
         root = [token for token in doc if token.head == token][0]
         fluent += root.lemma_
         fluent += "("
-        fluent = formQuestionFluent(fluent, root)
+        modeBiasFluent = fluent
+        fluent, modeBiasFluent = formQuestionFluent(question, fluent, modeBiasFluent, root)
         fluent += ")"
+        modeBiasFluent += ')'
         question.setFluent(fluent)
+        question.setModeBiasFluent(modeBiasFluent)
         self.synonymChecker(self.conceptsToExplore)
         self.updateFluents(story, question)
         self.setEventCalculusRepresentation(story, question)
+        index = story.getIndex(question)
+        if index + 1 == story.size():
+            self.previousQuestionIndex = -1
+        else:
+            self.previousQuestionIndex = index
 
-    def updateFluents(self, story, statement):
+    def updateFluents(self, story: Story, statement: Statement):
         for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
             fluent = currentStatement.getFluent()
-            if fluent:
-                predicate = fluent.split('(')[0]
-                if predicate in self.synonymDictionary.keys():
-                    fluent = self.synonymDictionary[predicate] + '(' + fluent.split('(')[1]
-                    currentStatement.setFluent(fluent)
+            modeBiasFluent = currentStatement.getModeBiasFluent()
+            currentStatement.setFluent(self.update(fluent))
+            currentStatement.setModeBiasFluent(self.update(modeBiasFluent))
 
-    def setEventCalculusRepresentation(self, story, statement):
+    def update(self, fluent):
+        splitFluent = fluent.split('(')
+        predicate = splitFluent[0]
+        if predicate in self.synonymDictionary.keys():
+            updatedFluent = self.synonymDictionary[predicate]
+        else:
+            return fluent
+        if len(splitFluent) == 1:
+            return updatedFluent
+        for index in range(1, len(splitFluent)):
+            updatedFluent += '(' + splitFluent[index]
+        return updatedFluent
+
+    def setEventCalculusRepresentation(self, story: Story, statement: Statement):
         for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
             fluent = currentStatement.getFluent()
-            if fluent:
-                self.eventCalculusWrapper.wrap(currentStatement)
-
-    def generateModeBias(self, story: Story, statement):
-        modeBias = set()
-        for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
-            fluent = story.get(index).getFluent()
-            if fluent:
-                predicate = fluent.split('(')[0]
-                if predicate == "be":
-                    modeBias.update(generateBeBias(fluent))
-                else:
-                    modeBias.update(generateNonBeBias(fluent))
-        return modeBias
+            modeBiasFluent = currentStatement.getModeBiasFluent()
+            self.eventCalculusWrapper.wrap(currentStatement)
+            predicate = fluent.split('(')[0]
+            if predicate == "be":
+                modeBias = generateBeBias(modeBiasFluent)
+            else:
+                modeBias = generateNonBeBias(modeBiasFluent)
+            self.corpus.updateModeBias(modeBias)
 
     def checkCurrentSynonyms(self, concept):
         for value in self.synonymDictionary.values():
             if self.conceptNet.isSynonym(concept, value):
                 self.synonymDictionary[concept] = value
                 return True
-        # tried adding because it might help
         for key in self.synonymDictionary.values():
             if self.conceptNet.isSynonym(concept, key):
                 self.synonymDictionary[concept] = self.synonymDictionary[key]
@@ -204,3 +199,24 @@ class BasicParser:
                 concepts.remove(concept)
         learnedConcepts = self.conceptNet.synonymFinder(concepts)
         self.synonymDictionary.update(learnedConcepts)
+
+
+if __name__ == '__main__':
+    # process data
+    # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
+
+    # get corpus
+    corpus = reader.corpus
+
+    # initialise parser
+    parser = BasicParser(corpus)
+
+    for story in reader.corpus:
+        for sentence in story:
+            parser.parse(story, sentence)
+        for sentence in story:
+            print(sentence.getText(), sentence.getLineID(), sentence.getFluent(),
+                  sentence.getEventCalculusRepresentation())
+    print(corpus.modeBias)
+    print(parser.synonymDictionary)

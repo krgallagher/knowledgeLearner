@@ -5,7 +5,8 @@ class Statement:
         # perhaps should save the fluents and have a separate fluents and then partialASP program with event calculus?
         self.fluent = None  # will eventually want this to be a set
         self.eventCalculusRepresentation = None
-        self.predicates = set()  # may want to change this name later on, need to read more about the event calculus
+        self.modeBiasFluent = None
+        self.predicates = set()
 
     def __eq__(self, other):
         return self.text == other.text and self.lineId == other.lineId
@@ -22,14 +23,20 @@ class Statement:
     def getEventCalculusRepresentation(self):
         return self.eventCalculusRepresentation
 
-    def getPredicates(self):
-        return self.predicates
-
     def setEventCalculusRepresentation(self, representation):
         self.eventCalculusRepresentation = representation
 
     def setFluent(self, fluent):
         self.fluent = fluent
 
-    def setPredicates(self, predicates):
-        self.predicates.update(predicates)
+    def setModeBiasFluent(self, modeBiasFluent):
+        self.modeBiasFluent = modeBiasFluent
+
+    def getModeBiasFluent(self):
+        return self.modeBiasFluent
+
+    def addPredicate(self, predicate):
+        self.predicates.add(predicate)
+
+    def getPredicates(self):
+        return self.predicates
