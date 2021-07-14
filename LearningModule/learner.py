@@ -12,17 +12,17 @@ class Learner:
     def learn(self, question, story, answer):
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
-            example = self.createPositiveExample(question, story)
+            example = self.createBravePositiveExample(question, story)
             story.appendExample(example)
 
             # do not need to run a learning task here
 
         else:
-            negativeExample = self.createNegativeExample(question, story, answer)
+            negativeExample = self.createBraveNegativeExample(question, story, answer)
             story.appendExample(negativeExample)
 
             # for bAbI dataset we can also create a positive example
-            positiveExample = self.createPositiveExample(question, story)
+            positiveExample = self.createBravePositiveExample(question, story)
             story.appendExample(positiveExample)
 
             # create learning file
@@ -40,7 +40,7 @@ class Learner:
             # delete the file
             os.remove(filename)
 
-    def createPositiveExample(self, question, story):
+    def createBravePositiveExample(self, question, story):
         positivePortion = question.createPartialInterpretation(question.getAnswer())
 
         # append all the extra event calculus and other predicates for the context aspect
@@ -76,14 +76,14 @@ class Learner:
 
         return context
 
-    def createNegativeExample(self, question, story, answer):
+    def createBraveNegativeExample(self, question, story, answer):
         negativeInterpretation = question.createPartialInterpretation(answer)
 
         # append all the extra event calculus and other predicates for the context aspect
         context = self.createContext(question, story)
 
         # put it altogether to form the positive example and add the positive example to the story.
-        negativeExample = '#neg(' + negativeInterpretation + ',{},' + context + ').'
+        negativeExample = '#pos(' + '{},' + negativeInterpretation + ',' + context + ').'
         return negativeExample
 
     def createLearningFile(self):

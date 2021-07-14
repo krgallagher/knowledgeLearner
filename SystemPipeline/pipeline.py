@@ -2,7 +2,7 @@ from DatasetReader.bAbIReader import bAbIReader
 from LearningModule.learner import Learner
 from ReasoningModule.reasoner import Reasoner
 from StoryStructure.Question import Question
-from TranslationalModule.bAbIParser import bAbIParser
+from TranslationalModule.basicParser import BasicParser
 
 if __name__ == '__main__':
 
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     corpus = trainingReader.corpus
 
     # initialise parser
-    parser = bAbIParser(corpus)
+    parser = BasicParser(corpus)
 
     # initialise reasoner
     reasoner = Reasoner(corpus)
@@ -30,13 +30,14 @@ if __name__ == '__main__':
                 answerToQuestion = reasoner.computeAnswer(sentence, story)
                 learner.learn(sentence, story, answerToQuestion)
 
+    #set hypotheses for testing corpus
     hypotheses = corpus.getHypotheses()
-    print(hypotheses)
+    testingReader.corpus.setHypotheses(hypotheses)
 
     # testing data loop
     numQuestions = 0
     numCorrect = 0
-    testingReader.corpus.setHypotheses(hypotheses)
+
     for story in testingReader.corpus:
         for sentence in story:
             parser.parse(story, sentence)

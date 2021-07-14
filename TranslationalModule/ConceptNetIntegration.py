@@ -5,35 +5,43 @@ class ConceptNetIntegration:
     def __init__(self):
         self.baseAddress = 'http://api.conceptnet.io/'
         self.synonymQuery = 'query?rel=/r/Synonym&start=/c/en/'
+        self.mannerOfQuery = 'query?rel=/r/MannerOf&start=/c/en/'
         self.synonym = 'query?rel=/r/Synonym'
         self.node = '&node=/c/en/'
         self.other = '&other=/c/en/'
 
-    # returns a list of verbs that "cover" all of the concepts
-    # if a verb is not covered then the dictionary does nothing I guess this is okay since we might want to learn that
-    # concept later on
     def synonymFinder(self, concepts):
-        relations = {}
+        # as a first step check whether the concepts are synonyms of each other
+        synonymRelations = {}
         for concept in concepts:
-            query = self.baseAddress + self.synonymQuery + concept
-            obj = requests.get(query).json()
-            for edge in obj['edges']:
-                label = edge['end']['label']
-                if label not in relations.keys():
-                    relations[label] = edge['weight']
-                else:
-                    relations[label] += edge['weight']
+            synonymRelations[concept] = 0
+        for concept1 in concepts:
+            for concept2 in concepts:
+                if self.isSynonym(concept1, concept2):
+                    synonymRelations[concept1] += 1
+                    synonymRelations[concept2] += 1
+
+        keys = synonymRelations.keys()
 
         synonymDictionary = {}
-        # the max on the relation values is somewhat arbitrary
-        # might want to ensure that the number of concepts to be learned is greater than 1 so that we don't get a
-        # strong random relationship
-        while synonymDictionary.keys() != set(concepts) and max(relations.values()) > 2.0:
-            maximum = max(relations, key=relations.get)
-            relations.pop(maximum)
+        # while the set of keys is not empty
+        while keys:
+            # take the maximum
+            maximum = max(synonymRelations, key=synonymRelations.get)
+            synonymRelations.pop(maximum)
+            # check if it covers more than one concept
+            conceptsCovered = []
             for concept in concepts:
-                if concept not in synonymDictionary.keys() and self.isSynonym(concept, maximum):
+                if concept in synonymDictionary.values():
+                    synonymDictionary[concept] = concept
+                elif concept not in synonymDictionary.keys() and self.isSynonym(concept, maximum):
+                    conceptsCovered.append(concept)
+
+            # if it does, then update the synonym dictionary accordingly
+            if len(conceptsCovered) >= 2:
+                for concept in conceptsCovered:
                     synonymDictionary[concept] = maximum
+            keys = synonymRelations.keys()
         return synonymDictionary
 
     def isSynonym(self, word1, word2):
@@ -43,6 +51,14 @@ class ConceptNetIntegration:
         obj = requests.get(query).json()
         if obj['edges']:
             return True
+        if '_' in word1 and '_' in word2:  # not perfect but maybe better?
+            node = self.node + word1.split('_')[0]
+            other = self.other + word2.split('_')[0]
+            query = self.baseAddress + self.synonym + node + other
+            query = self.baseAddress + self.synonym + node + other
+            obj = requests.get(query).json()
+            if obj['edges']:
+                return True
         return False
 
 
@@ -84,8 +100,7 @@ class Query:
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    concepts = ['go', 'move', 'journey', 'travel']
+    concepts = ['go_to', 'move_to', 'journey_to', 'travel_to', 'get']
     synonymDictionary = semanticNetwork.synonymFinder(concepts)
     for key in synonymDictionary.keys():
         print(key, synonymDictionary[key])
-    print(semanticNetwork.isSynonym("go", "go"))

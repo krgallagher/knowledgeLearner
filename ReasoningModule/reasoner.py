@@ -3,7 +3,7 @@ import re
 from StoryStructure.Question import Question
 
 
-# assumes to left-hand parantheses and two right-hand paranthesees, easy to adjust this code
+# TODO assumes to left-hand parentheses and two right-hand parentheses, easy to adjust this code
 def createRegularExpression(eventCalculusRepresentation):
     # split with left hand parentheses
     leftSplit = eventCalculusRepresentation.split('(')
@@ -49,6 +49,37 @@ def whereSearch(question, answerSet):
     return answers
 
 
+def isInAllAnswerSets(question, answerSets):
+    #create regular expression pattern to be matched
+    eventCalculusRepresentation = question.getEventCalculusRepresentation()
+    pattern = createRegularExpression(eventCalculusRepresentation)
+    compiledPattern = re.compile(pattern)
+
+    numAnswerSetsIn = 0
+    for answerSet in answerSets:
+        for rule in answerSet:
+            result = compiledPattern.fullmatch(rule)
+            if result:
+                numAnswerSetsIn += 1
+                break
+    return numAnswerSetsIn == len(answerSets)
+
+def searchForAnswer(question, answerSets):
+    if "where" in question.getText().lower():
+        answers = []
+        for answerSet in answerSets:
+            newAnswers = whereSearch(question, answerSet)
+            answers += newAnswers
+        if answers:
+            return answers[0]
+        return "unknown"
+    elif "is" == question.getText()[0:2].lower():
+        if isInAllAnswerSets(question, answerSets):
+            return "yes"
+        else:
+            return "no"
+
+
 class Reasoner:
     def __init__(self, corpus):
         self.corpus = corpus
@@ -61,7 +92,7 @@ class Reasoner:
         answerSets = self.getAnswerSets(filename)
 
         # parse the answer sets accordingly to give an answer
-        answer = self.searchForAnswer(question, answerSets)
+        answer = searchForAnswer(question, answerSets)
 
         # delete the file
         os.remove(filename)
@@ -71,16 +102,18 @@ class Reasoner:
     def createClingoFile(self, question, story):
         filename = '/tmp/ClingoFile.las'
         temp = open(filename, 'w')
+
         # add in the background knowledge
         for rule in self.corpus.backgroundKnowledge:
             temp.write(rule)
             temp.write('\n')
+
         # add in the hypotheses
         for hypothesis in self.corpus.hypotheses:
             temp.write(hypothesis)
             temp.write('\n')
 
-        # for statement in story
+        # add in the statements from the story
         for statement in story.getSentences():
             if not isinstance(statement, Question):
                 temp.write(statement.getEventCalculusRepresentation())
@@ -113,16 +146,6 @@ class Reasoner:
                 answerSets.append(answerSet)
             index += 1
         return answerSets
-
-    def searchForAnswer(self, question, answerSets):
-        if "where" in question.getText().lower():
-            answers = []
-            for answerSet in answerSets:
-                newAnswers = whereSearch(question, answerSet)
-                answers += newAnswers
-            if answers:
-                return answers[0]
-            return "unknown"
 
 
 if __name__ == '__main__':
