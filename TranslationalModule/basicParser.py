@@ -44,38 +44,24 @@ def timePredicate(statement: Statement):
     return time
 
 
-def formStatementFluent(statement: Statement, fluent, modeBiasFluent, root):
-    children = root.children
-    for child in children:
-        tag = child.tag_.lower()
-        lemma = child.lemma_.lower()
-        if 'nn' in tag:
-            if not fluent[-1] == '(':
-                fluent += ','
-                modeBiasFluent += ','
-            fluent += lemma
-            modeBiasFluent += varWrapping(tag)
-            # add tag predicates
-            relevantPredicate = tag + '(' + lemma + ')'
-            statement.addPredicate(relevantPredicate)
-        fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, child)
+def formStatementFluent(statement: Statement, fluent, modeBiasFluent, doc):
+    nouns = [token for token in doc if "NN" in token.tag_]
+    for noun in nouns:
+        tag = noun.tag_.lower()
+        lemma = noun.lemma_.lower()
+        if fluent[-1] != '(':
+            fluent += ','
+        fluent += lemma
+        modeBiasFluent += varWrapping(tag)
+
+        # add tag predicates
+        relevantPredicate = tag + '(' + lemma + ')'
+        statement.addPredicate(relevantPredicate)
     return fluent, modeBiasFluent
 
 
-def formQuestionFluent(question: Question, fluent, modeBiasFluent, root):
-    children = root.children
-    for child in children:
-        tag = child.tag_.lower()
-        lemma = child.lemma_.lower()
-        if 'nn' in tag:
-            if not fluent[-1] == '(':
-                fluent += ','
-            fluent += lemma
-            modeBiasFluent += varWrapping(tag)
-            # add tag predicates
-            relevantPredicate = tag + '(' + lemma + ')'
-            question.addPredicate(relevantPredicate)
-        fluent, modeBiasFluent = formStatementFluent(question, fluent, modeBiasFluent, child)
+def formQuestionFluent(question: Question, fluent, modeBiasFluent, doc):
+    fluent, modeBiasFluent = formStatementFluent(question, fluent, modeBiasFluent, doc)
     if not fluent[-1] == '(':
         fluent += ','
         modeBiasFluent += ','
@@ -83,8 +69,6 @@ def formQuestionFluent(question: Question, fluent, modeBiasFluent, root):
     modeBiasFluent += varWrapping('nn')
     # might want to add multiple options here
     return fluent, modeBiasFluent
-
-
 
 class BasicParser:
     def __init__(self, corpus):
@@ -115,7 +99,7 @@ class BasicParser:
         conceptsToExplore.add(fluent)
         fluent += "("
         modeBiasFluent = fluent
-        fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, root)
+        fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, doc)
         fluent += ")"
         modeBiasFluent += ")"
         statement.setFluent(fluent)
@@ -129,7 +113,7 @@ class BasicParser:
         fluent += root.lemma_
         fluent += "("
         modeBiasFluent = fluent
-        fluent, modeBiasFluent = formQuestionFluent(question, fluent, modeBiasFluent, root)
+        fluent, modeBiasFluent = formQuestionFluent(question, fluent, modeBiasFluent, doc)
         fluent += ")"
         modeBiasFluent += ')'
         question.setFluent(fluent)
