@@ -1,7 +1,7 @@
 import os
-
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
+from StoryStructure.Story import Story
 from TranslationalModule.basicParser import BasicParser
 
 
@@ -12,18 +12,30 @@ class Learner:
     def learn(self, question, story, answer):
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
-            example = self.createBravePositiveExample(question, story)
+            if "where" in question.getText():
+                example = self.createBravePositiveExample(question, story)
+            else:
+                if answer == "yes":
+                    example = self.createBravePositiveExample(question, story)
+                else:
+                    example = self.createBraveNegativeExample(question, story)
             story.appendExample(example)
 
             # do not need to run a learning task here
 
         else:
-            negativeExample = self.createBraveNegativeExample(question, story, answer)
-            story.appendExample(negativeExample)
+            if "where" in question.getText():
+                example = self.createBraveNegativeExample(question, story, answer)
+            else:
+                if question.getAnswer() == "yes":
+                    example = self.createBravePositiveExample(question, story)
+                else:
+                    example = self.createBraveNegativeExample(question, story)
+            story.appendExample(example)
 
             # for bAbI dataset we can also create a positive example
-            positiveExample = self.createBravePositiveExample(question, story)
-            story.appendExample(positiveExample)
+            # positiveExample = self.createBravePositiveExample(question, story)
+            # story.appendExample(positiveExample)
 
             # create learning file
             filename = self.createLearningFile()
@@ -33,9 +45,13 @@ class Learner:
 
             # use ILASP to complete learning task
             hypotheses = self.solveILASPtask(filename)
+            print("HYPOTHESES:", hypotheses)
 
-            # add the computed hypotheses to the corpus [note that we need to give new hypotheses each time]
-            self.corpus.setHypotheses(hypotheses)
+            # If the hypotheses are satisfiable, then add the computed hypotheses to the corpus
+            unsatisfiable = set()
+            unsatisfiable.add("UNSATISFIABLE")
+            if hypotheses != unsatisfiable:
+                self.corpus.setHypotheses(hypotheses)
 
             # delete the file
             os.remove(filename)
@@ -58,7 +74,7 @@ class Learner:
             if not isinstance(statement, Question):
                 context = self.addEventCalculus(statement, context)
             context = self.addPredicates(statement, context)
-        if context[-1] !='{':
+        if context[-1] != '{':
             context += '.}\n'
         return context
 
@@ -76,7 +92,7 @@ class Learner:
 
         return context
 
-    def createBraveNegativeExample(self, question, story, answer):
+    def createBraveNegativeExample(self, question: Question, story: Story, answer=None):
         negativeInterpretation = question.createPartialInterpretation(answer)
 
         # append all the extra event calculus and other predicates for the context aspect
@@ -88,6 +104,7 @@ class Learner:
 
     def createLearningFile(self):
         filename = '/tmp/learningFile.las'
+        #filename = "/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"
         temp = open(filename, 'w')
         # add in the background knowledge
         for rule in self.corpus.backgroundKnowledge:
@@ -119,7 +136,6 @@ class Learner:
     def processILASP(self, output):
         lines = output.split('\n')
         return set([line for line in lines if line])
-
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ class Statement:
         self.eventCalculusRepresentation = None
         self.modeBiasFluent = None
         self.predicates = set()
+        self.negatedVerb = False
 
     def __eq__(self, other):
         return self.text == other.text and self.lineId == other.lineId

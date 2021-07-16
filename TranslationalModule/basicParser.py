@@ -4,7 +4,7 @@ from StoryStructure import Story
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from TranslationalModule.EventCalculus import holdsAt, happensAt, initiatedAt, terminatedAt, EventCalculusWrapper
+from TranslationalModule.EventCalculus import holdsAt, happensAt, initiatedAt, terminatedAt, wrap
 
 
 def modeHWrapping(predicate):
@@ -27,7 +27,7 @@ def generateNonBeBias(modeBiasFluent):
     return bias
 
 
-def generateBeBias(modeBiasFluent):
+def generateBeBias(modeBiasFluent, statement: Statement):
     bias = set()
     time = varWrapping("time")
     initiated = initiatedAt(modeBiasFluent, time)
@@ -36,6 +36,8 @@ def generateBeBias(modeBiasFluent):
     bias.add(modeHWrapping(initiated))
     bias.add(modeBWrapping(holds))
     bias.add(modeHWrapping(terminated))
+    if not isinstance(statement, Question):
+        bias.add(modeBWrapping(initiated))
     return bias
 
 
@@ -51,9 +53,9 @@ def formStatementFluent(statement: Statement, fluent, modeBiasFluent, doc):
         lemma = noun.lemma_.lower()
         if fluent[-1] != '(':
             fluent += ','
+            modeBiasFluent += ','
         fluent += lemma
         modeBiasFluent += varWrapping(tag)
-
         # add tag predicates
         relevantPredicate = tag + '(' + lemma + ')'
         statement.addPredicate(relevantPredicate)
@@ -62,21 +64,22 @@ def formStatementFluent(statement: Statement, fluent, modeBiasFluent, doc):
 
 def formQuestionFluent(question: Question, fluent, modeBiasFluent, doc):
     fluent, modeBiasFluent = formStatementFluent(question, fluent, modeBiasFluent, doc)
-    if not fluent[-1] == '(':
-        fluent += ','
-        modeBiasFluent += ','
-    fluent += "V1"
-    modeBiasFluent += varWrapping('nn')
-    # might want to add multiple options here
+    if "where" or "what" in question.getText():
+        if not fluent[-1] == '(':
+            fluent += ','
+            modeBiasFluent += ','
+        fluent += "V1"
+        modeBiasFluent += varWrapping('nn')
+
     return fluent, modeBiasFluent
+
 
 class BasicParser:
     def __init__(self, corpus):
-        self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("en_core_web_lg")
         self.synonymDictionary = {}
         self.previousQuestionIndex = -1
         self.conceptNet = ConceptNetIntegration()
-        self.eventCalculusWrapper = EventCalculusWrapper()
         self.conceptsToExplore = set()
         self.corpus = corpus
 
@@ -92,11 +95,18 @@ class BasicParser:
         fluent = ""
         root = [token for token in doc if token.head == token][0]
         adposition = [token for token in doc if token.pos_ == "ADP"]
+        negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
+        verb_modifier = [token for token in doc if token.dep_ == 'acomp']
+        if negation:
+            statement.negatedVerb = True
         fluent += root.lemma_
-        if adposition:
+        if adposition and fluent != 'be':
             fluent += '_' + adposition[0].text
+        if verb_modifier:
+            fluent += '_' + verb_modifier[0].lemma_
         conceptsToExplore = set()
-        conceptsToExplore.add(fluent)
+        if fluent != 'be':
+            conceptsToExplore.add(fluent)
         fluent += "("
         modeBiasFluent = fluent
         fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, doc)
@@ -111,6 +121,9 @@ class BasicParser:
         fluent = ""
         root = [token for token in doc if token.head == token][0]
         fluent += root.lemma_
+        verb_modifier = [token for token in doc if token.dep_ == 'acomp']
+        if verb_modifier:
+            fluent += '_' + verb_modifier[0].lemma_
         fluent += "("
         modeBiasFluent = fluent
         fluent, modeBiasFluent = formQuestionFluent(question, fluent, modeBiasFluent, doc)
@@ -148,15 +161,17 @@ class BasicParser:
             updatedFluent += '(' + splitFluent[index]
         return updatedFluent
 
+
+    #to do tidy this up and even tidy up the name of this
     def setEventCalculusRepresentation(self, story: Story, statement: Statement):
         for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
             fluent = currentStatement.getFluent()
             modeBiasFluent = currentStatement.getModeBiasFluent()
-            self.eventCalculusWrapper.wrap(currentStatement)
+            wrap(currentStatement)
             predicate = fluent.split('(')[0]
             if predicate == "be":
-                modeBias = generateBeBias(modeBiasFluent)
+                modeBias = generateBeBias(modeBiasFluent, currentStatement)
             else:
                 modeBias = generateNonBeBias(modeBiasFluent)
             self.corpus.updateModeBias(modeBias)
@@ -188,7 +203,7 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
 
     # get corpus
     corpus = reader.corpus

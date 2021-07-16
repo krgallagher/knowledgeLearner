@@ -80,6 +80,28 @@ def searchForAnswer(question, answerSets):
             return "no"
 
 
+def processClingoOutput(output):
+    answerSets = []
+    data = output.split('\n')
+    index = 0
+    while index < len(data):
+        if data[index] == "SATISFIABLE" or data[index] == "UNSATISFIABLE":
+            break
+        if "Answer" in data[index]:
+            index += 1
+            answerSet = set(data[index].split())
+            answerSets.append(answerSet)
+        index += 1
+    return answerSets
+
+
+def getAnswerSets(filename):
+    command = "Clingo -W none -n 0 " + filename
+    output = os.popen(command).read()
+    answerSets = processClingoOutput(output)
+    return answerSets
+
+
 class Reasoner:
     def __init__(self, corpus):
         self.corpus = corpus
@@ -89,7 +111,7 @@ class Reasoner:
         filename = self.createClingoFile(question, story)
 
         # use clingo to gather the answer sets from the file (if there are any)
-        answerSets = self.getAnswerSets(filename)
+        answerSets = getAnswerSets(filename)
 
         # parse the answer sets accordingly to give an answer
         answer = searchForAnswer(question, answerSets)
@@ -118,6 +140,7 @@ class Reasoner:
             if not isinstance(statement, Question):
                 temp.write(statement.getEventCalculusRepresentation())
                 temp.write('.\n')
+            # write the predicates even if the statement is a question
             for predicate in statement.getPredicates():
                 temp.write(predicate)
                 temp.write('.\n')
@@ -125,27 +148,6 @@ class Reasoner:
                 break
         temp.close()
         return filename
-
-
-    def getAnswerSets(self, filename):
-        command = "Clingo -W none -n 0 " + filename
-        output = os.popen(command).read()
-        answerSets = self.processClingoOutput(output)
-        return answerSets
-
-    def processClingoOutput(self, output):
-        answerSets = []
-        data = output.split('\n')
-        index = 0
-        while index < len(data):
-            if data[index] == "SATISFIABLE" or data[index] == "UNSATISFIABLE":
-                break
-            if "Answer" in data[index]:
-                index += 1
-                answerSet = set(data[index].split())
-                answerSets.append(answerSet)
-            index += 1
-        return answerSets
 
 
 if __name__ == '__main__':
