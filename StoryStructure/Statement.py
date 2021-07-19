@@ -2,12 +2,16 @@ class Statement:
     def __init__(self, lineId, text):
         self.text = text
         self.lineId = int(lineId)
-        # perhaps should save the fluents and have a separate fluents and then partialASP program with event calculus?
-        self.fluent = None  # will eventually want this to be a set
+        self.fluent = None
         self.eventCalculusRepresentation = None
         self.modeBiasFluent = None
         self.predicates = set()
+        self.eventCalculusPredicates = set()
         self.negatedVerb = False
+
+        # create a time predicate for the event calculus representation
+        time = "time(" + str(self.getLineID()) + ")"
+        self.addEventCalculusPredicate(time)
 
     def __eq__(self, other):
         return self.text == other.text and self.lineId == other.lineId
@@ -41,3 +45,9 @@ class Statement:
 
     def getPredicates(self):
         return self.predicates
+
+    def addEventCalculusPredicate(self, predicate):
+        self.eventCalculusPredicates.add(predicate)
+
+    def getEventCalculusPredicates(self):
+        return self.eventCalculusPredicates

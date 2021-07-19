@@ -17,7 +17,7 @@ def terminatedAt(fluent, time):
 def wrap(statement: Statement):
     fluent = statement.getFluent()
     time = statement.getLineID()
-    predicate = fluent.split("(")[0]
+    predicate = fluent.split("(")[0].split('_')[0]
     if predicate == "be":
         if statement.negatedVerb:
             eventCalculus = terminatedAt(fluent, time)

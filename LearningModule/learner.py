@@ -9,28 +9,31 @@ class Learner:
     def __init__(self, corpus):
         self.corpus = corpus
 
-    def learn(self, question, story, answer):
+    def learn(self, question, story, answer, eventCalculusNeeded=True):
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
-            if "where" in question.getText():
-                example = self.createBravePositiveExample(question, story)
+            if "where" or "what" in question.getText():
+                example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
             else:
                 if answer == "yes":
-                    example = self.createBravePositiveExample(question, story)
+                    example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
-                    example = self.createBraveNegativeExample(question, story)
+                    example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
 
             # do not need to run a learning task here
 
         else:
-            if "where" in question.getText():
-                example = self.createBraveNegativeExample(question, story, answer)
+            if "where" or "what" in question.getText():
+                if answer == "unknown":
+                    example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
+                else:
+                    example = self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
             else:
                 if question.getAnswer() == "yes":
-                    example = self.createBravePositiveExample(question, story)
+                    example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
-                    example = self.createBraveNegativeExample(question, story)
+                    example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
 
             # for bAbI dataset we can also create a positive example
@@ -38,7 +41,7 @@ class Learner:
             # story.appendExample(positiveExample)
 
             # create learning file
-            filename = self.createLearningFile()
+            filename = self.createLearningFile(eventCalculusNeeded)
             temp = open(filename, 'r')
             for line in temp:
                 print(line)
@@ -56,32 +59,35 @@ class Learner:
             # delete the file
             os.remove(filename)
 
-    def createBravePositiveExample(self, question, story):
-        positivePortion = question.createPartialInterpretation(question.getAnswer())
+    def createBravePositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
+        positivePortion = question.createPartialInterpretation(question.getAnswer(), eventCalculusNeeded)
 
         # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story)
+        context = self.createContext(question, story, eventCalculusNeeded)
 
         # put it altogether to form the positive example and add the positive example to the story.
         positiveExample = '#pos(' + positivePortion + ',{},' + context + ').'
         return positiveExample
 
-    def createContext(self, question, story):
+    def createContext(self, question: Question, story: Story, eventCalculusNeeded):
         context = '{'
         for statement in story:
             if statement == question:
                 break
             if not isinstance(statement, Question):
-                context = self.addEventCalculus(statement, context)
+                context = self.addRepresentation(statement, context, eventCalculusNeeded)
             context = self.addPredicates(statement, context)
         if context[-1] != '{':
             context += '.}\n'
         return context
 
-    def addEventCalculus(self, question, context):
+    def addRepresentation(self, question, context, eventCalculusNeeded):
         if context[-1] != '{':
             context += '.\n'
-        context += question.getEventCalculusRepresentation()
+        if eventCalculusNeeded:
+            context += question.getEventCalculusRepresentation()
+        else:
+            context += question.getFluent()
         return context
 
     def addPredicates(self, question, context):
@@ -92,24 +98,25 @@ class Learner:
 
         return context
 
-    def createBraveNegativeExample(self, question: Question, story: Story, answer=None):
-        negativeInterpretation = question.createPartialInterpretation(answer)
+    def createBraveNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=None):
+        negativeInterpretation = question.createPartialInterpretation(answer, eventCalculusNeeded)
 
         # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story)
+        context = self.createContext(question, story, eventCalculusNeeded)
 
         # put it altogether to form the positive example and add the positive example to the story.
         negativeExample = '#pos(' + '{},' + negativeInterpretation + ',' + context + ').'
         return negativeExample
 
-    def createLearningFile(self):
-        filename = '/tmp/learningFile.las'
-        #filename = "/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"
+    def createLearningFile(self, eventCalculusNeeded):
+        # filename = '/tmp/learningFile.las'
+        filename = "/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"
         temp = open(filename, 'w')
         # add in the background knowledge
-        for rule in self.corpus.backgroundKnowledge:
-            temp.write(rule)
-            temp.write('\n')
+        if eventCalculusNeeded:
+            for rule in self.corpus.backgroundKnowledge:
+                temp.write(rule)
+                temp.write('\n')
 
         # add in the mode bias
         for bias in self.corpus.modeBias:

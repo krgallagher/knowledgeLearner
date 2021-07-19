@@ -100,7 +100,5 @@ class Query:
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    concepts = ['go_to', 'move_to', 'journey_to', 'travel_to', 'get']
-    synonymDictionary = semanticNetwork.synonymFinder(concepts)
-    for key in synonymDictionary.keys():
-        print(key, synonymDictionary[key])
+    print(semanticNetwork.isSynonym("discard", "left"))
+

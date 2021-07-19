@@ -13,11 +13,15 @@ class Question(Statement):
     def isCorrectAnswer(self, answer):
         return answer == self.answer
 
-    def createPartialInterpretation(self, answer):
-        eventCalculus = self.getEventCalculusRepresentation()
-        splitting = eventCalculus.split(',')
+    def createPartialInterpretation(self, answer, eventCalculusNeeded):
+        if eventCalculusNeeded:
+            representation = self.getEventCalculusRepresentation()
+        else:
+            representation = self.getFluent()
+        splitting = representation.split(',')
         for i in range(0, len(splitting)):
             if splitting[i][0] == 'V':
+                print(answer)
                 splitting[i] = answer + ')'
         example = '{'
         for element in splitting:

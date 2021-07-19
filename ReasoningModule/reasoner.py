@@ -3,13 +3,14 @@ import re
 from StoryStructure.Question import Question
 
 
-# TODO assumes to left-hand parentheses and two right-hand parentheses, easy to adjust this code
-def createRegularExpression(eventCalculusRepresentation):
+def createRegularExpression(representation):
     # split with left hand parentheses
-    leftSplit = eventCalculusRepresentation.split('(')
-    rightSplit = leftSplit[2].split(')')
+    leftSplit = representation.split('(')
+    rightSplit = leftSplit[len(leftSplit) - 1].split(')')
     arguments = rightSplit[0].split(',')
-    regularExpression = leftSplit[0] + '\(' + leftSplit[1] + '\('
+    regularExpression = ""
+    for index in range(0, len(leftSplit) - 1):
+        regularExpression += leftSplit[index] + '\('
     for index in range(0, len(arguments)):
         if "V" in arguments[index]:
             arguments[index] = ".+"
@@ -17,40 +18,46 @@ def createRegularExpression(eventCalculusRepresentation):
         if regularExpression[-1] != '(':
             regularExpression += ','
         regularExpression += argument
-    regularExpression += '\)' + rightSplit[1] + '\)'
+    regularExpression += '\)'
+    for index in range(1, len(rightSplit) - 1):
+        regularExpression += rightSplit[index] + '\)'
     return regularExpression
 
 
-def getAnswer(fullMatch, eventCalculusRepresentation):
-    leftSplitEC = eventCalculusRepresentation.split('(')
-    rightSplitEC = leftSplitEC[2].split(')')
-    argumentsEC = rightSplitEC[0].split(',')
+# TODO make this more malleable.
+def getAnswer(fullMatch, representation):
+    leftSplitRep = representation.split('(')
+    rightSplitRep = leftSplitRep[len(leftSplitRep) - 1].split(')')
+    argumentsRep = rightSplitRep[0].split(',')
     leftSplitMatch = fullMatch.split('(')
-    rightSplitMatch = leftSplitMatch[2].split(')')
+    rightSplitMatch = leftSplitMatch[len(leftSplitMatch) - 1].split(')')
     argumentsMatch = rightSplitMatch[0].split(',')
-    for index in range(0, len(argumentsEC)):
-        if argumentsEC[index] != argumentsMatch[index]:
+    for index in range(0, len(argumentsRep)):
+        if argumentsRep[index] != argumentsMatch[index]:
             answer = argumentsMatch[index]
             return answer
     return None
 
 
-def whereSearch(question, answerSet):
+def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded):
     # create a regular expression
     answers = []
-    eventCalculusRepresentation = question.getEventCalculusRepresentation()
-    pattern = createRegularExpression(eventCalculusRepresentation)
+    if eventCalculusRepresentationNeeded:
+        representation = question.getEventCalculusRepresentation()
+    else:
+        representation = question.getFluent()
+    pattern = createRegularExpression(representation)
     compiledPattern = re.compile(pattern)
     for rule in answerSet:
         result = compiledPattern.fullmatch(rule)
         if result:
             fullMatch = result[0]
-            answers.append(getAnswer(fullMatch, eventCalculusRepresentation))
+            answers.append(getAnswer(fullMatch, representation))
     return answers
 
 
-def isInAllAnswerSets(question, answerSets):
-    #create regular expression pattern to be matched
+def isInAllAnswerSets(question: Question, answerSets):
+    # create regular expression pattern to be matched
     eventCalculusRepresentation = question.getEventCalculusRepresentation()
     pattern = createRegularExpression(eventCalculusRepresentation)
     compiledPattern = re.compile(pattern)
@@ -64,11 +71,12 @@ def isInAllAnswerSets(question, answerSets):
                 break
     return numAnswerSetsIn == len(answerSets)
 
-def searchForAnswer(question, answerSets):
-    if "where" in question.getText().lower():
+
+def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded):
+    if "where" in question.getText().lower() or "what" in question.getText().lower():
         answers = []
         for answerSet in answerSets:
-            newAnswers = whereSearch(question, answerSet)
+            newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
             answers += newAnswers
         if answers:
             return answers[0]
@@ -106,29 +114,30 @@ class Reasoner:
     def __init__(self, corpus):
         self.corpus = corpus
 
-    def computeAnswer(self, question, story):
+    def computeAnswer(self, question, story, eventCalculusNeeded=True):
         # create Clingo file
-        filename = self.createClingoFile(question, story)
+        filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
         # use clingo to gather the answer sets from the file (if there are any)
         answerSets = getAnswerSets(filename)
 
         # parse the answer sets accordingly to give an answer
-        answer = searchForAnswer(question, answerSets)
+        answer = searchForAnswer(question, answerSets, eventCalculusNeeded)
 
         # delete the file
         os.remove(filename)
 
         return answer
 
-    def createClingoFile(self, question, story):
+    def createClingoFile(self, question, story, eventCalculusNeeded):
         filename = '/tmp/ClingoFile.las'
         temp = open(filename, 'w')
 
         # add in the background knowledge
-        for rule in self.corpus.backgroundKnowledge:
-            temp.write(rule)
-            temp.write('\n')
+        if eventCalculusNeeded:
+            for rule in self.corpus.backgroundKnowledge:
+                temp.write(rule)
+                temp.write('\n')
 
         # add in the hypotheses
         for hypothesis in self.corpus.hypotheses:
@@ -138,7 +147,13 @@ class Reasoner:
         # add in the statements from the story
         for statement in story:
             if not isinstance(statement, Question):
-                temp.write(statement.getEventCalculusRepresentation())
+                if eventCalculusNeeded:
+                    temp.write(statement.getEventCalculusRepresentation())
+                    for predicate in statement.getEventCalculusPredicates():
+                        temp.write(predicate)
+                        temp.write('.\n')
+                else:
+                    temp.write(statement.getFluent())
                 temp.write('.\n')
             # write the predicates even if the statement is a question
             for predicate in statement.getPredicates():
@@ -146,12 +161,11 @@ class Reasoner:
                 temp.write('.\n')
             if statement == question:
                 break
+
         temp.close()
         return filename
 
 
 if __name__ == '__main__':
-    predicate1 = "holdsAt(go(mary,V1),1)"
-    predicate2 = "holedsAt(go(mary,bathroom),1)"
-    print(getAnswer(predicate2, predicate1))
-
+    representation = "go(V1,bathroom)"
+    print(createRegularExpression(representation))

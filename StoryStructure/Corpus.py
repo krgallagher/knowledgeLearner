@@ -4,11 +4,10 @@ from DatasetReader.BackgroundKnowledge import eventCalculusAxioms
 class Corpus:
     def __init__(self):
         self.stories = []
-        # note that the background knowledge is a set
-        self.backgroundKnowledge = eventCalculusAxioms()  # might want to eventually set this up differently to make it more general, but fine for now
+        self.backgroundKnowledge = eventCalculusAxioms()
         self.modeBias = set()
-        self.hypotheses = set()  # might want to change this to a set?
-        # might want to add a variable for the hypothesis space
+        self.hypotheses = set()
+        self.isEventCalculusNeeded = False
 
     def append(self, story):
         self.stories.append(story)

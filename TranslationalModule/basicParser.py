@@ -19,6 +19,10 @@ def varWrapping(tag):
     return "var(" + tag + ")"
 
 
+def hasADPChild(noun, doc):
+    return [token for token in doc if token.head == noun and token.pos_ == "ADP"]
+
+
 def generateNonBeBias(modeBiasFluent):
     bias = set()
     time = varWrapping("time")
@@ -27,70 +31,84 @@ def generateNonBeBias(modeBiasFluent):
     return bias
 
 
-def generateBeBias(modeBiasFluent, statement: Statement):
-    bias = set()
-    time = varWrapping("time")
-    initiated = initiatedAt(modeBiasFluent, time)
-    holds = holdsAt(modeBiasFluent, time)
-    terminated = terminatedAt(modeBiasFluent, time)
-    bias.add(modeHWrapping(initiated))
-    bias.add(modeBWrapping(holds))
-    bias.add(modeHWrapping(terminated))
-    if not isinstance(statement, Question):
-        bias.add(modeBWrapping(initiated))
-    return bias
-
-
-def timePredicate(statement: Statement):
-    time = "time(" + str(statement.getLineID()) + ")"
-    return time
-
-
 def formStatementFluent(statement: Statement, fluent, modeBiasFluent, doc):
-    nouns = [token for token in doc if "NN" in token.tag_]
+    nouns = [token for token in doc if "NN" in token.tag_ and token.text.lower() not in fluent.split('_')]
+    fluent += "("
+    modeBiasFluent += "("
     for noun in nouns:
         tag = noun.tag_.lower()
-        lemma = noun.lemma_.lower()
+        # ignore plural
+        if tag == 'nns':
+            tag = 'nn'
+        children = [child for child in noun.children]
+        newNoun = ""
+        for child in children:
+            if child.pos_ == "ADJ":
+                if newNoun:
+                    newNoun += "_"
+                newNoun += child.text.lower()
+        if newNoun:
+            newNoun += "_"
+        newNoun += noun.lemma_.lower()
         if fluent[-1] != '(':
             fluent += ','
             modeBiasFluent += ','
-        fluent += lemma
+        fluent += newNoun
         modeBiasFluent += varWrapping(tag)
         # add tag predicates
-        relevantPredicate = tag + '(' + lemma + ')'
+        relevantPredicate = tag + '(' + newNoun + ')'
         statement.addPredicate(relevantPredicate)
     return fluent, modeBiasFluent
 
 
 def formQuestionFluent(question: Question, fluent, modeBiasFluent, doc):
     fluent, modeBiasFluent = formStatementFluent(question, fluent, modeBiasFluent, doc)
-    if "where" or "what" in question.getText():
+    if "where" in question.getText() or "what" in question.getText():
         if not fluent[-1] == '(':
             fluent += ','
             modeBiasFluent += ','
         fluent += "V1"
         modeBiasFluent += varWrapping('nn')
-
     return fluent, modeBiasFluent
 
 
 class BasicParser:
     def __init__(self, corpus):
-        self.nlp = spacy.load("en_core_web_lg")
+        self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
         self.synonymDictionary = {}
         self.previousQuestionIndex = -1
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
         self.corpus = corpus
+        for story in self.corpus:
+            for statement in story:
+                doc = self.nlp(statement.getText())
+                root = [token for token in doc if token.head == token][0]
+                if root.lemma_ != "be":
+                    self.corpus.isEventCalculusNeeded = True
+                    return
 
     def parse(self, story: Story, statement: Statement):
         if isinstance(statement, Question):
             self.parseQuestion(statement, story)
         else:
             self.parseStatement(statement)
-        statement.addPredicate(timePredicate(statement))
 
     def parseStatement(self, statement: Statement):
+        # create the base for the fluent
+        doc, fluent, modeBiasFluent = self.createFluentBase(statement)
+        # extract concepts to explore from this [may be able to move this into previous method eventually]
+        conceptsToExplore = set()
+        if fluent.split('_')[0] != 'be':
+            conceptsToExplore.add(fluent)
+        fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, doc)
+        fluent += ")"
+        modeBiasFluent += ")"
+        statement.setFluent(fluent)
+        statement.setModeBiasFluent(modeBiasFluent)
+        self.conceptsToExplore.update(conceptsToExplore)
+
+    def createFluentBase(self, statement):
         doc = self.nlp(statement.getText())
         fluent = ""
         root = [token for token in doc if token.head == token][0]
@@ -100,32 +118,21 @@ class BasicParser:
         if negation:
             statement.negatedVerb = True
         fluent += root.lemma_
-        if adposition and fluent != 'be':
-            fluent += '_' + adposition[0].text
+        # if adposition and fluent != 'be':
         if verb_modifier:
             fluent += '_' + verb_modifier[0].lemma_
-        conceptsToExplore = set()
-        if fluent != 'be':
-            conceptsToExplore.add(fluent)
-        fluent += "("
+        if adposition:
+            nouns = [token for token in doc if
+                     token.head == adposition[0] and token.tag_ == 'NN' and hasADPChild(token, doc)]
+            if nouns:
+                fluent += '_' + nouns[0].text.lower()
+            else:
+                fluent += '_' + adposition[0].text.lower()
         modeBiasFluent = fluent
-        fluent, modeBiasFluent = formStatementFluent(statement, fluent, modeBiasFluent, doc)
-        fluent += ")"
-        modeBiasFluent += ")"
-        statement.setFluent(fluent)
-        statement.setModeBiasFluent(modeBiasFluent)
-        self.conceptsToExplore.update(conceptsToExplore)
+        return doc, fluent, modeBiasFluent
 
     def parseQuestion(self, question: Question, story: Story):
-        doc = self.nlp(question.getText())
-        fluent = ""
-        root = [token for token in doc if token.head == token][0]
-        fluent += root.lemma_
-        verb_modifier = [token for token in doc if token.dep_ == 'acomp']
-        if verb_modifier:
-            fluent += '_' + verb_modifier[0].lemma_
-        fluent += "("
-        modeBiasFluent = fluent
+        doc, fluent, modeBiasFluent = self.createFluentBase(question)
         fluent, modeBiasFluent = formQuestionFluent(question, fluent, modeBiasFluent, doc)
         fluent += ")"
         modeBiasFluent += ')'
@@ -134,6 +141,7 @@ class BasicParser:
         self.synonymChecker(self.conceptsToExplore)
         self.updateFluents(story, question)
         self.setEventCalculusRepresentation(story, question)
+        self.updateModeBias(story, question)
         index = story.getIndex(question)
         if index + 1 == story.size():
             self.previousQuestionIndex = -1
@@ -143,8 +151,7 @@ class BasicParser:
     def updateFluents(self, story: Story, statement: Statement):
         for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
-            fluent = currentStatement.getFluent()
-            modeBiasFluent = currentStatement.getModeBiasFluent()
+            fluent, modeBiasFluent = currentStatement.getFluent(), currentStatement.getModeBiasFluent()
             currentStatement.setFluent(self.update(fluent))
             currentStatement.setModeBiasFluent(self.update(modeBiasFluent))
 
@@ -161,20 +168,42 @@ class BasicParser:
             updatedFluent += '(' + splitFluent[index]
         return updatedFluent
 
-
-    #to do tidy this up and even tidy up the name of this
     def setEventCalculusRepresentation(self, story: Story, statement: Statement):
+        for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
+            currentStatement = story.get(index)
+            wrap(currentStatement)
+
+    def updateModeBias(self, story: Story, statement: Statement):
         for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
             fluent = currentStatement.getFluent()
             modeBiasFluent = currentStatement.getModeBiasFluent()
-            wrap(currentStatement)
-            predicate = fluent.split('(')[0]
+            predicate = fluent.split('(')[0].split('_')[0]
             if predicate == "be":
-                modeBias = generateBeBias(modeBiasFluent, currentStatement)
+                modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
             else:
                 modeBias = generateNonBeBias(modeBiasFluent)
             self.corpus.updateModeBias(modeBias)
+
+    def generateBeBias(self, modeBiasFluent, statement: Statement):
+        bias = set()
+        if self.corpus.isEventCalculusNeeded:
+            time = varWrapping("time")
+            initiated = initiatedAt(modeBiasFluent, time)
+            holds = holdsAt(modeBiasFluent, time)
+            terminated = terminatedAt(modeBiasFluent, time)
+            if isinstance(statement, Question):
+                bias.add(modeHWrapping(initiated))
+                bias.add(modeHWrapping(terminated))
+            else:
+                bias.add(modeBWrapping(initiated))
+            bias.add(modeBWrapping(holds))
+        else:
+            if isinstance(statement, Question):
+                bias.add(modeHWrapping(modeBiasFluent))
+            else:
+                bias.add(modeBWrapping(modeBiasFluent))
+        return bias
 
     def checkCurrentSynonyms(self, concept):
         for value in self.synonymDictionary.values():
@@ -210,6 +239,7 @@ if __name__ == '__main__':
 
     # initialise parser
     parser = BasicParser(corpus)
+    print(corpus.isEventCalculusNeeded)
 
     for story in reader.corpus:
         for sentence in story:
@@ -217,5 +247,7 @@ if __name__ == '__main__':
         for sentence in story:
             print(sentence.getText(), sentence.getLineID(), sentence.getFluent(),
                   sentence.getEventCalculusRepresentation())
+            if isinstance(sentence, Question):
+                print(sentence.getModeBiasFluent())
     print(corpus.modeBias)
     print(parser.synonymDictionary)
