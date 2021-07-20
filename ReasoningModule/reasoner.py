@@ -1,6 +1,7 @@
 import os
 import re
 from StoryStructure.Question import Question
+from Utilities.ILASPSyntax import createTimeRange
 
 
 def createRegularExpression(representation):
@@ -45,7 +46,7 @@ def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded
     if eventCalculusRepresentationNeeded:
         representation = question.getEventCalculusRepresentation()
     else:
-        representation = question.getFluent()
+        representation = question.getFluents()
     pattern = createRegularExpression(representation)
     compiledPattern = re.compile(pattern)
     for rule in answerSet:
@@ -118,6 +119,11 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
+        file = open(filename, 'r')
+        for line in file:
+            print(line)
+
+
         # use clingo to gather the answer sets from the file (if there are any)
         answerSets = getAnswerSets(filename)
 
@@ -149,19 +155,18 @@ class Reasoner:
             if not isinstance(statement, Question):
                 if eventCalculusNeeded:
                     temp.write(statement.getEventCalculusRepresentation())
-                    for predicate in statement.getEventCalculusPredicates():
-                        temp.write(predicate)
-                        temp.write('.\n')
+                    temp.write('.\n')
                 else:
-                    temp.write(statement.getFluent())
-                temp.write('.\n')
+                    temp.write(statement.getFluents())
+                    temp.write('.\n')
+
             # write the predicates even if the statement is a question
             for predicate in statement.getPredicates():
                 temp.write(predicate)
                 temp.write('.\n')
             if statement == question:
                 break
-
+        temp.write(createTimeRange(question))
         temp.close()
         return filename
 

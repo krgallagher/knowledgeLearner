@@ -17,7 +17,7 @@ class Question(Statement):
         if eventCalculusNeeded:
             representation = self.getEventCalculusRepresentation()
         else:
-            representation = self.getFluent()
+            representation = self.getFluents()
         splitting = representation.split(',')
         for i in range(0, len(splitting)):
             if splitting[i][0] == 'V':

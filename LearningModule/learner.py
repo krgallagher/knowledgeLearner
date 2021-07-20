@@ -3,6 +3,7 @@ from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 from TranslationalModule.basicParser import BasicParser
+from Utilities.ILASPSyntax import createTimeRange
 
 
 class Learner:
@@ -12,7 +13,7 @@ class Learner:
     def learn(self, question, story, answer, eventCalculusNeeded=True):
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
-            if "where" or "what" in question.getText():
+            if "where" in question.getText().lower() or "what" in question.getText().lower():
                 example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
             else:
                 if answer == "yes":
@@ -24,7 +25,7 @@ class Learner:
             # do not need to run a learning task here
 
         else:
-            if "where" or "what" in question.getText():
+            if "where" in question.getText().lower() or "what" in question.getText().lower():
                 if answer == "unknown":
                     example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
@@ -72,13 +73,15 @@ class Learner:
     def createContext(self, question: Question, story: Story, eventCalculusNeeded):
         context = '{'
         for statement in story:
-            if statement == question:
-                break
             if not isinstance(statement, Question):
                 context = self.addRepresentation(statement, context, eventCalculusNeeded)
             context = self.addPredicates(statement, context)
+            if statement == question:
+                break
         if context[-1] != '{':
-            context += '.}\n'
+            context += '.\n'
+            context += createTimeRange(question)
+        context += '}\n'
         return context
 
     def addRepresentation(self, question, context, eventCalculusNeeded):
@@ -87,7 +90,7 @@ class Learner:
         if eventCalculusNeeded:
             context += question.getEventCalculusRepresentation()
         else:
-            context += question.getFluent()
+            context += question.getFluents()
         return context
 
     def addPredicates(self, question, context):
@@ -95,7 +98,6 @@ class Learner:
             if context[-1] != '{':
                 context += '.\n'
             context += predicate
-
         return context
 
     def createBraveNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=None):
@@ -136,6 +138,7 @@ class Learner:
         return filename
 
     def solveILASPtask(self, filename):
+        # command = "FastLAS --nopl" + filename
         command = "ILASP -q -nc -ml=2 --version=4 " + filename
         output = os.popen(command).read()
         return self.processILASP(output)

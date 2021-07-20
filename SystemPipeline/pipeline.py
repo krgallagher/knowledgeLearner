@@ -6,10 +6,10 @@ from TranslationalModule.basicParser import BasicParser
 
 if __name__ == '__main__':
     # process data
-    trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_test.txt")
-    #trainingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
-    #testingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test")
+    #trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
+    #testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_test.txt")
+    trainingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
+    testingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_test")
 
     # get corpus
     corpus = trainingReader.corpus
