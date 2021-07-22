@@ -32,14 +32,16 @@ class bAbIReader:
         if len(data) == 1:
             return Statement(identification, text)
         else:
-            hints = data[2].split(" ")
-            answer = data[1]
+            hints = data[2].strip('\n').split(" ")  # might be able to disregard this hints eventually
+            answer = data[1].split(',')
             return Question(identification, text, answer, hints)
 
 
 if __name__ == "__main__":
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa19_path-finding_train.txt")
     for story1 in reader.corpus:
         sentences = story1.getSentences()
         for statement in sentences:
             print(statement.getLineID(), statement.getText())
+            if isinstance(statement, Question):
+                print(statement.getAnswer(), statement.getHints())

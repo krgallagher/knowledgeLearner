@@ -1,6 +1,7 @@
 import os
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
+from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.basicParser import BasicParser
 from Utilities.ILASPSyntax import createTimeRange
@@ -16,7 +17,7 @@ class Learner:
             if "where" in question.getText().lower() or "what" in question.getText().lower():
                 example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
             else:
-                if answer == "yes":
+                if "yes" in answer:
                     example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
                     example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
@@ -26,14 +27,15 @@ class Learner:
 
         else:
             if "where" in question.getText().lower() or "what" in question.getText().lower():
-                if answer == "unknown":
+                if len(answer) == 0:
                     example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
                     example = self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
             else:
-                if question.getAnswer() == "yes":
+                if "yes" in question.getAnswer():
                     example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
+
                     example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
 
@@ -70,6 +72,16 @@ class Learner:
         positiveExample = '#pos(' + positivePortion + ',{},' + context + ').'
         return positiveExample
 
+    def createBraveNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=[]):
+        negativeInterpretation = question.createPartialInterpretation(answer, eventCalculusNeeded)
+
+        # append all the extra event calculus and other predicates for the context aspect
+        context = self.createContext(question, story, eventCalculusNeeded)
+
+        # put it altogether to form the positive example and add the positive example to the story.
+        negativeExample = '#pos(' + '{},' + negativeInterpretation + ',' + context + ').'
+        return negativeExample
+
     def createContext(self, question: Question, story: Story, eventCalculusNeeded):
         context = '{'
         for statement in story:
@@ -80,17 +92,21 @@ class Learner:
                 break
         if context[-1] != '{':
             context += '.\n'
-            context += createTimeRange(question)
+            context += createTimeRange(question.getLineID())
+            context += '.\n'
         context += '}\n'
         return context
 
-    def addRepresentation(self, question, context, eventCalculusNeeded):
-        if context[-1] != '{':
-            context += '.\n'
+    def addRepresentation(self, statement: Statement, context, eventCalculusNeeded):
         if eventCalculusNeeded:
-            context += question.getEventCalculusRepresentation()
+            representation = statement.getEventCalculusRepresentation()
         else:
-            context += question.getFluents()
+            representation = statement.getFluents()
+        for predicate in representation:
+            if context[-1] != '{' and context[-1] != '\n':
+                context += '.\n'
+            context += predicate
+            #context += '\n'
         return context
 
     def addPredicates(self, question, context):
@@ -100,21 +116,11 @@ class Learner:
             context += predicate
         return context
 
-    def createBraveNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=None):
-        negativeInterpretation = question.createPartialInterpretation(answer, eventCalculusNeeded)
-
-        # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story, eventCalculusNeeded)
-
-        # put it altogether to form the positive example and add the positive example to the story.
-        negativeExample = '#pos(' + '{},' + negativeInterpretation + ',' + context + ').'
-        return negativeExample
-
     def createLearningFile(self, eventCalculusNeeded):
         # filename = '/tmp/learningFile.las'
         filename = "/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"
         temp = open(filename, 'w')
-        # add in the background knowledge
+        # add in the background knowledge only if using the event calculus
         if eventCalculusNeeded:
             for rule in self.corpus.backgroundKnowledge:
                 temp.write(rule)
@@ -131,6 +137,7 @@ class Learner:
                 temp.write(example)
                 temp.write('\n')
 
+        # might want to make this so it starts with 4 variables and then gradually increases.
         temp.write("#maxv(4).")
         temp.write('\n')
 

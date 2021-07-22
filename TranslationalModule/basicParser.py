@@ -35,7 +35,7 @@ class BasicParser:
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
         self.corpus = corpus
-        # will want to integrate this elsewhere, but okay for now
+        # replace this with a component that checks whether certain states have changed across the entire corpus
         for story in self.corpus:
             for statement in story:
                 doc = self.nlp(statement.getText())
@@ -62,7 +62,8 @@ class BasicParser:
         # creating the fluent base
         fluentBase = ""
         root = [token for token in doc if token.head == token][0]
-        adposition = [token for token in doc if token.pos_ == "ADP"]
+        #TODO change it so that the adposition has to be a child of the verb.
+        adposition = [token for token in doc if token.pos_ == "ADP" and ((token.head == root or token.head.pos_ == "ADV") or (token.head.dep_ == "nsubj" or token.head.dep_ == 'attr'))]
         negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
         verb_modifier = [token for token in doc if token.dep_ == 'acomp']
         if negation:
@@ -111,7 +112,8 @@ class BasicParser:
                     newFluents.append(fluent1)
                     newModeBiasFluents.append(modeBiasFluent1)
                     if secondaryNoun:
-                        fluent2, modeBiasFluent2 = self.addNounToFluent(statement, secondaryNoun, fluents[i], modeBiasFluents[i])
+                        fluent2, modeBiasFluent2 = self.addNounToFluent(statement, secondaryNoun, fluents[i],
+                                                                        modeBiasFluents[i])
                         newFluents.append(fluent2)
                         newModeBiasFluents.append(modeBiasFluent2)
                 fluents = newFluents
@@ -138,6 +140,7 @@ class BasicParser:
         # ignore plural
         if tag == 'nns':
             tag = 'nn'
+        #TODO append ADP children to the noun in some way and remove a noun while doing it
         children = [child for child in noun.children]
         descriptiveNoun = ""
         for child in children:
@@ -187,7 +190,7 @@ class BasicParser:
     def updateModeBias(self, story: Story, statement: Statement):
         for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
-            #fluent = currentStatement.getFluents()
+            # fluent = currentStatement.getFluents()
             modeBiasFluents = currentStatement.getModeBiasFluents()
             for modeBiasFluent in modeBiasFluents:
                 predicate = modeBiasFluent.split('(')[0].split('_')[0]
@@ -244,7 +247,7 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task12_train")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
 
     # get corpus
     corpus = reader.corpus

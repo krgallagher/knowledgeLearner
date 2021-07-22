@@ -40,13 +40,16 @@ def getAnswer(fullMatch, representation):
     return None
 
 
+# TODO trying to tidy this up today
+
 def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded):
     # create a regular expression
     answers = []
     if eventCalculusRepresentationNeeded:
-        representation = question.getEventCalculusRepresentation()
+        representation = question.getEventCalculusRepresentation().copy()
     else:
-        representation = question.getFluents()
+        representation = question.getFluents().copy()
+    representation = representation.pop()
     pattern = createRegularExpression(representation)
     compiledPattern = re.compile(pattern)
     for rule in answerSet:
@@ -57,12 +60,16 @@ def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded
     return answers
 
 
-def isInAllAnswerSets(question: Question, answerSets):
+# TODO edit this to have both the event calculus and non-event calculus representation taken into account
+def isInAllAnswerSets(question: Question, answerSets, eventCalculusRepresentationNeeded):
     # create regular expression pattern to be matched
-    eventCalculusRepresentation = question.getEventCalculusRepresentation()
-    pattern = createRegularExpression(eventCalculusRepresentation)
+    if eventCalculusRepresentationNeeded:
+        representation = question.getEventCalculusRepresentation().copy()
+    else:
+        representation = question.getFluents().copy()
+    representation = representation.pop()
+    pattern = createRegularExpression(representation)
     compiledPattern = re.compile(pattern)
-
     numAnswerSetsIn = 0
     for answerSet in answerSets:
         for rule in answerSet:
@@ -80,13 +87,13 @@ def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationN
             newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
             answers += newAnswers
         if answers:
-            return answers[0]
-        return "unknown"
+            return [answers[0]]  # just choose the first element of the list
+        return []
     elif "is" == question.getText()[0:2].lower():
-        if isInAllAnswerSets(question, answerSets):
-            return "yes"
+        if isInAllAnswerSets(question, answerSets, eventCalculusRepresentationNeeded):
+            return ["yes"]
         else:
-            return "no"
+            return ["no"]
 
 
 def processClingoOutput(output):
@@ -107,8 +114,7 @@ def processClingoOutput(output):
 def getAnswerSets(filename):
     command = "Clingo -W none -n 0 " + filename
     output = os.popen(command).read()
-    answerSets = processClingoOutput(output)
-    return answerSets
+    return processClingoOutput(output)
 
 
 class Reasoner:
@@ -119,10 +125,9 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
-        file = open(filename, 'r')
-        for line in file:
-            print(line)
-
+        # file = open(filename, 'r')
+        # for line in file:
+        #    print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)
         answerSets = getAnswerSets(filename)
@@ -154,10 +159,11 @@ class Reasoner:
         for statement in story:
             if not isinstance(statement, Question):
                 if eventCalculusNeeded:
-                    temp.write(statement.getEventCalculusRepresentation())
-                    temp.write('.\n')
+                    representation = statement.getEventCalculusRepresentation()
                 else:
-                    temp.write(statement.getFluents())
+                    representation = statement.getFluents()
+                for predicate in representation:
+                    temp.write(predicate)
                     temp.write('.\n')
 
             # write the predicates even if the statement is a question
@@ -166,11 +172,11 @@ class Reasoner:
                 temp.write('.\n')
             if statement == question:
                 break
-        temp.write(createTimeRange(question))
+        temp.write(createTimeRange(question.getLineID()))
+        temp.write('.\n')
         temp.close()
         return filename
 
 
 if __name__ == '__main__':
-    representation = "go(V1,bathroom)"
-    print(createRegularExpression(representation))
+    pass
