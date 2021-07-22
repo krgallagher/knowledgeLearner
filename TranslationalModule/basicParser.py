@@ -16,17 +16,6 @@ def hasADPChild(noun, doc):
     return [token for token in doc if token.head == noun and token.pos_ == "ADP"]
 
 
-def generateNonBeBias(modeBiasFluent):
-    bias = set()
-    time = varWrapping("time")
-    happens = happensAt(modeBiasFluent, time)
-    bias.add(modeBWrapping(happens))
-    return bias
-
-
-# if the noun has a child that is a coordinating conjunction then we need to create multiple predicates.
-
-
 class BasicParser:
     def __init__(self, corpus):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
@@ -35,14 +24,6 @@ class BasicParser:
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
         self.corpus = corpus
-        # replace this with a component that checks whether certain states have changed across the entire corpus
-        for story in self.corpus:
-            for statement in story:
-                doc = self.nlp(statement.getText())
-                root = [token for token in doc if token.head == token][0]
-                if root.lemma_ != "be":
-                    self.corpus.isEventCalculusNeeded = True
-                    return
 
     def parse(self, story: Story, statement: Statement):
         self.createFluentsAndModeBiasFluents(statement)
@@ -50,7 +31,7 @@ class BasicParser:
             self.synonymChecker(self.conceptsToExplore)
             self.updateFluents(story, statement)
             self.setEventCalculusRepresentation(story, statement)
-            self.updateModeBias(story, statement)
+            # self.updateModeBias(story, statement)
             index = story.getIndex(statement)
             if index + 1 == story.size():
                 self.previousQuestionIndex = -1
@@ -62,8 +43,10 @@ class BasicParser:
         # creating the fluent base
         fluentBase = ""
         root = [token for token in doc if token.head == token][0]
-        #TODO change it so that the adposition has to be a child of the verb.
-        adposition = [token for token in doc if token.pos_ == "ADP" and ((token.head == root or token.head.pos_ == "ADV") or (token.head.dep_ == "nsubj" or token.head.dep_ == 'attr'))]
+        # TODO change it so that the adposition has to be a child of the verb.
+        adposition = [token for token in doc if token.pos_ == "ADP" and (
+                (token.head == root or token.head.pos_ == "ADV") or (
+                token.head.dep_ == "nsubj" or token.head.dep_ == 'attr'))]
         negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
         verb_modifier = [token for token in doc if token.dep_ == 'acomp']
         if negation:
@@ -140,7 +123,7 @@ class BasicParser:
         # ignore plural
         if tag == 'nns':
             tag = 'nn'
-        #TODO append ADP children to the noun in some way and remove a noun while doing it
+        # TODO append ADP children to the noun in some way and remove a noun while doing it
         children = [child for child in noun.children]
         descriptiveNoun = ""
         for child in children:
@@ -187,39 +170,6 @@ class BasicParser:
             currentStatement = story.get(index)
             wrap(currentStatement)
 
-    def updateModeBias(self, story: Story, statement: Statement):
-        for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
-            currentStatement = story.get(index)
-            # fluent = currentStatement.getFluents()
-            modeBiasFluents = currentStatement.getModeBiasFluents()
-            for modeBiasFluent in modeBiasFluents:
-                predicate = modeBiasFluent.split('(')[0].split('_')[0]
-                if predicate == "be":
-                    modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
-                else:
-                    modeBias = generateNonBeBias(modeBiasFluent)
-            self.corpus.updateModeBias(modeBias)
-
-    def generateBeBias(self, modeBiasFluent, statement: Statement):
-        bias = set()
-        if self.corpus.isEventCalculusNeeded:
-            time = varWrapping("time")
-            initiated = initiatedAt(modeBiasFluent, time)
-            holds = holdsAt(modeBiasFluent, time)
-            terminated = terminatedAt(modeBiasFluent, time)
-            if isinstance(statement, Question):
-                bias.add(modeHWrapping(initiated))
-                bias.add(modeHWrapping(terminated))
-            else:
-                bias.add(modeBWrapping(initiated))
-            bias.add(modeBWrapping(holds))
-        else:
-            if isinstance(statement, Question):
-                bias.add(modeHWrapping(modeBiasFluent))
-            else:
-                bias.add(modeBWrapping(modeBiasFluent))
-        return bias
-
     def checkCurrentSynonyms(self, concept):
         for value in self.synonymDictionary.values():
             if self.conceptNet.isSynonym(concept, value):
@@ -247,7 +197,7 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task17_train")
 
     # get corpus
     corpus = reader.corpus

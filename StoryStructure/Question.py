@@ -26,7 +26,11 @@ class Question(Statement):
 
     def createPartialInterpretation(self, answers, eventCalculusNeeded):
         if self.isYesNoQuestion():
-            return '{' + self.eventCalculusRepresentation.copy().pop() + '}'
+            if eventCalculusNeeded:
+                representation = self.eventCalculusRepresentation.copy().pop()
+            else:
+                representation = self.getFluents().copy().pop()
+            return '{' + representation + '}'
         interpretation = '{'
         for answer in answers:
             if answers.index(answer) != 0:

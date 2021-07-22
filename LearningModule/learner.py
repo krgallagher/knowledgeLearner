@@ -3,15 +3,19 @@ from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
-from TranslationalModule.basicParser import BasicParser
-from Utilities.ILASPSyntax import createTimeRange
+from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
+from TranslationalModule.basicParser import BasicParser, varWrapping
+from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
 
 class Learner:
     def __init__(self, corpus):
         self.corpus = corpus
 
-    def learn(self, question, story, answer, eventCalculusNeeded=True):
+    def learn(self, question: Question, story: Story, answer, eventCalculusNeeded=True):
+
+        self.updateModeBias(story, question)
+
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
             if "where" in question.getText().lower() or "what" in question.getText().lower():
@@ -60,7 +64,8 @@ class Learner:
                 self.corpus.setHypotheses(hypotheses)
 
             # delete the file
-            os.remove(filename)
+            # might not want to delete the file in case information is cached.
+            # os.remove(filename)
 
     def createBravePositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
         positivePortion = question.createPartialInterpretation(question.getAnswer(), eventCalculusNeeded)
@@ -92,8 +97,9 @@ class Learner:
                 break
         if context[-1] != '{':
             context += '.\n'
-            context += createTimeRange(question.getLineID())
-            context += '.\n'
+            if eventCalculusNeeded:
+                context += createTimeRange(question.getLineID())
+                context += '.\n'
         context += '}\n'
         return context
 
@@ -106,7 +112,7 @@ class Learner:
             if context[-1] != '{' and context[-1] != '\n':
                 context += '.\n'
             context += predicate
-            #context += '\n'
+            # context += '\n'
         return context
 
     def addPredicates(self, question, context):
@@ -138,8 +144,11 @@ class Learner:
                 temp.write('\n')
 
         # might want to make this so it starts with 4 variables and then gradually increases.
-        temp.write("#maxv(4).")
-        temp.write('\n')
+        if eventCalculusNeeded:
+            temp.write("#maxv(4)")
+        else:
+            temp.write("#maxv(3)")
+        temp.write('.\n')
 
         temp.close()
         return filename
@@ -153,6 +162,48 @@ class Learner:
     def processILASP(self, output):
         lines = output.split('\n')
         return set([line for line in lines if line])
+
+    def updateModeBias(self, story: Story, statement: Statement):
+        for index in range(0, story.getIndex(statement) + 1):
+            currentStatement = story.get(index)
+            modeBiasFluents = currentStatement.getModeBiasFluents()
+            for modeBiasFluent in modeBiasFluents:
+                predicate = modeBiasFluent.split('(')[0].split('_')[0]
+                if predicate == "be":
+                    modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
+                else:
+                    modeBias = self.generateNonBeBias(modeBiasFluent)
+            self.corpus.updateModeBias(modeBias)
+
+    def generateBeBias(self, modeBiasFluent, statement: Statement):
+        bias = set()
+        if self.corpus.isEventCalculusNeeded:
+            time = varWrapping("time")
+            initiated = initiatedAt(modeBiasFluent, time)
+            holds = holdsAt(modeBiasFluent, time)
+            terminated = terminatedAt(modeBiasFluent, time)
+            if isinstance(statement, Question):
+                bias.add(modeHWrapping(initiated))
+                bias.add(modeHWrapping(terminated))
+            else:
+                bias.add(modeBWrapping(initiated))
+            bias.add(modeBWrapping(holds))
+        else:
+            if isinstance(statement, Question):
+                bias.add(modeHWrapping(modeBiasFluent))
+            else:
+                bias.add(modeBWrapping(modeBiasFluent))
+        return bias
+
+    def generateNonBeBias(self, modeBiasFluent):
+        bias = set()
+        if self.corpus.isEventCalculusNeeded:
+            time = varWrapping("time")
+            happens = happensAt(modeBiasFluent, time)
+            bias.add(modeBWrapping(happens))
+        else:
+            bias.add(modeBWrapping(modeBiasFluent))
+        return bias
 
 
 if __name__ == '__main__':

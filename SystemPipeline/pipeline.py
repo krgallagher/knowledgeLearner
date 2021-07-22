@@ -7,10 +7,10 @@ from TranslationalModule.basicParser import BasicParser
 
 if __name__ == '__main__':
     # process data
-    # trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    # testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_test.txt")
-    trainingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task9_train")
-    testingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task9_test")
+    #trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa9_simple-negation_train.txt")
+    #testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa9_simple-negation_test.txt")
+    trainingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task17_train")
+    testingReader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task17_test")
 
     # get corpus
     corpus = trainingReader.corpus
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     # training data loop
 
-    #parse through all of the data
+    # parse through all of the data
     for story in corpus:
         for sentence in story:
             parser.parse(story, sentence)
@@ -34,24 +34,14 @@ if __name__ == '__main__':
     if isEventCalculusNeeded(corpus):
         corpus.isEventCalculusNeeded = True
 
-    #train the data
-    for story in corpus:
-        for sentence in story:
-            if isinstance(sentence, Question):
-                answerToQuestion = reasoner.computeAnswer(sentence, story, corpus.isEventCalculusNeeded)
-                print(answerToQuestion, sentence.getAnswer(), sentence.getText(), sentence.getLineID())
-                learner.learn(sentence, story, answerToQuestion, corpus.isEventCalculusNeeded)
 
-    '''
+    # train the data
     for story in corpus:
         for sentence in story:
-            parser.parse(story, sentence)
             if isinstance(sentence, Question):
-                # made a change so that now it returns a set of answers
                 answerToQuestion = reasoner.computeAnswer(sentence, story, corpus.isEventCalculusNeeded)
                 print(answerToQuestion, sentence.getAnswer(), sentence.getText(), sentence.getLineID())
                 learner.learn(sentence, story, answerToQuestion, corpus.isEventCalculusNeeded)
-    '''
 
     # set hypotheses for testing corpus
     hypotheses = corpus.getHypotheses()
