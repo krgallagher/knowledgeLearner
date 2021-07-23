@@ -21,28 +21,28 @@ class ConceptNetIntegration:
                     synonymRelations[concept1] += 1
                     synonymRelations[concept2] += 1
 
-        keys = synonymRelations.keys()
-
-        synonymDictionary = {}
+        currentDictionary = {}
         # while the set of keys is not empty
-        while keys:
-            # take the maximum
+        size = len(synonymRelations.keys())
+        for i in range(0, size):
+            values = currentDictionary.values()
+            keys = currentDictionary.keys()
             maximum = max(synonymRelations, key=synonymRelations.get)
             synonymRelations.pop(maximum)
             # check if it covers more than one concept
             conceptsCovered = []
             for concept in concepts:
-                if concept in synonymDictionary.values():
-                    synonymDictionary[concept] = concept
-                elif concept not in synonymDictionary.keys() and self.isSynonym(concept, maximum):
+                if concept in values:
+                    currentDictionary[concept] = concept
+                for key in keys:
+                    if self.isSynonym(concept, key):
+                        currentDictionary[concept] = currentDictionary[key]
+                if concept not in currentDictionary.keys() and self.isSynonym(concept, maximum):
                     conceptsCovered.append(concept)
-
-            # if it does, then update the synonym dictionary accordingly
             if len(conceptsCovered) >= 2:
                 for concept in conceptsCovered:
-                    synonymDictionary[concept] = maximum
-            keys = synonymRelations.keys()
-        return synonymDictionary
+                    currentDictionary[concept] = maximum
+        return currentDictionary
 
     def isSynonym(self, word1, word2):
         node = self.node + word1
@@ -54,7 +54,6 @@ class ConceptNetIntegration:
         if '_' in word1 and '_' in word2:  # not perfect but maybe better?
             node = self.node + word1.split('_')[0]
             other = self.other + word2.split('_')[0]
-            query = self.baseAddress + self.synonym + node + other
             query = self.baseAddress + self.synonym + node + other
             obj = requests.get(query).json()
             if obj['edges']:
@@ -100,5 +99,4 @@ class Query:
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.isSynonym("discard", "left"))
-
+    print(semanticNetwork.isSynonym("go_to", "move_to"))

@@ -4,8 +4,7 @@ from StoryStructure import Story
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from TranslationalModule.EventCalculus import holdsAt, happensAt, initiatedAt, terminatedAt, wrap
-from Utilities.ILASPSyntax import modeHWrapping, modeBWrapping
+from TranslationalModule.EventCalculus import wrap
 
 
 def varWrapping(tag):
@@ -26,28 +25,57 @@ class BasicParser:
         self.corpus = corpus
 
     def parse(self, story: Story, statement: Statement):
-        self.createFluentsAndModeBiasFluents(statement)
+        self.createFluentsAndModeBiasFluents(statement, story)
         if isinstance(statement, Question):
             self.synonymChecker(self.conceptsToExplore)
             self.updateFluents(story, statement)
             self.setEventCalculusRepresentation(story, statement)
-            # self.updateModeBias(story, statement)
             index = story.getIndex(statement)
             if index + 1 == story.size():
                 self.previousQuestionIndex = -1
             else:
                 self.previousQuestionIndex = index
 
-    def createFluentsAndModeBiasFluents(self, statement: Statement):
+    def coreferenceFinder(self, statement: Statement, story: Story):
+        statementText = statement.getText()
+        index = story.getIndex(statement)
+        if index == 0:
+            return statementText
+        previousIndex = index - 1
+        currentSentence = self.nlp(statementText)
+        previousSentence = self.nlp(story.get(previousIndex).getText())
+        pronoun = [token for token in currentSentence if token.pos_ == "PRON"]
+        properNoun = [token for token in previousSentence if token.pos_ == "PROPN"]
+        if properNoun:
+            replacementPhrase = properNoun[0].text
+            if properNoun[0].conjuncts:  # might want to generalise for or conjuncts as well
+                for noun in properNoun[0].conjuncts:
+                    replacementPhrase += " and " + noun.text
+            return statementText.replace(" " + pronoun[0].text + " ", " " + replacementPhrase + " ")
+        return statementText
+
+    def createFluentsAndModeBiasFluents(self, statement: Statement, story: Story):
         doc = self.nlp(statement.getText())
+        pronouns = [token for token in doc if token.pos_ == "PRON"]
+        if pronouns:
+            doc = self.nlp(self.coreferenceFinder(statement, story))
+
         # creating the fluent base
         fluentBase = ""
         root = [token for token in doc if token.head == token][0]
+        childVerb = [child for child in root.children if child.pos_ == 'VERB']
+        if childVerb:
+            root = childVerb[0]
         # TODO change it so that the adposition has to be a child of the verb.
         adposition = [token for token in doc if token.pos_ == "ADP" and (
                 (token.head == root or token.head.pos_ == "ADV") or (
                 token.head.dep_ == "nsubj" or token.head.dep_ == 'attr'))]
+        # might only want to add adpositions if they have a subject to them?
         negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
+        # playing around with the verb modifier code...
+        # should probably clean this up a bit...
+        # or (token.head == root and token.dep_ == "attr" and token.tag_ != "WP")
+        #or (token.pos_ == "ADV") or (token.dep_ == "advmod")
         verb_modifier = [token for token in doc if token.dep_ == 'acomp']
         if negation:
             statement.negatedVerb = True
@@ -72,33 +100,22 @@ class BasicParser:
         nouns = [token for token in doc if "NN" in token.tag_ and token.text.lower() not in fluentBase.split('_')]
         fluent = fluentBase + "("
         modeBiasFluent = fluent
-        # -----------#
         fluents = [fluent]
         modeBiasFluents = [modeBiasFluent]
         nounsCopy = nouns.copy()
         for noun in nouns:
             if noun in nounsCopy:
-                nounsCopy.remove(noun)
-                # see if there are any conjunctions that we want to deal with here.
-                secondaryNoun = None
-                children = [child for child in noun.children if 'CC' in child.tag_]
-                nounChildren = [child for child in noun.children if 'NN' in child.tag_]
-                if children and len(nounChildren) == 1 and nounChildren[0] in nounsCopy:
-                    secondaryNoun = nounChildren[0]
-                    nounsCopy.remove(secondaryNoun)
-
-                # for all of the current fluents, add the noun
+                conjuncts = [noun] + list(noun.conjuncts)
                 newFluents = []
                 newModeBiasFluents = []
-                for i in range(0, len(fluents)):
-                    fluent1, modeBiasFluent1 = self.addNounToFluent(statement, noun, fluents[i], modeBiasFluents[i])
-                    newFluents.append(fluent1)
-                    newModeBiasFluents.append(modeBiasFluent1)
-                    if secondaryNoun:
-                        fluent2, modeBiasFluent2 = self.addNounToFluent(statement, secondaryNoun, fluents[i],
-                                                                        modeBiasFluents[i])
-                        newFluents.append(fluent2)
-                        newModeBiasFluents.append(modeBiasFluent2)
+                for conjunct in conjuncts:
+                    nounsCopy.remove(conjunct)
+                    for i in range(0, len(fluents)):
+                        newFluent, newMBFluent = self.addNounToFluent(statement, conjunct, fluents[i],
+                                                                      modeBiasFluents[i])
+                        newFluents.append(newFluent)
+                        newModeBiasFluents.append(newMBFluent)
+
                 fluents = newFluents
                 modeBiasFluents = newModeBiasFluents
 
@@ -175,9 +192,10 @@ class BasicParser:
             if self.conceptNet.isSynonym(concept, value):
                 self.synonymDictionary[concept] = value
                 return True
-        for key in self.synonymDictionary.values():
+        for key in self.synonymDictionary.keys():
             if self.conceptNet.isSynonym(concept, key):
                 self.synonymDictionary[concept] = self.synonymDictionary[key]
+                return True
         return False
 
     def synonymChecker(self, concepts):
@@ -197,7 +215,7 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task17_train")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task13_train")
 
     # get corpus
     corpus = reader.corpus
