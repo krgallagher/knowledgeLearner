@@ -99,4 +99,4 @@ class Query:
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.isSynonym("go_to", "move_to"))
+    print(semanticNetwork.isSynonym("abandon", "leave"))

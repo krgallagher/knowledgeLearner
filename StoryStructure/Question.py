@@ -25,11 +25,11 @@ class Question(Statement):
         return questionWithAnswer
 
     def createPartialInterpretation(self, answers, eventCalculusNeeded):
-        if self.isYesNoQuestion():
+        if self.isYesNoMaybeQuestion():
             if eventCalculusNeeded:
-                representation = self.eventCalculusRepresentation.copy().pop()
+                representation = self.eventCalculusRepresentation[0][0]
             else:
-                representation = self.getFluents().copy().pop()
+                representation = self.getFluents().copy()[0][0]
             return '{' + representation + '}'
         interpretation = '{'
         for answer in answers:
@@ -43,10 +43,9 @@ class Question(Statement):
     # might be able to fill this according to the representation I want...
     def answerFiller(self, answer, eventCalculusNeeded):
         if eventCalculusNeeded:
-            representation = self.getEventCalculusRepresentation().copy()
+            representation = self.getEventCalculusRepresentation()[0][0]
         else:
-            representation = self.getFluents().copy()
-        representation = representation.pop()
+            representation = self.getFluents()[0][0]
         splitting = representation.split(',')
         for i in range(0, len(splitting)):
             if splitting[i][0] == 'V':
@@ -58,5 +57,5 @@ class Question(Statement):
             example += element
         return example
 
-    def isYesNoQuestion(self):
-        return "yes" in self.answer or "no" in self.answer
+    def isYesNoMaybeQuestion(self):
+        return "yes" in self.answer or "no" in self.answer or "maybe" in self.answer

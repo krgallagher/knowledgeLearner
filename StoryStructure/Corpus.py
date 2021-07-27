@@ -1,5 +1,5 @@
 from DatasetReader.BackgroundKnowledge import eventCalculusAxioms
-
+import random
 
 class Corpus:
     def __init__(self):
@@ -8,9 +8,18 @@ class Corpus:
         self.modeBias = set()
         self.hypotheses = set()
         self.isEventCalculusNeeded = False
+        self.choiceRulesPresent = False
 
     def append(self, story):
         self.stories.append(story)
+
+    def reset(self):
+        self.modeBias = set()
+        self.hypotheses = set()
+        self.isEventCalculusNeeded = False
+        self.choiceRulesPresent = False
+        for story in self.stories:
+            story.reset()
 
     def __iter__(self):
         ''' Returns the Iterator object '''
@@ -22,11 +31,25 @@ class Corpus:
     def setHypotheses(self, newHypotheses):
         self.hypotheses = newHypotheses
 
+    def addHypotheses(self, newHypotheses):
+        self.hypotheses.update(newHypotheses)
+
+    def addBackgroundKnowledge(self, additionalBackgroundKnowledge):
+        self.backgroundKnowledge.update(additionalBackgroundKnowledge)
+
+    def removeMostRecentHypotheses(self):
+        self.hypotheses.pop()
+
     def getHypotheses(self):
         return self.hypotheses
 
     def updateModeBias(self, modeBias):
         self.modeBias.update(modeBias)
+
+    def shuffle(self):
+        random.seed(4)
+        random.shuffle(self.stories)
+
 
 
 class CorpusIterator:

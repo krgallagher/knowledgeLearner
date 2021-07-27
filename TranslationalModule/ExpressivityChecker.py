@@ -15,7 +15,7 @@ def createExpressivityConstraint(sentence: Sentence, questionWithAnswers):
             constraint += ', '
         constraint += predicate
     constraint += ', '
-    constraint += sentence.getEventCalculusRepresentation().copy().pop()
+    constraint += sentence.getEventCalculusRepresentation()[0][0]
 
     # will also need to change the way answers are stored here...
     for answer in sentence.getAnswer():
@@ -25,9 +25,21 @@ def createExpressivityConstraint(sentence: Sentence, questionWithAnswers):
 
 def createYesNoRule(question: Question):
     if "yes" in question.getAnswer():
-        return question.getEventCalculusRepresentation().copy().pop()
+        return question.getEventCalculusRepresentation()[0][0]
     else:
-        return ":- " + question.getEventCalculusRepresentation().copy().pop()
+        return ":- " + question.getEventCalculusRepresentation()[0][0]
+
+
+def createChoiceRule(fluents):
+    if len(fluents) == 1:
+        return fluents[0]
+    rule = "1{"
+    for fluent in fluents:
+        if rule[-1] != "{":
+            rule += ";"
+        rule += fluent
+    rule += "}1"
+    return rule
 
 
 def createExpressivityClingoFile(story, corpus):
@@ -38,15 +50,14 @@ def createExpressivityClingoFile(story, corpus):
     for rule in corpus.backgroundKnowledge:
         temp.write(rule)
         temp.write('\n')
-
     for sentence in story:
         representation = sentence.getEventCalculusRepresentation()
         if isinstance(sentence, Question):
-            if "yes" in sentence.getAnswer() or "no" in sentence.getAnswer():
+            # TODO change this into a boolean function
+            if "yes" in sentence.getAnswer() or "no" in sentence.getAnswer() or "maybe" in sentence.getAnswer():
                 rule = createYesNoRule(sentence)
                 temp.write(rule)
                 temp.write('.\n')
-                pass
             else:
                 questionWithAnswers = sentence.getQuestionWithAnswers()
                 for predicate in questionWithAnswers:
@@ -55,9 +66,11 @@ def createExpressivityClingoFile(story, corpus):
                 expressivityConstraint = createExpressivityConstraint(sentence, questionWithAnswers)
                 temp.write(expressivityConstraint)
                 temp.write('.\n')
+
         else:
-            for predicate in representation:
-                temp.write(predicate)
+            for i in range(0, len(representation)):
+                choiceRule = createChoiceRule(representation[i])
+                temp.write(choiceRule)
                 temp.write('.\n')
 
     temp.write(createTimeRange(len(story)))

@@ -2,9 +2,9 @@ class Statement:
     def __init__(self, lineId, text):
         self.text = text
         self.lineId = int(lineId)
-        self.fluents = set()
-        self.eventCalculusRepresentation = set()
-        self.modeBiasFluents = set()
+        self.fluents = list(list())
+        self.eventCalculusRepresentation = list(list())
+        self.modeBiasFluents = list(list())
         self.staticPredicates = set()  # might want to rename this to something else
         self.negatedVerb = False
 

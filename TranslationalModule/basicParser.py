@@ -15,6 +15,11 @@ def hasADPChild(noun, doc):
     return [token for token in doc if token.head == noun and token.pos_ == "ADP"]
 
 
+def isDisjunctive(noun, doc):
+    conjunctives = [token.text.lower() for token in doc if token.head == noun and token.pos_ == "CCONJ"]
+    return "or" in conjunctives
+
+
 class BasicParser:
     def __init__(self, corpus):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
@@ -28,6 +33,7 @@ class BasicParser:
         self.createFluentsAndModeBiasFluents(statement, story)
         if isinstance(statement, Question):
             self.synonymChecker(self.conceptsToExplore)
+            # TODO fix the next two steps to comply with my recent changes...
             self.updateFluents(story, statement)
             self.setEventCalculusRepresentation(story, statement)
             index = story.getIndex(statement)
@@ -59,7 +65,6 @@ class BasicParser:
         pronouns = [token for token in doc if token.pos_ == "PRON"]
         if pronouns:
             doc = self.nlp(self.coreferenceFinder(statement, story))
-
         # creating the fluent base
         fluentBase = ""
         root = [token for token in doc if token.head == token][0]
@@ -68,14 +73,11 @@ class BasicParser:
             root = childVerb[0]
         # TODO change it so that the adposition has to be a child of the verb.
         adposition = [token for token in doc if token.pos_ == "ADP" and (
-                (token.head == root or token.head.pos_ == "ADV") or (
-                token.head.dep_ == "nsubj" or token.head.dep_ == 'attr'))]
+                    token.head == root or token.head.pos_ == "ADV")]
+        #token.head.dep_ == "nsubj" or token.head.dep_ == 'attr')
+
         # might only want to add adpositions if they have a subject to them?
         negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
-        # playing around with the verb modifier code...
-        # should probably clean this up a bit...
-        # or (token.head == root and token.dep_ == "attr" and token.tag_ != "WP")
-        #or (token.pos_ == "ADV") or (token.dep_ == "advmod")
         verb_modifier = [token for token in doc if token.dep_ == 'acomp']
         if negation:
             statement.negatedVerb = True
@@ -99,48 +101,71 @@ class BasicParser:
         # now we need to form a statement/question fluent
         nouns = [token for token in doc if "NN" in token.tag_ and token.text.lower() not in fluentBase.split('_')]
         fluent = fluentBase + "("
-        modeBiasFluent = fluent
-        fluents = [fluent]
-        modeBiasFluents = [modeBiasFluent]
+        fluents = [[fluent]]
+        modeBiasFluents = [[fluent]]
         nounsCopy = nouns.copy()
         for noun in nouns:
             if noun in nounsCopy:
+                disjunctive = isDisjunctive(noun, doc)
                 conjuncts = [noun] + list(noun.conjuncts)
                 newFluents = []
-                newModeBiasFluents = []
+                newMBFluents = []
                 for conjunct in conjuncts:
                     nounsCopy.remove(conjunct)
+                if disjunctive:
                     for i in range(0, len(fluents)):
-                        newFluent, newMBFluent = self.addNounToFluent(statement, conjunct, fluents[i],
-                                                                      modeBiasFluents[i])
-                        newFluents.append(newFluent)
-                        newModeBiasFluents.append(newMBFluent)
-
+                        orFluentList = []
+                        orMBFluentList = []
+                        for conjunct in conjuncts:
+                            for j in range(0, len(fluents[i])):
+                                newFluent, newMBFluent = self.addNounToFluent(statement, conjunct, fluents[i][j],
+                                                                              modeBiasFluents[i][j], nounsCopy)
+                                orFluentList.append(newFluent)
+                                orMBFluentList.append(newMBFluent)
+                        newFluents.append(orFluentList)
+                        newMBFluents.append(orMBFluentList)
+                else:
+                    for i in range(0, len(fluents)):
+                        for conjunct in conjuncts:
+                            fluents1 = []
+                            mbfluents1 = []
+                            for j in range(0, len(fluents[i])):
+                                resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
+                                                                                          fluents[i][j],
+                                                                                          modeBiasFluents[i][j], nounsCopy)
+                                fluents1.append(resultingFluent)
+                                mbfluents1.append(resultingMBFluent)
+                            newFluents.append(fluents1)
+                            newMBFluents.append(mbfluents1)
                 fluents = newFluents
-                modeBiasFluents = newModeBiasFluents
+                modeBiasFluents = newMBFluents
 
         if isinstance(statement, Question):
             if "where" in statement.getText().lower() or "what" in statement.getText().lower():
                 for i in range(0, len(fluents)):
-                    if not fluents[i][-1] == '(':
-                        fluents[i] += ','
-                        modeBiasFluents[i] += ','
-                    fluents[i] += "V1"
-                    modeBiasFluents[i] += varWrapping('nn')
-        # add the rest of everything
+                    for j in range(0, len(fluents[i])):
+                        if not fluents[i][j][-1] == '(':
+                            fluents[i][j] += ','
+                            modeBiasFluents[i][j] += ','
+                        fluents[i][j] += "V1"
+                        modeBiasFluents[i][j] += varWrapping('nn')
+
         for i in range(0, len(fluents)):
-            fluents[i] += ")"
-            modeBiasFluents[i] += ")"
-        statement.setFluents(set(fluents))
-        statement.setModeBiasFluents(set(modeBiasFluents))
+            for j in range(0, len(fluents[i])):
+                fluents[i][j] += ")"
+                modeBiasFluents[i][j] += ")"
+        statement.setFluents(fluents)
+        statement.setModeBiasFluents(modeBiasFluents)
         return
 
-    def addNounToFluent(self, statement, noun, fluent, modeBiasFluent):
+    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns):
+        # might be able to have a loop here, something like, for choice in fluent.
         tag = noun.tag_.lower()
         # ignore plural
         if tag == 'nns':
             tag = 'nn'
         # TODO append ADP children to the noun in some way and remove a noun while doing it
+
         children = [child for child in noun.children]
         descriptiveNoun = ""
         for child in children:
@@ -151,6 +176,12 @@ class BasicParser:
         if descriptiveNoun:
             descriptiveNoun += "_"
         descriptiveNoun += noun.lemma_.lower()
+        for child in children:
+            relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
+            if child.pos_ == "ADP" and nouns:
+                descriptiveNoun += "_" + child.text.lower() + "_" + relevantNouns[0].text.lower()
+                nouns.remove(nouns[0])
+
         if fluent[-1] != '(':
             fluent += ','
             modeBiasFluent += ','
@@ -165,21 +196,25 @@ class BasicParser:
         for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
             fluents, modeBiasFluents = currentStatement.getFluents(), currentStatement.getModeBiasFluents()
+            # we are getting a list of lists...
             currentStatement.setFluents(self.update(fluents))
             currentStatement.setModeBiasFluents(self.update(modeBiasFluents))
 
     def update(self, fluents):
-        newFluents = set()
-        for fluent in fluents:
-            splitFluent = fluent.split('(')
-            predicate = splitFluent[0]
-            if predicate in self.synonymDictionary.keys():
-                updatedFluent = self.synonymDictionary[predicate]
-            else:
-                updatedFluent = predicate
-            for index in range(1, len(splitFluent)):
-                updatedFluent += '(' + splitFluent[index]
-            newFluents.add(updatedFluent)
+        newFluents = []
+        for i in range(0, len(fluents)):
+            currentFluents = []
+            for j in range(0, len(fluents[i])):
+                splitFluent = fluents[i][j].split('(')
+                predicate = splitFluent[0]
+                if predicate in self.synonymDictionary.keys():
+                    updatedFluent = self.synonymDictionary[predicate]
+                else:
+                    updatedFluent = predicate
+                for index in range(1, len(splitFluent)):
+                    updatedFluent += '(' + splitFluent[index]
+                currentFluents.append(updatedFluent)
+            newFluents.append(currentFluents)
         return newFluents
 
     def setEventCalculusRepresentation(self, story: Story, statement: Statement):
@@ -215,7 +250,7 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task13_train")
+    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task12_train")
 
     # get corpus
     corpus = reader.corpus

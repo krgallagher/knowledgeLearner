@@ -6,6 +6,9 @@ class Story:
         self.sentences = []
         self.examples = set()  # set of positive and negative examples
 
+    def reset(self):
+        self.examples = set()
+
     def __len__(self):
         return len(self.sentences)
 

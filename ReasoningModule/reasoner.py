@@ -1,6 +1,7 @@
 import os
 import re
 from StoryStructure.Question import Question
+from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange
 
 
@@ -46,10 +47,10 @@ def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded
     # create a regular expression
     answers = []
     if eventCalculusRepresentationNeeded:
-        representation = question.getEventCalculusRepresentation().copy()
+        representation = question.getEventCalculusRepresentation()[0][0]
     else:
-        representation = question.getFluents().copy()
-    representation = representation.pop()
+        representation = question.getFluents()[0][0]
+    representation = representation
     pattern = createRegularExpression(representation)
     compiledPattern = re.compile(pattern)
     for rule in answerSet:
@@ -61,13 +62,13 @@ def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded
 
 
 # TODO edit this to have both the event calculus and non-event calculus representation taken into account
-def isInAllAnswerSets(question: Question, answerSets, eventCalculusRepresentationNeeded):
+def isPossibleAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded):
     # create regular expression pattern to be matched
     if eventCalculusRepresentationNeeded:
-        representation = question.getEventCalculusRepresentation().copy()
+        representation = question.getEventCalculusRepresentation()[0][0]
     else:
-        representation = question.getFluents().copy()
-    representation = representation.pop()
+        representation = question.getFluents()[0][0]
+    representation = representation
     pattern = createRegularExpression(representation)
     compiledPattern = re.compile(pattern)
     numAnswerSetsIn = 0
@@ -77,7 +78,12 @@ def isInAllAnswerSets(question: Question, answerSets, eventCalculusRepresentatio
             if result:
                 numAnswerSetsIn += 1
                 break
-    return numAnswerSetsIn == len(answerSets)
+    if numAnswerSetsIn == len(answerSets):
+        return ["yes"]
+    elif numAnswerSetsIn >= 1:
+        return ["maybe"]
+    else:
+        return ["no"]
 
 
 def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded):
@@ -90,10 +96,7 @@ def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationN
             return [answers[0]]  # just choose the first element of the list
         return []
     elif "is" == question.getText()[0:2].lower():
-        if isInAllAnswerSets(question, answerSets, eventCalculusRepresentationNeeded):
-            return ["yes"]
-        else:
-            return ["no"]
+        return isPossibleAnswer(question, answerSets, eventCalculusRepresentationNeeded)
 
 
 def processClingoOutput(output):
@@ -108,6 +111,7 @@ def processClingoOutput(output):
             answerSet = set(data[index].split())
             answerSets.append(answerSet)
         index += 1
+    #print(answerSets)
     return answerSets
 
 
@@ -125,8 +129,8 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
-        # file = open(filename, 'r')
-        # for line in file:
+        #file = open(filename, 'r')
+        #for line in file:
         #    print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)
@@ -145,10 +149,10 @@ class Reasoner:
         temp = open(filename, 'w')
 
         # add in the background knowledge
-        if eventCalculusNeeded:
-            for rule in self.corpus.backgroundKnowledge:
-                temp.write(rule)
-                temp.write('\n')
+        #if eventCalculusNeeded:
+        for rule in self.corpus.backgroundKnowledge:
+            temp.write(rule)
+            temp.write('\n')
 
         # add in the hypotheses
         for hypothesis in self.corpus.hypotheses:
@@ -162,8 +166,9 @@ class Reasoner:
                     representation = statement.getEventCalculusRepresentation()
                 else:
                     representation = statement.getFluents()
-                for predicate in representation:
-                    temp.write(predicate)
+                for i in range(0, len(representation)):
+                    choiceRule = createChoiceRule(representation[i])
+                    temp.write(choiceRule)
                     temp.write('.\n')
 
             # write the predicates even if the statement is a question
@@ -176,7 +181,3 @@ class Reasoner:
         temp.write('.\n')
         temp.close()
         return filename
-
-
-if __name__ == '__main__':
-    pass

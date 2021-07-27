@@ -4,6 +4,7 @@ from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
+from TranslationalModule.ExpressivityChecker import createChoiceRule
 from TranslationalModule.basicParser import BasicParser, varWrapping
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
@@ -19,61 +20,76 @@ class Learner:
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
             if "where" in question.getText().lower() or "what" in question.getText().lower():
-                example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
+                example = self.createPositiveExample(question, story, eventCalculusNeeded)
+                # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
             else:
-                if "yes" in answer:
-                    example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
+                if "yes" in answer or "maybe" in answer:
+                    example = self.createPositiveExample(question, story, eventCalculusNeeded)
+                    # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
-                    example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
+                    example = self.createNegativeExample(question, story, eventCalculusNeeded)
+                    # example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
 
-            # do not need to run a learning task here
 
         else:
             if "where" in question.getText().lower() or "what" in question.getText().lower():
                 if len(answer) == 0:
-                    example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
+                    example = self.createPositiveExample(question, story, eventCalculusNeeded)
+                    # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
-                    example = self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
+                    example = self.createNegativeExample(question, story, eventCalculusNeeded, answer)
+                    # example = self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
             else:
-                if "yes" in question.getAnswer():
-                    example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
+                if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
+                    example = self.createPositiveExample(question, story, eventCalculusNeeded)
+                    # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
-
-                    example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
+                    example = self.createNegativeExample(question, story, eventCalculusNeeded)
+                    # example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
 
-            # for bAbI dataset we can also create a positive example
-            # positiveExample = self.createBravePositiveExample(question, story)
-            # story.appendExample(positiveExample)
 
-            # create learning file
-            filename = self.createLearningFile(eventCalculusNeeded)
-            temp = open(filename, 'r')
-            for line in temp:
-                print(line)
-
-            # use ILASP to complete learning task
-            hypotheses = self.solveILASPtask(filename)
-            print("HYPOTHESES:", hypotheses)
-
-            # If the hypotheses are satisfiable, then add the computed hypotheses to the corpus
             unsatisfiable = set()
             unsatisfiable.add("UNSATISFIABLE")
+
+            filename = self.createLearningFile(question, story, eventCalculusNeeded, False)
+            #temp = open(filename, 'r')
+            #for line in temp:
+            #    print(line)
+
+            hypotheses = self.solveILASPtask(filename)
+
+            print("HYPOTHESES", hypotheses)
             if hypotheses != unsatisfiable:
-                self.corpus.setHypotheses(hypotheses)
+                self.corpus.addHypotheses(hypotheses)
+
+            print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
+
+            # try to first add the hypotheses previously learned and the mode bias that is only relevant to the
+            # example that was wrong
 
             # delete the file
             # might not want to delete the file in case information is cached.
             # os.remove(filename)
 
+    def createPositiveExample(self, question, story, eventCalculusNeeded):
+        if "maybe" in question.getAnswer():
+            return self.createBravePositiveExample(question, story, eventCalculusNeeded)
+        if self.corpus.choiceRulesPresent:
+            return self.createCautiousPositiveExample(question, story, eventCalculusNeeded)
+        return self.createBravePositiveExample(question, story, eventCalculusNeeded)
+
+    def createNegativeExample(self, question, story, eventCalculusNeeded, answer=[]):
+        if self.corpus.choiceRulesPresent:
+            return self.createCautiousNegativeExample(question, story, eventCalculusNeeded, answer)
+        return self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
+
     def createBravePositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
         positivePortion = question.createPartialInterpretation(question.getAnswer(), eventCalculusNeeded)
 
-        # append all the extra event calculus and other predicates for the context aspect
         context = self.createContext(question, story, eventCalculusNeeded)
 
-        # put it altogether to form the positive example and add the positive example to the story.
         positiveExample = '#pos(' + positivePortion + ',{},' + context + ').'
         return positiveExample
 
@@ -85,6 +101,26 @@ class Learner:
 
         # put it altogether to form the positive example and add the positive example to the story.
         negativeExample = '#pos(' + '{},' + negativeInterpretation + ',' + context + ').'
+        return negativeExample
+
+    def createCautiousPositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
+        positivePortion = question.createPartialInterpretation(question.getAnswer(), eventCalculusNeeded)
+
+        # append all the extra event calculus and other predicates for the context aspect
+        context = self.createContext(question, story, eventCalculusNeeded)
+
+        # put it altogether to form the positive example and add the positive example to the story.
+        positiveExample = '#neg(' + '{},' + positivePortion + "," + context + ').'
+        return positiveExample
+
+    def createCautiousNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=[]):
+        negativeInterpretation = question.createPartialInterpretation(answer, eventCalculusNeeded)
+
+        # append all the extra event calculus and other predicates for the context aspect
+        context = self.createContext(question, story, eventCalculusNeeded)
+
+        # put it altogether to form the positive example and add the positive example to the story.
+        negativeExample = '#neg(' + negativeInterpretation + ',{},' + context + ').'
         return negativeExample
 
     def createContext(self, question: Question, story: Story, eventCalculusNeeded):
@@ -108,11 +144,11 @@ class Learner:
             representation = statement.getEventCalculusRepresentation()
         else:
             representation = statement.getFluents()
-        for predicate in representation:
+        for i in range(0, len(representation)):
+            rule = createChoiceRule(representation[i])
             if context[-1] != '{' and context[-1] != '\n':
                 context += '.\n'
-            context += predicate
-            # context += '\n'
+            context += rule
         return context
 
     def addPredicates(self, question, context):
@@ -122,20 +158,29 @@ class Learner:
             context += predicate
         return context
 
-    def createLearningFile(self, eventCalculusNeeded):
+    def createLearningFile(self, question: Question, story: Story, eventCalculusNeeded, withOldHypotheses):
         # filename = '/tmp/learningFile.las'
         filename = "/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"
         temp = open(filename, 'w')
         # add in the background knowledge only if using the event calculus
-        if eventCalculusNeeded:
-            for rule in self.corpus.backgroundKnowledge:
-                temp.write(rule)
+        #if eventCalculusNeeded:
+        for rule in self.corpus.backgroundKnowledge:
+            temp.write(rule)
+            temp.write('\n')
+
+        if withOldHypotheses:
+            for hypothesis in self.corpus.getHypotheses():
+                temp.write(hypothesis)
                 temp.write('\n')
 
-        # add in the mode bias
-        for bias in self.corpus.modeBias:
-            temp.write(bias)
-            temp.write('\n')
+            for bias in self.getRelevantModeBias(story, question):
+                temp.write(bias)
+                temp.write('\n')
+        else:
+            # add in the mode bias
+            for bias in self.corpus.modeBias:
+                temp.write(bias)
+                temp.write('\n')
 
         # add in examples for the stories thus far
         for story in self.corpus:
@@ -167,13 +212,37 @@ class Learner:
         for index in range(0, story.getIndex(statement) + 1):
             currentStatement = story.get(index)
             modeBiasFluents = currentStatement.getModeBiasFluents()
-            for modeBiasFluent in modeBiasFluents:
-                predicate = modeBiasFluent.split('(')[0].split('_')[0]
-                if predicate == "be":
-                    modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
-                else:
-                    modeBias = self.generateNonBeBias(modeBiasFluent)
-            self.corpus.updateModeBias(modeBias)
+            for i in range(0, len(modeBiasFluents)):
+                for j in range(0, len(modeBiasFluents[i])):
+                    modeBiasFluent = modeBiasFluents[i][j]
+                    predicate = modeBiasFluent.split('(')[0].split('_')[0]
+                    if predicate == "be":
+                        modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
+                    else:
+                        modeBias = self.generateNonBeBias(modeBiasFluent)
+                    self.corpus.updateModeBias(modeBias)
+
+    def getRelevantModeBias(self, story: Story, statement: Statement):
+        print("GeTTiNG relevant mode bias")
+        relevantModeBias = set()
+        for index in range(0, story.getIndex(statement) + 1):
+            currentStatement = story.get(index)
+            if isinstance(currentStatement, Question) and currentStatement != statement:
+                pass
+            else:
+                modeBiasFluents = currentStatement.getModeBiasFluents()
+                print("MODE bias fluents:", modeBiasFluents)
+                for i in range(0, len(modeBiasFluents)):
+                    for j in range(0, len(modeBiasFluents[i])):
+                        modeBiasFluent = modeBiasFluents[i][j]
+                        predicate = modeBiasFluent.split('(')[0].split('_')[0]
+                        if predicate == "be":
+                            modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
+                        else:
+                            modeBias = self.generateNonBeBias(modeBiasFluent)
+                        relevantModeBias.update(modeBias)
+            print(relevantModeBias)
+        return relevantModeBias
 
     def generateBeBias(self, modeBiasFluent, statement: Statement):
         bias = set()

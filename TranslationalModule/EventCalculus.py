@@ -16,18 +16,22 @@ def terminatedAt(fluent, time):
 #TODO fix so that it doesn't rely on there being one argument for the predicate.
 def wrap(statement: Statement):
     fluents = statement.getFluents()
-    eventCalculusPredicates = set()
+    eventCalculusPredicates = []
     time = statement.getLineID()
-    for fluent in fluents:
-        predicate = fluent.split("(")[0].split('_')[0]
-        if predicate == "be":
-            if statement.negatedVerb:
-                eventCalculus = terminatedAt(fluent, time)
-            elif isinstance(statement, Question):
-                eventCalculus = holdsAt(fluent, time)
+    for i in range(0, len(fluents)):
+        currentECPredicates = []
+        for j in range(0, len(fluents[i])):
+            fluent = fluents[i][j]
+            predicate = fluent.split("(")[0].split('_')[0]
+            if predicate == "be":
+                if statement.negatedVerb:
+                    eventCalculus = terminatedAt(fluent, time)
+                elif isinstance(statement, Question):
+                    eventCalculus = holdsAt(fluent, time)
+                else:
+                    eventCalculus = initiatedAt(fluent, time)
             else:
-                eventCalculus = initiatedAt(fluent, time)
-        else:
-            eventCalculus = happensAt(fluent, time)
-        eventCalculusPredicates.add(eventCalculus)
+                eventCalculus = happensAt(fluent, time)
+            currentECPredicates.append(eventCalculus)
+        eventCalculusPredicates.append(currentECPredicates)
     statement.setEventCalculusRepresentation(eventCalculusPredicates)
