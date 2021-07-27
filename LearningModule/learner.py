@@ -10,7 +10,9 @@ from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
 
 class Learner:
-    def __init__(self, corpus):
+    def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"):
+        # will probably eventually want to make the default be in the tmp bin, but this is okay for now I think
+        self.filename = filename
         self.corpus = corpus
 
     def learn(self, question: Question, story: Story, answer, eventCalculusNeeded=True):
@@ -21,44 +23,34 @@ class Learner:
         if question.isCorrectAnswer(answer):
             if "where" in question.getText().lower() or "what" in question.getText().lower():
                 example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
             else:
                 if "yes" in answer or "maybe" in answer:
                     example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                    # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
                     example = self.createNegativeExample(question, story, eventCalculusNeeded)
-                    # example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
-
-
         else:
             if "where" in question.getText().lower() or "what" in question.getText().lower():
                 if len(answer) == 0:
                     example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                    # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
                     example = self.createNegativeExample(question, story, eventCalculusNeeded, answer)
-                    # example = self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
             else:
                 if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
                     example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                    # example = self.createBravePositiveExample(question, story, eventCalculusNeeded)
                 else:
                     example = self.createNegativeExample(question, story, eventCalculusNeeded)
-                    # example = self.createBraveNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
-
 
             unsatisfiable = set()
             unsatisfiable.add("UNSATISFIABLE")
 
-            filename = self.createLearningFile(question, story, eventCalculusNeeded, False)
-            #temp = open(filename, 'r')
-            #for line in temp:
-            #    print(line)
+            self.createLearningFile(question, story, eventCalculusNeeded, False)
+            file = open(self.filename, 'r')
+            for line in file:
+                print(line)
 
-            hypotheses = self.solveILASPtask(filename)
+            hypotheses = self.solveILASPtask()
 
             print("HYPOTHESES", hypotheses)
             if hypotheses != unsatisfiable:
@@ -69,9 +61,9 @@ class Learner:
             # try to first add the hypotheses previously learned and the mode bias that is only relevant to the
             # example that was wrong
 
-            # delete the file
-            # might not want to delete the file in case information is cached.
-            # os.remove(filename)
+    def __del__(self):
+        # delete file from computer
+        os.remove(self.filename)
 
     def createPositiveExample(self, question, story, eventCalculusNeeded):
         if "maybe" in question.getAnswer():
@@ -159,11 +151,9 @@ class Learner:
         return context
 
     def createLearningFile(self, question: Question, story: Story, eventCalculusNeeded, withOldHypotheses):
-        # filename = '/tmp/learningFile.las'
-        filename = "/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"
-        temp = open(filename, 'w')
+        temp = open(self.filename, 'w')
         # add in the background knowledge only if using the event calculus
-        #if eventCalculusNeeded:
+        # if eventCalculusNeeded:
         for rule in self.corpus.backgroundKnowledge:
             temp.write(rule)
             temp.write('\n')
@@ -196,11 +186,10 @@ class Learner:
         temp.write('.\n')
 
         temp.close()
-        return filename
 
-    def solveILASPtask(self, filename):
+    def solveILASPtask(self):
         # command = "FastLAS --nopl" + filename
-        command = "ILASP -q -nc -ml=2 --version=4 " + filename
+        command = "ILASP -q -nc -ml=2 --version=4 " + self.filename
         output = os.popen(command).read()
         return self.processILASP(output)
 
@@ -219,7 +208,7 @@ class Learner:
                     if predicate == "be":
                         modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
                     else:
-                        modeBias = self.generateNonBeBias(modeBiasFluent)
+                        modeBias = self.generateNonBeBias(modeBiasFluent, currentStatement)
                     self.corpus.updateModeBias(modeBias)
 
     def getRelevantModeBias(self, story: Story, statement: Statement):
@@ -239,7 +228,7 @@ class Learner:
                         if predicate == "be":
                             modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
                         else:
-                            modeBias = self.generateNonBeBias(modeBiasFluent)
+                            modeBias = self.generateNonBeBias(modeBiasFluent, currentStatement)
                         relevantModeBias.update(modeBias)
             print(relevantModeBias)
         return relevantModeBias
@@ -264,14 +253,17 @@ class Learner:
                 bias.add(modeBWrapping(modeBiasFluent))
         return bias
 
-    def generateNonBeBias(self, modeBiasFluent):
+    def generateNonBeBias(self, modeBiasFluent, statement: Statement):
         bias = set()
         if self.corpus.isEventCalculusNeeded:
             time = varWrapping("time")
             happens = happensAt(modeBiasFluent, time)
             bias.add(modeBWrapping(happens))
         else:
-            bias.add(modeBWrapping(modeBiasFluent))
+            if isinstance(statement, Question):
+                bias.add(modeHWrapping(modeBiasFluent))
+            else:
+                bias.add(modeBWrapping(modeBiasFluent))
         return bias
 
 
@@ -284,7 +276,7 @@ if __name__ == '__main__':
 
     # learner
     learner = Learner(corpus)
-    for story in reader.corpus:
+    for story in corpus:
         statements = story.getSentences()
         for statement in statements:
             parser.parse(statements, statement)

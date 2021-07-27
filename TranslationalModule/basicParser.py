@@ -76,11 +76,12 @@ class BasicParser:
         fluentBase = self.createFluentBase(doc, statement)
 
         # if the statement is not a question, then add concepts to explore
-        if not isinstance(statement, Question):
-            conceptsToExplore = set()
-            if fluentBase.split('_')[0] != 'be':
-                conceptsToExplore.add(fluentBase)
+        # if not isinstance(statement, Question):
+        conceptsToExplore = set()
+        if fluentBase.split('_')[0] != 'be':
+            conceptsToExplore.add(fluentBase)
             self.conceptsToExplore.update(conceptsToExplore)
+
         # now we need to form a statement/question fluent
         nouns = [token for token in doc if "NN" in token.tag_ and token.text.lower() not in fluentBase.split('_')]
         fluent = fluentBase + "("
@@ -143,7 +144,7 @@ class BasicParser:
         return
 
     def createFluentBase(self, doc, statement: Statement):
-        #print(statement.getText())
+        # print(statement.getText())
         fluentBase = ""
 
         # get root verb or something similar to it...
@@ -152,22 +153,22 @@ class BasicParser:
         if childVerb:
             root = childVerb[0]
         fluentBase += root.lemma_
-        #print("Fluent Base:", fluentBase)
+        # print("Fluent Base:", fluentBase)
 
         # add modifiers, maybe include comaprators here?
-        verb_modifier = [token for token in doc if token.tag_ == 'JJR']
+        verb_modifier = [token for token in doc if token.tag_ == 'JJR' or token.dep_ == "acomp"]
         if verb_modifier:
             fluentBase += '_' + verb_modifier[0].lemma_
-        #print("Verb modifiers: ", verb_modifier)
+        # print("Verb modifiers: ", verb_modifier)
         # add adpositions
         adposition = [token for token in doc if
                       token.pos_ == "ADP" and (token.head == root or token.head.pos_ == "ADV")]
-        #print("Adpositions", adposition)
+        # print("Adpositions", adposition)
         if adposition:
-            #nouns = [token for token in doc if
-             #        token.head == adposition[0] and token.tag_ == 'NN' and hasADPChild(token, doc)]
-            #print("Adposition 0 nouns:", nouns)
-            #if nouns:
+            # nouns = [token for token in doc if
+            #        token.head == adposition[0] and token.tag_ == 'NN' and hasADPChild(token, doc)]
+            # print("Adposition 0 nouns:", nouns)
+            # if nouns:
             #    fluentBase += '_' + nouns[0].text.lower()
             fluentBase += '_' + adposition[0].text.lower()
         return fluentBase

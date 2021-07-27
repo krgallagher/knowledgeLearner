@@ -13,7 +13,7 @@ class Question(Statement):
     def getHints(self):
         return self.hints
 
-    #TODO might want to fix this so that order does/does not matter when the size is greater than 1 for the answer set
+    # TODO might want to fix this so that order does/does not matter when the size is greater than 1 for the answer set
     def isCorrectAnswer(self, answer):
         return answer == self.answer
 

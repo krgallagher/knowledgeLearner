@@ -8,7 +8,6 @@ from TranslationalModule.basicParser import BasicParser
 
 
 def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
-    # get corpus
     # initialise parser
     parser = BasicParser(trainCorpus)
     # initialise reasoner
@@ -34,7 +33,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # testing data loop
     numQuestions = 0
     numCorrect = 0
-    #print("TEST")
+    print("TEST")
     for story in testCorpus:
         for sentence in story:
             parser.parse(story, sentence)
@@ -43,11 +42,12 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
                 answerToQuestion = reasoner.computeAnswer(sentence, story, trainCorpus.isEventCalculusNeeded)
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
-                print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(), sentence.getAnswer(), answerToQuestion)
-    #print("Number Correct: ", numCorrect)
-    #print("Number of Question: ", numQuestions)
-    #print("Accuracy: ", numCorrect / numQuestions)  # should theoretically be careful about dividing by zero
-    #print("Hypotheses: ", corpus.getHypotheses())
+                print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
+                      sentence.getAnswer(), answerToQuestion)
+    print("Number Correct: ", numCorrect)
+    print("Number of Question: ", numQuestions)
+    print("Accuracy: ", numCorrect / numQuestions)  # should theoretically be careful about dividing by zero
+    print("Hypotheses: ", trainCorpus.getHypotheses())
     return numCorrect / numQuestions
 
 
@@ -68,8 +68,8 @@ if __name__ == '__main__':
     # process data
     # trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt")
     # testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt")
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)

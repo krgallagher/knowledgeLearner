@@ -95,7 +95,7 @@ def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationN
         if answers:
             return [answers[0]]  # just choose the first element of the list
         return []
-    elif "is" == question.getText()[0:2].lower():
+    elif question.isYesNoMaybeQuestion():
         return isPossibleAnswer(question, answerSets, eventCalculusRepresentationNeeded)
 
 
@@ -111,7 +111,6 @@ def processClingoOutput(output):
             answerSet = set(data[index].split())
             answerSets.append(answerSet)
         index += 1
-    #print(answerSets)
     return answerSets
 
 
@@ -149,7 +148,7 @@ class Reasoner:
         temp = open(filename, 'w')
 
         # add in the background knowledge
-        #if eventCalculusNeeded:
+        # if eventCalculusNeeded:
         for rule in self.corpus.backgroundKnowledge:
             temp.write(rule)
             temp.write('\n')

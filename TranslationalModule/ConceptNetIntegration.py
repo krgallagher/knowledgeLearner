@@ -7,6 +7,7 @@ class ConceptNetIntegration:
         self.synonymQuery = 'query?rel=/r/Synonym&start=/c/en/'
         self.mannerOfQuery = 'query?rel=/r/MannerOf&start=/c/en/'
         self.synonym = 'query?rel=/r/Synonym'
+        self.relatedTo = 'query?rel=/r/RelatedTo'
         self.node = '&node=/c/en/'
         self.other = '&other=/c/en/'
 
@@ -44,24 +45,38 @@ class ConceptNetIntegration:
                     currentDictionary[concept] = maximum
         return currentDictionary
 
+    # NOTE: this may not be the best, route, but let's just do this for now
     def isSynonym(self, word1, word2):
+        root1 = word1.split('_')[0]
+        root2 = word2.split('_')[0]
+        if root1 == root2:
+            return True
         node = self.node + word1
         other = self.other + word2
         query = self.baseAddress + self.synonym + node + other
         obj = requests.get(query).json()
         if obj['edges']:
             return True
-        if '_' in word1 and '_' in word2:  # not perfect but maybe better?
-            node = self.node + word1.split('_')[0]
-            other = self.other + word2.split('_')[0]
+        if '_' in word1 and '_' in word2:
+            node = self.node + root1
+            other = self.other + root2
+            if node == other:
+                return True
             query = self.baseAddress + self.synonym + node + other
             obj = requests.get(query).json()
             if obj['edges']:
                 return True
         return False
 
+    def isRelated(self, word1, word2):
+        node = self.node + word1
+        other = self.other + word2
+        query = self.baseAddress + self.relatedTo + node + other
+        obj = requests.get(query).json()
+        if obj['edges']:
+            return True
 
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.isSynonym("in", "inside"))
+    print(semanticNetwork.isSynonym("fit", "fit"))

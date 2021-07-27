@@ -86,7 +86,6 @@ def isUnsatisfiable(output):
 def runClingo(filename):
     command = "Clingo -W none -n 0 " + filename
     output = os.popen(command).read()
-    print(output)
     return output
 
 
@@ -95,9 +94,9 @@ def isEventCalculusNeeded(corpus: Corpus):
         # create a clingo file that evaluates the expressivitiy of the corpus
         filename = createExpressivityClingoFile(story, corpus)
 
-        file = open(filename, 'r')
-        for line in file:
-            print(line)
+        #file = open(filename, 'r')
+        #for line in file:
+        #    print(line)
 
         # run the file with clingo
         answerSets = runClingo(filename)
