@@ -61,41 +61,6 @@ class ConceptNetIntegration:
         return False
 
 
-class QueryBuilder:
-    def __init__(self, start=None, end=None, rel=None, node=None, other=None, sources=None):
-        self.start = start  # a URI that the start or subject position must match.
-        self.end = end  # a URI that the end or object position must match
-        self.rel = rel  # a relation
-        self.node = node  # a URI that must match either the start or the end
-        self.other = other  # a URI that must match either the start or the end, and be different from node
-        self.sources = sources  # a URI that must match one of the sources of the edge
-        self.baseAddress = 'http://api.conceptnet.io/'
-
-    def withStart(self, start):
-        self.start = start
-
-    def withEnd(self, end):
-        self.end = end
-
-    def withRel(self, rel):
-        self.rel = rel
-
-    def withNode(self, node):
-        self.node = node
-
-    def withOther(self, other):
-        self.other = other
-
-    def withSources(self, sources):
-        self.sources = sources
-
-    def build(self):
-        return
-
-
-class Query:
-    pass
-
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
