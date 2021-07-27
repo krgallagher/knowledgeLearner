@@ -3,6 +3,7 @@ from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure import Sentence
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
+from StoryStructure.Story import Story
 from TranslationalModule.basicParser import BasicParser
 from Utilities.ILASPSyntax import createTimeRange
 
@@ -42,7 +43,7 @@ def createChoiceRule(fluents):
     return rule
 
 
-def createExpressivityClingoFile(story, corpus):
+def createExpressivityClingoFile(story: Story, corpus: Corpus):
     filename = '/tmp/ClingoFile.lp'
     temp = open(filename, 'w')
 
@@ -85,6 +86,7 @@ def isUnsatisfiable(output):
 def runClingo(filename):
     command = "Clingo -W none -n 0 " + filename
     output = os.popen(command).read()
+    print(output)
     return output
 
 
@@ -92,6 +94,10 @@ def isEventCalculusNeeded(corpus: Corpus):
     for story in corpus:
         # create a clingo file that evaluates the expressivitiy of the corpus
         filename = createExpressivityClingoFile(story, corpus)
+
+        file = open(filename, 'r')
+        for line in file:
+            print(line)
 
         # run the file with clingo
         answerSets = runClingo(filename)
@@ -101,15 +107,13 @@ def isEventCalculusNeeded(corpus: Corpus):
             os.remove(filename)
             return True
 
-    os.remove(filename)
+        os.remove(filename)
     return False
 
 
 if __name__ == "__main__":
     # process the data
-    reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa9_simple-negation_train.txt")
-    # get corpus
-    corpus = reader.corpus
+    corpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa9_simple-negation_train.txt")
 
     # initialise parser
     parser = BasicParser(corpus)

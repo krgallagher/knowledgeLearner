@@ -33,7 +33,6 @@ class BasicParser:
         self.createFluentsAndModeBiasFluents(statement, story)
         if isinstance(statement, Question):
             self.synonymChecker(self.conceptsToExplore)
-            # TODO fix the next two steps to comply with my recent changes...
             self.updateFluents(story, statement)
             self.setEventCalculusRepresentation(story, statement)
             index = story.getIndex(statement)
@@ -62,36 +61,20 @@ class BasicParser:
 
     def createFluentsAndModeBiasFluents(self, statement: Statement, story: Story):
         doc = self.nlp(statement.getText())
+
+        # check for coreferences
         pronouns = [token for token in doc if token.pos_ == "PRON"]
         if pronouns:
             doc = self.nlp(self.coreferenceFinder(statement, story))
-        # creating the fluent base
-        fluentBase = ""
-        root = [token for token in doc if token.head == token][0]
-        childVerb = [child for child in root.children if child.pos_ == 'VERB']
-        if childVerb:
-            root = childVerb[0]
-        # TODO change it so that the adposition has to be a child of the verb.
-        adposition = [token for token in doc if token.pos_ == "ADP" and (
-                    token.head == root or token.head.pos_ == "ADV")]
-        #token.head.dep_ == "nsubj" or token.head.dep_ == 'attr')
 
-        # might only want to add adpositions if they have a subject to them?
+        # check for negations
         negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
-        verb_modifier = [token for token in doc if token.dep_ == 'acomp']
         if negation:
             statement.negatedVerb = True
-        fluentBase += root.lemma_
-        if verb_modifier:
-            fluentBase += '_' + verb_modifier[0].lemma_
-        if adposition:
-            nouns = [token for token in doc if
-                     token.head == adposition[0] and token.tag_ == 'NN' and hasADPChild(token, doc)]
-            if nouns:
-                fluentBase += '_' + nouns[0].text.lower()
-            else:
-                fluentBase += '_' + adposition[0].text.lower()
-        # the base for the fluent has been created
+
+        # creating the fluent base
+        fluentBase = self.createFluentBase(doc, statement)
+
         # if the statement is not a question, then add concepts to explore
         if not isinstance(statement, Question):
             conceptsToExplore = set()
@@ -132,7 +115,8 @@ class BasicParser:
                             for j in range(0, len(fluents[i])):
                                 resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
                                                                                           fluents[i][j],
-                                                                                          modeBiasFluents[i][j], nounsCopy)
+                                                                                          modeBiasFluents[i][j],
+                                                                                          nounsCopy)
                                 fluents1.append(resultingFluent)
                                 mbfluents1.append(resultingMBFluent)
                             newFluents.append(fluents1)
@@ -157,6 +141,36 @@ class BasicParser:
         statement.setFluents(fluents)
         statement.setModeBiasFluents(modeBiasFluents)
         return
+
+    def createFluentBase(self, doc, statement: Statement):
+        #print(statement.getText())
+        fluentBase = ""
+
+        # get root verb or something similar to it...
+        root = [token for token in doc if token.head == token][0]
+        childVerb = [child for child in root.children if child.pos_ == 'VERB']
+        if childVerb:
+            root = childVerb[0]
+        fluentBase += root.lemma_
+        #print("Fluent Base:", fluentBase)
+
+        # add modifiers, maybe include comaprators here?
+        verb_modifier = [token for token in doc if token.tag_ == 'JJR']
+        if verb_modifier:
+            fluentBase += '_' + verb_modifier[0].lemma_
+        #print("Verb modifiers: ", verb_modifier)
+        # add adpositions
+        adposition = [token for token in doc if
+                      token.pos_ == "ADP" and (token.head == root or token.head.pos_ == "ADV")]
+        #print("Adpositions", adposition)
+        if adposition:
+            #nouns = [token for token in doc if
+             #        token.head == adposition[0] and token.tag_ == 'NN' and hasADPChild(token, doc)]
+            #print("Adposition 0 nouns:", nouns)
+            #if nouns:
+            #    fluentBase += '_' + nouns[0].text.lower()
+            fluentBase += '_' + adposition[0].text.lower()
+        return fluentBase
 
     def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns):
         # might be able to have a loop here, something like, for choice in fluent.
@@ -250,16 +264,12 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task12_train")
-
-    # get corpus
-    corpus = reader.corpus
+    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
 
     # initialise parser
     parser = BasicParser(corpus)
-    print(corpus.isEventCalculusNeeded)
 
-    for story in reader.corpus:
+    for story in corpus:
         for sentence in story:
             parser.parse(story, sentence)
         for sentence in story:

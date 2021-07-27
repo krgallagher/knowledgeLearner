@@ -277,10 +277,7 @@ class Learner:
 
 if __name__ == '__main__':
     # process data
-    reader = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
-
-    # get corpus
-    corpus = reader.corpus
+    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
 
     # initialise parser
     parser = BasicParser(corpus)

@@ -7,40 +7,40 @@ from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
 from TranslationalModule.basicParser import BasicParser
 
 
-def mainPipeline(trainer, tester, numExamples=10000):
+def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # get corpus
-    corpus = trainer.corpus
     # initialise parser
-    parser = BasicParser(corpus)
+    parser = BasicParser(trainCorpus)
     # initialise reasoner
-    reasoner = Reasoner(corpus)
+    reasoner = Reasoner(trainCorpus)
     # initialise learner
-    learner = Learner(corpus)
+    learner = Learner(trainCorpus)
     # training data loop
     # parse through all of the data
-    for story in corpus:
+    for story in trainCorpus:
         for sentence in story:
             parser.parse(story, sentence)
-    if isEventCalculusNeeded(corpus):
-        corpus.isEventCalculusNeeded = True
+
+    if isEventCalculusNeeded(trainCorpus):
+        trainCorpus.isEventCalculusNeeded = True
     # potentially can add this information into the parser.
-    if choiceRulesPresent(corpus):
-        corpus.choiceRulesPresent = True
+    if choiceRulesPresent(trainCorpus):
+        trainCorpus.choiceRulesPresent = True
 
     # train the data
-    train(corpus, reasoner, learner, numExamples)
+    train(trainCorpus, reasoner, learner, numExamples)
     # set hypotheses for testing corpus
-    hypotheses = corpus.getHypotheses()
+    hypotheses = trainCorpus.getHypotheses()
     # testing data loop
     numQuestions = 0
     numCorrect = 0
     #print("TEST")
-    for story in tester.corpus:
+    for story in testCorpus:
         for sentence in story:
             parser.parse(story, sentence)
             if isinstance(sentence, Question):
                 numQuestions += 1
-                answerToQuestion = reasoner.computeAnswer(sentence, story, corpus.isEventCalculusNeeded)
+                answerToQuestion = reasoner.computeAnswer(sentence, story, trainCorpus.isEventCalculusNeeded)
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
                 print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(), sentence.getAnswer(), answerToQuestion)
@@ -68,8 +68,8 @@ if __name__ == '__main__':
     # process data
     # trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt")
     # testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt")
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_test"
-    trainingReader = bAbIReader(trainingSet)
-    testingReader = bAbIReader(testingSet)
-    mainPipeline(trainingReader, testingReader)
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
+    trainingCorpus = bAbIReader(trainingSet)
+    testingCorpus = bAbIReader(testingSet)
+    mainPipeline(trainingCorpus, testingCorpus)
