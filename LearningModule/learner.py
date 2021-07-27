@@ -45,7 +45,7 @@ class Learner:
             unsatisfiable = set()
             unsatisfiable.add("UNSATISFIABLE")
 
-            self.createLearningFile(question, story, eventCalculusNeeded, False)
+            self.createLearningFile(eventCalculusNeeded)
             file = open(self.filename, 'r')
             for line in file:
                 print(line)
@@ -61,9 +61,11 @@ class Learner:
             # try to first add the hypotheses previously learned and the mode bias that is only relevant to the
             # example that was wrong
 
+    # TODO uncomment this later on and remove the pass
     def __del__(self):
         # delete file from computer
-        os.remove(self.filename)
+        # os.remove(self.filename)
+        pass
 
     def createPositiveExample(self, question, story, eventCalculusNeeded):
         if "maybe" in question.getAnswer():
@@ -116,13 +118,15 @@ class Learner:
         return negativeExample
 
     def createContext(self, question: Question, story: Story, eventCalculusNeeded):
+        predicates = set()
         context = '{'
         for statement in story:
             if not isinstance(statement, Question):
                 context = self.addRepresentation(statement, context, eventCalculusNeeded)
-            context = self.addPredicates(statement, context)
+            predicates.update(statement.getPredicates())
             if statement == question:
                 break
+        context = self.addPredicates(predicates, context)
         if context[-1] != '{':
             context += '.\n'
             if eventCalculusNeeded:
@@ -143,14 +147,14 @@ class Learner:
             context += rule
         return context
 
-    def addPredicates(self, question, context):
-        for predicate in question.getPredicates():
+    def addPredicates(self, predicates, context):
+        for predicate in predicates:
             if context[-1] != '{':
                 context += '.\n'
             context += predicate
         return context
 
-    def createLearningFile(self, question: Question, story: Story, eventCalculusNeeded, withOldHypotheses):
+    def createLearningFile(self, eventCalculusNeeded):
         temp = open(self.filename, 'w')
         # add in the background knowledge only if using the event calculus
         # if eventCalculusNeeded:
@@ -158,19 +162,10 @@ class Learner:
             temp.write(rule)
             temp.write('\n')
 
-        if withOldHypotheses:
-            for hypothesis in self.corpus.getHypotheses():
-                temp.write(hypothesis)
-                temp.write('\n')
-
-            for bias in self.getRelevantModeBias(story, question):
-                temp.write(bias)
-                temp.write('\n')
-        else:
-            # add in the mode bias
-            for bias in self.corpus.modeBias:
-                temp.write(bias)
-                temp.write('\n')
+        # add in the mode bias
+        for bias in self.corpus.modeBias:
+            temp.write(bias)
+            temp.write('\n')
 
         # add in examples for the stories thus far
         for story in self.corpus:
