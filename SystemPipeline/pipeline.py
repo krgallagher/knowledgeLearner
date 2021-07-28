@@ -16,9 +16,9 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     learner = Learner(trainCorpus)
     # training data loop
     # parse through all of the data
-    for story in trainCorpus:
-        for sentence in story:
-            parser.parse(story, sentence)
+    #for story in trainCorpus:
+    #    for sentence in story:
+    #        parser.parse(story, sentence)
 
     if isEventCalculusNeeded(trainCorpus):
         trainCorpus.isEventCalculusNeeded = True

@@ -24,22 +24,16 @@ class BasicParser:
     def __init__(self, corpus):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
         self.synonymDictionary = {}
-        self.previousQuestionIndex = -1
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
         self.corpus = corpus
-
-    def parse(self, story: Story, statement: Statement):
-        self.createFluentsAndModeBiasFluents(statement, story)
-        if isinstance(statement, Question):
-            self.synonymChecker(self.conceptsToExplore)
-            self.updateFluents(story, statement)
-            self.setEventCalculusRepresentation(story, statement)
-            index = story.getIndex(statement)
-            if index + 1 == story.size():
-                self.previousQuestionIndex = -1
-            else:
-                self.previousQuestionIndex = index
+        for story in self.corpus:
+            for sentence in story:
+                self.parse(story, sentence)
+        #play around with the synonym dictionary
+        self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
+        self.updateFluents()
+        self.setEventCalculusRepresentation()
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         statementText = statement.getText()
@@ -59,7 +53,7 @@ class BasicParser:
             return statementText.replace(" " + pronoun[0].text + " ", " " + replacementPhrase + " ")
         return statementText
 
-    def createFluentsAndModeBiasFluents(self, statement: Statement, story: Story):
+    def parse(self, story: Story, statement: Statement):
         doc = self.nlp(statement.getText())
 
         # check for coreferences
@@ -73,7 +67,7 @@ class BasicParser:
             statement.negatedVerb = True
 
         # creating the fluent base
-        fluentBase = self.createFluentBase(doc, statement)
+        fluentBase = self.createFluentBase(doc)
 
         # if the statement is not a question, then add concepts to explore
         # if not isinstance(statement, Question):
@@ -143,7 +137,7 @@ class BasicParser:
         statement.setModeBiasFluents(modeBiasFluents)
         return
 
-    def createFluentBase(self, doc, statement: Statement):
+    def createFluentBase(self, doc):
         # print(statement.getText())
         fluentBase = ""
 
@@ -207,13 +201,12 @@ class BasicParser:
         statement.addPredicate(relevantPredicate)
         return fluent, modeBiasFluent
 
-    def updateFluents(self, story: Story, statement: Statement):
-        for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
-            currentStatement = story.get(index)
-            fluents, modeBiasFluents = currentStatement.getFluents(), currentStatement.getModeBiasFluents()
-            # we are getting a list of lists...
-            currentStatement.setFluents(self.update(fluents))
-            currentStatement.setModeBiasFluents(self.update(modeBiasFluents))
+    def updateFluents(self):
+        for story in self.corpus:
+            for sentence in story:
+                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
+                sentence.setFluents(self.update(fluents))
+                sentence.setModeBiasFluents(self.update(modeBiasFluents))
 
     def update(self, fluents):
         newFluents = []
@@ -232,34 +225,13 @@ class BasicParser:
             newFluents.append(currentFluents)
         return newFluents
 
-    def setEventCalculusRepresentation(self, story: Story, statement: Statement):
-        for index in range(self.previousQuestionIndex + 1, story.getIndex(statement) + 1):
-            currentStatement = story.get(index)
-            wrap(currentStatement)
+    def setEventCalculusRepresentation(self):
+        for story in self.corpus:
+            for sentence in story:
+                wrap(sentence)
 
-    def checkCurrentSynonyms(self, concept):
-        for value in self.synonymDictionary.values():
-            if self.conceptNet.isSynonym(concept, value):
-                self.synonymDictionary[concept] = value
-                return True
-        for key in self.synonymDictionary.keys():
-            if self.conceptNet.isSynonym(concept, key):
-                self.synonymDictionary[concept] = self.synonymDictionary[key]
-                return True
-        return False
 
-    def synonymChecker(self, concepts):
-        conceptsCopy = concepts.copy()
-        for concept in conceptsCopy:
-            if concept in self.synonymDictionary.keys():
-                concepts.remove(concept)
-            elif concept in self.synonymDictionary.values():
-                self.synonymDictionary[concept] = concept
-                concepts.remove(concept)
-            elif self.checkCurrentSynonyms(concept):
-                concepts.remove(concept)
-        learnedConcepts = self.conceptNet.synonymFinder(concepts)
-        self.synonymDictionary.update(learnedConcepts)
+
 
 
 if __name__ == '__main__':
@@ -271,8 +243,6 @@ if __name__ == '__main__':
     parser = BasicParser(corpus)
 
     for story in corpus:
-        for sentence in story:
-            parser.parse(story, sentence)
         for sentence in story:
             print(sentence.getText(), sentence.getLineID(), sentence.getFluents(),
                   sentence.getEventCalculusRepresentation(), sentence.getPredicates(), sentence.getModeBiasFluents())
