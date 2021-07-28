@@ -68,8 +68,8 @@ if __name__ == '__main__':
     # process data
     # trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt")
     # testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt")
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)

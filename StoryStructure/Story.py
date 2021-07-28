@@ -4,7 +4,7 @@ from StoryStructure import Statement
 class Story:
     def __init__(self):
         self.sentences = []
-        self.examples = set()  # set of positive and negative examples
+        self.examples = []  # list of positive and negative examples
 
     def reset(self):
         self.examples = set()
@@ -27,19 +27,23 @@ class Story:
     def getExamples(self):
         return self.examples
 
+    def getExample(self, index):
+        return self.examples[index]
+
     def size(self):
         return len(self.sentences)
 
     # the story class does not need to worry about how to create a positive/negative example,
     # it only needs to worry about how to store it
     def appendExample(self, example):
-        self.examples.add(example)
+        self.examples.append(example)
 
     def __iter__(self):
         ''' Returns the Iterator object '''
         return StoryIterator(self)
 
 
+# iterator class
 class StoryIterator:
     ''' Iterator class '''
 
@@ -56,11 +60,3 @@ class StoryIterator:
             return result
         # End of Iteration
         raise StopIteration
-
-
-if __name__ == "__main__":
-    story = Story()
-    story.addSentence("hello")
-    story.addSentence("goodbye")
-    for sentence in story:
-        print(sentence)

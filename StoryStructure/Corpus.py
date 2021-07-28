@@ -1,6 +1,9 @@
 from DatasetReader.BackgroundKnowledge import eventCalculusAxioms
 import random
 
+from StoryStructure.Story import Story
+
+
 class Corpus:
     def __init__(self):
         self.stories = []
@@ -50,7 +53,11 @@ class Corpus:
         random.seed(4)
         random.shuffle(self.stories)
 
+    def getIndex(self, story: Story):
+        return self.stories.index(story)
 
+    def get(self, index):
+        return self.stories[index]
 
 class CorpusIterator:
     ''' Iterator class '''

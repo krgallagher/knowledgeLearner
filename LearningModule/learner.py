@@ -10,15 +10,18 @@ from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
 
 class Learner:
-    def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las"):
+    def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
+                 cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las"):
         # will probably eventually want to make the default be in the tmp bin, but this is okay for now I think
         self.filename = filename
+        self.cachingFile = cachingFile
         self.corpus = corpus
+        self.oldModeBias = set()
+        self.previousStoryIndexForIncorrectQuestion = 0  # default to the first story
+        self.previousExampleAddedIndex = 0  # the last index that has been added for a positive/negative example
+        # need to store the index
 
     def learn(self, question: Question, story: Story, answer, eventCalculusNeeded=True):
-
-        self.updateModeBias(story, question)
-
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
             if "where" in question.getText().lower() or "what" in question.getText().lower():
@@ -42,24 +45,39 @@ class Learner:
                     example = self.createNegativeExample(question, story, eventCalculusNeeded)
             story.appendExample(example)
 
+            # possibly refactor this bit.
             unsatisfiable = set()
             unsatisfiable.add("UNSATISFIABLE")
 
-            self.createLearningFile(eventCalculusNeeded)
+            # store the old mode bias
+            self.oldModeBias = self.corpus.modeBias.copy()
+
+            # update the old mode bias.
+            self.updateModeBias(story, question)
+
+            if self.oldModeBias == self.corpus.modeBias:
+                self.appendExamplesToLearningFile(story)
+            else:
+                if os.path.exists(self.cachingFile):
+                    os.remove(self.cachingFile)
+                self.createLearningFile(eventCalculusNeeded)
+
+            # update the index of the previous story to have a question wrong.
+            self.previousStoryIndexForIncorrectQuestion = self.corpus.getIndex(story)
+
             file = open(self.filename, 'r')
             for line in file:
                 print(line)
 
             hypotheses = self.solveILASPtask()
 
+
+
             print("HYPOTHESES", hypotheses)
             if hypotheses != unsatisfiable:
                 self.corpus.addHypotheses(hypotheses)
 
             print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
-
-            # try to first add the hypotheses previously learned and the mode bias that is only relevant to the
-            # example that was wrong
 
     # TODO uncomment this later on and remove the pass
     def __del__(self):
@@ -155,36 +173,55 @@ class Learner:
         return context
 
     def createLearningFile(self, eventCalculusNeeded):
-        temp = open(self.filename, 'w')
+        file = open(self.filename, 'w')
         # add in the background knowledge only if using the event calculus
         # if eventCalculusNeeded:
         for rule in self.corpus.backgroundKnowledge:
-            temp.write(rule)
-            temp.write('\n')
+            file.write(rule)
+            file.write('\n')
 
         # add in the mode bias
         for bias in self.corpus.modeBias:
-            temp.write(bias)
-            temp.write('\n')
-
-        # add in examples for the stories thus far
-        for story in self.corpus:
-            for example in story.getExamples():
-                temp.write(example)
-                temp.write('\n')
+            file.write(bias)
+            file.write('\n')
 
         # might want to make this so it starts with 4 variables and then gradually increases.
         if eventCalculusNeeded:
-            temp.write("#maxv(4)")
+            file.write("#maxv(4)")
         else:
-            temp.write("#maxv(3)")
-        temp.write('.\n')
+            file.write("#maxv(3)")
+        file.write('.\n')
 
-        temp.close()
+        # add in examples for the stories thus far
+        for story in self.corpus:
+            self.addExamplesFromStory(file, story)
+        file.close()
+
+    def appendExamplesToLearningFile(self, story: Story):
+        file = open(self.filename, 'a')
+        lastStory = self.corpus.get(self.previousStoryIndexForIncorrectQuestion)
+        for index in range(self.previousExampleAddedIndex + 1, len(lastStory.examples) - 1):
+            example = lastStory.examples[index]
+            file.write(example)
+            file.write('\n')
+
+        for index in range(self.previousStoryIndexForIncorrectQuestion + 1, self.corpus.getIndex(story)):
+            previousStory = self.corpus.stories[index]
+            self.addExamplesFromStory(file, previousStory)
+
+        self.addExamplesFromStory(file, story)
+        # TODO need to move this up
+        self.previousExampleAddedIndex = len(story.examples) - 1
+        file.close()
+
+    def addExamplesFromStory(self, file, story: Story):
+        for example in story.getExamples():
+            file.write(example)
+            file.write('\n')
 
     def solveILASPtask(self):
         # command = "FastLAS --nopl" + filename
-        command = "ILASP -q -nc -ml=2 --version=4 " + self.filename
+        command = "ILASP -q -nc -ml=2 --version=4 --cache-path=" + self.cachingFile + " " + self.filename
         output = os.popen(command).read()
         return self.processILASP(output)
 
@@ -192,19 +229,28 @@ class Learner:
         lines = output.split('\n')
         return set([line for line in lines if line])
 
-    def updateModeBias(self, story: Story, statement: Statement):
-        for index in range(0, story.getIndex(statement) + 1):
+    def updateModeBias(self, story: Story, question: Statement):
+        # add the mode bias for all the stories so far
+        for storyIndex in range(self.previousStoryIndexForIncorrectQuestion, self.corpus.getIndex(story)):
+            for sentence in self.corpus.stories[storyIndex]:
+                self.addStatementModeBias(sentence)
+
+        # add the mode bias for current story
+        for index in range(0, story.getIndex(question) + 1):
             currentStatement = story.get(index)
-            modeBiasFluents = currentStatement.getModeBiasFluents()
-            for i in range(0, len(modeBiasFluents)):
-                for j in range(0, len(modeBiasFluents[i])):
-                    modeBiasFluent = modeBiasFluents[i][j]
-                    predicate = modeBiasFluent.split('(')[0].split('_')[0]
-                    if predicate == "be":
-                        modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
-                    else:
-                        modeBias = self.generateNonBeBias(modeBiasFluent, currentStatement)
-                    self.corpus.updateModeBias(modeBias)
+            self.addStatementModeBias(currentStatement)
+
+    def addStatementModeBias(self, statement):
+        modeBiasFluents = statement.getModeBiasFluents()
+        for i in range(0, len(modeBiasFluents)):
+            for j in range(0, len(modeBiasFluents[i])):
+                modeBiasFluent = modeBiasFluents[i][j]
+                predicate = modeBiasFluent.split('(')[0].split('_')[0]
+                if predicate == "be":
+                    modeBias = self.generateBeBias(modeBiasFluent, statement)
+                else:
+                    modeBias = self.generateNonBeBias(modeBiasFluent, statement)
+                self.corpus.updateModeBias(modeBias)
 
     def getRelevantModeBias(self, story: Story, statement: Statement):
         print("GeTTiNG relevant mode bias")
@@ -264,7 +310,7 @@ class Learner:
 
 if __name__ == '__main__':
     # process data
-    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
+    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
 
     # initialise parser
     parser = BasicParser(corpus)

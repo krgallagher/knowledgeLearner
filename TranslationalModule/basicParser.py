@@ -265,7 +265,7 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task8_train")
 
     # initialise parser
     parser = BasicParser(corpus)

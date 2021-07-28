@@ -79,4 +79,4 @@ class ConceptNetIntegration:
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.isSynonym("fit", "fit"))
+    print(semanticNetwork.isSynonym("take", "carry"))
