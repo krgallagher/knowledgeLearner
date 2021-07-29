@@ -4,7 +4,7 @@ from StoryStructure.Statement import Statement
 class Question(Statement):
     def __init__(self, text, lineId, answer, hints):
         Statement.__init__(self, text, lineId)
-        self.answer = answer  # this should be stored as a list
+        self.answer = answer
         self.hints = hints
 
     def getAnswer(self):
@@ -14,6 +14,7 @@ class Question(Statement):
         return self.hints
 
     # TODO might want to fix this so that order does/does not matter when the size is greater than 1 for the answer set
+    #To get around this might just store this in a different way.
     def isCorrectAnswer(self, answer):
         return answer == self.answer
 
@@ -59,3 +60,12 @@ class Question(Statement):
 
     def isYesNoMaybeQuestion(self):
         return "yes" in self.answer or "no" in self.answer or "maybe" in self.answer
+
+    def isHowManyQuestion(self):
+        return "how many" in self.text.lower()
+
+    def isWhereQuestion(self):
+        return "where" in self.text.lower()
+
+    def isWhatQuestion(self):
+        return "what" in self.text.lower()

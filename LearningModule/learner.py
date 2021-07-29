@@ -34,7 +34,7 @@ class Learner:
             story.appendExample(example)
         else:
             if "where" in question.getText().lower() or "what" in question.getText().lower():
-                if len(answer) == 0:
+                if answer == ["nothing"]:
                     example = self.createPositiveExample(question, story, eventCalculusNeeded)
                 else:
                     example = self.createNegativeExample(question, story, eventCalculusNeeded, answer)
@@ -70,8 +70,6 @@ class Learner:
                 print(line)
 
             hypotheses = self.solveILASPtask()
-
-
 
             print("HYPOTHESES", hypotheses)
             if hypotheses != unsatisfiable:
@@ -246,35 +244,13 @@ class Learner:
             for j in range(0, len(modeBiasFluents[i])):
                 modeBiasFluent = modeBiasFluents[i][j]
                 predicate = modeBiasFluent.split('(')[0].split('_')[0]
-                if predicate == "be":
-                    modeBias = self.generateBeBias(modeBiasFluent, statement)
+                if predicate == "be" or isinstance(statement, Question):
+                    modeBias = self.generateBeAndQuestionBias(modeBiasFluent, statement)
                 else:
                     modeBias = self.generateNonBeBias(modeBiasFluent, statement)
                 self.corpus.updateModeBias(modeBias)
 
-    def getRelevantModeBias(self, story: Story, statement: Statement):
-        print("GeTTiNG relevant mode bias")
-        relevantModeBias = set()
-        for index in range(0, story.getIndex(statement) + 1):
-            currentStatement = story.get(index)
-            if isinstance(currentStatement, Question) and currentStatement != statement:
-                pass
-            else:
-                modeBiasFluents = currentStatement.getModeBiasFluents()
-                print("MODE bias fluents:", modeBiasFluents)
-                for i in range(0, len(modeBiasFluents)):
-                    for j in range(0, len(modeBiasFluents[i])):
-                        modeBiasFluent = modeBiasFluents[i][j]
-                        predicate = modeBiasFluent.split('(')[0].split('_')[0]
-                        if predicate == "be":
-                            modeBias = self.generateBeBias(modeBiasFluent, currentStatement)
-                        else:
-                            modeBias = self.generateNonBeBias(modeBiasFluent, currentStatement)
-                        relevantModeBias.update(modeBias)
-            print(relevantModeBias)
-        return relevantModeBias
-
-    def generateBeBias(self, modeBiasFluent, statement: Statement):
+    def generateBeAndQuestionBias(self, modeBiasFluent, statement: Statement):
         bias = set()
         if self.corpus.isEventCalculusNeeded:
             time = varWrapping("time")

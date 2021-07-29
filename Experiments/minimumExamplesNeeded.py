@@ -11,7 +11,7 @@ if __name__ == '__main__':
     numShuffles = 5
     multiplier = 5
     for i in range(0, numShuffles):
-        trainingCorpus.corpus.shuffle()
+        trainingCorpus.trainCorpus.shuffle()
         print("Shuffle", i + 1)
         for j in range(1, 6):
             trainingCorpus.reset()

@@ -9,16 +9,11 @@ from TranslationalModule.basicParser import BasicParser
 
 def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # initialise parser
-    parser = BasicParser(trainCorpus)
+    parser = BasicParser(trainCorpus, testCorpus)
     # initialise reasoner
     reasoner = Reasoner(trainCorpus)
     # initialise learner
     learner = Learner(trainCorpus)
-    # training data loop
-    # parse through all of the data
-    #for story in trainCorpus:
-    #    for sentence in story:
-    #        parser.parse(story, sentence)
 
     if isEventCalculusNeeded(trainCorpus):
         trainCorpus.isEventCalculusNeeded = True
@@ -34,9 +29,9 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     numQuestions = 0
     numCorrect = 0
     print("TEST")
+    #NEED TO REVISE THIS
     for story in testCorpus:
         for sentence in story:
-            parser.parse(story, sentence)
             if isinstance(sentence, Question):
                 numQuestions += 1
                 answerToQuestion = reasoner.computeAnswer(sentence, story, trainCorpus.isEventCalculusNeeded)
@@ -68,8 +63,8 @@ if __name__ == '__main__':
     # process data
     # trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt")
     # testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt")
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)

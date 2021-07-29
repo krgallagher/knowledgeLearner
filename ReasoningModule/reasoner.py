@@ -43,6 +43,7 @@ def getAnswer(fullMatch, representation):
 
 # TODO trying to tidy this up today
 
+#TODO rename this since this funciton is used for more than a "where" search
 def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded):
     # create a regular expression
     answers = []
@@ -58,6 +59,11 @@ def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded
         if result:
             fullMatch = result[0]
             answers.append(getAnswer(fullMatch, representation))
+    if eventCalculusRepresentationNeeded:
+        #sort the answers according to time stamp
+        pass
+
+
     return answers
 
 
@@ -93,10 +99,14 @@ def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationN
             newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
             answers += newAnswers
         if answers:
-            return [answers[0]]  # just choose the first element of the list
-        return []
+            return answers
+            #return [answers[0]]  # just choose the first element of the list
+        return ["nothing"]
     elif question.isYesNoMaybeQuestion():
         return isPossibleAnswer(question, answerSets, eventCalculusRepresentationNeeded)
+    elif question.isHowManyQuestion():
+
+        return []
 
 
 def processClingoOutput(output):

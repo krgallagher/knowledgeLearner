@@ -21,19 +21,28 @@ def isDisjunctive(noun, doc):
 
 
 class BasicParser:
-    def __init__(self, corpus):
+    def __init__(self, trainCorpus, testCorpus):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
         self.synonymDictionary = {}
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
-        self.corpus = corpus
-        for story in self.corpus:
+        self.trainCorpus = trainCorpus
+        self.testCorpus = testCorpus
+
+        # parse the training set
+        for story in self.trainCorpus:
             for sentence in story:
                 self.parse(story, sentence)
-        #play around with the synonym dictionary
+
+        # parse the testing set
+        for story in self.testCorpus:
+            for sentence in story:
+                self.parse(story, sentence)
+        # play around with the synonym dictionary
         self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
         self.updateFluents()
         self.setEventCalculusRepresentation()
+        print(self.synonymDictionary)
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         statementText = statement.getText()
@@ -72,7 +81,7 @@ class BasicParser:
         # if the statement is not a question, then add concepts to explore
         # if not isinstance(statement, Question):
         conceptsToExplore = set()
-        if fluentBase.split('_')[0] != 'be':
+        if fluentBase.split('_')[0] != 'be' and not isinstance(statement, Question):
             conceptsToExplore.add(fluentBase)
             self.conceptsToExplore.update(conceptsToExplore)
 
@@ -202,7 +211,12 @@ class BasicParser:
         return fluent, modeBiasFluent
 
     def updateFluents(self):
-        for story in self.corpus:
+        for story in self.trainCorpus:
+            for sentence in story:
+                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
+                sentence.setFluents(self.update(fluents))
+                sentence.setModeBiasFluents(self.update(modeBiasFluents))
+        for story in self.testCorpus:
             for sentence in story:
                 fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
                 sentence.setFluents(self.update(fluents))
@@ -226,27 +240,28 @@ class BasicParser:
         return newFluents
 
     def setEventCalculusRepresentation(self):
-        for story in self.corpus:
+        for story in self.trainCorpus:
             for sentence in story:
                 wrap(sentence)
-
-
-
+        for story in self.testCorpus:
+            for sentence in story:
+                wrap(sentence)
 
 
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task8_train")
+    trainCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_train")
+    testCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_test")
 
     # initialise parser
-    parser = BasicParser(corpus)
+    parser = BasicParser(trainCorpus, testCorpus)
 
-    for story in corpus:
+    for story in trainCorpus:
         for sentence in story:
             print(sentence.getText(), sentence.getLineID(), sentence.getFluents(),
                   sentence.getEventCalculusRepresentation(), sentence.getPredicates(), sentence.getModeBiasFluents())
             if isinstance(sentence, Question):
                 print(sentence.getModeBiasFluents())
-    print(corpus.modeBias)
+    print(trainCorpus.modeBias)
     print(parser.synonymDictionary)

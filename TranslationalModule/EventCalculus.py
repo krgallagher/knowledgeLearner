@@ -23,7 +23,7 @@ def wrap(statement: Statement):
         for j in range(0, len(fluents[i])):
             fluent = fluents[i][j]
             predicate = fluent.split("(")[0].split('_')[0]
-            if predicate == "be":
+            if predicate == "be" or isinstance(statement, Question):
                 if statement.negatedVerb:
                     eventCalculus = terminatedAt(fluent, time)
                 elif isinstance(statement, Question):

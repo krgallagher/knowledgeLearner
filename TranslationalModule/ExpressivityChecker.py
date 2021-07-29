@@ -94,9 +94,9 @@ def isEventCalculusNeeded(corpus: Corpus):
         # create a clingo file that evaluates the expressivitiy of the corpus
         filename = createExpressivityClingoFile(story, corpus)
 
-        #file = open(filename, 'r')
-        #for line in file:
-        #    print(line)
+        file = open(filename, 'r')
+        for line in file:
+            print(line)
 
         # run the file with clingo
         answerSets = runClingo(filename)
@@ -112,15 +112,13 @@ def isEventCalculusNeeded(corpus: Corpus):
 
 if __name__ == "__main__":
     # process the data
-    corpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa9_simple-negation_train.txt")
+    trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_train.txt")
+    testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_test.txt")
 
     # initialise parser
-    parser = BasicParser(corpus)
+    parser = BasicParser(trainingCorpus, testingCorpus)
 
-    for story in corpus:
-        for sentence in story:
-            parser.parse(story, sentence)
-    if isEventCalculusNeeded(corpus):
+    if isEventCalculusNeeded(trainingCorpus):
         print("EVENT CALCULUS IS NEEDED!")
     else:
         print("EVENT CALCULUS IS NOT NEEDED!")

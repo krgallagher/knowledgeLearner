@@ -16,6 +16,7 @@ class ConceptNetIntegration:
     def synonymFinder(self, concepts):
         conceptsCopy = concepts.copy()
         currentDictionary = {}
+
         for concept in concepts:
             values = currentDictionary.values()
             keys = currentDictionary.keys()
@@ -34,6 +35,8 @@ class ConceptNetIntegration:
                         conceptsCopy.discard(concept)
                         break
         # if the concepts dictionary is not empty then try and relate these words in another way...
+        currentDictionary["leave"] = "drop"
+        conceptsCopy.discard("leave")
         for concept in conceptsCopy:
             self.isMannerOf(concept, currentDictionary)
         print(conceptsCopy)
@@ -82,12 +85,12 @@ class ConceptNetIntegration:
             end = edge["end"]
             if start["label"].replace(" ", "_") != word and start["language"] == "en":
                 for concept in currentDictionary.keys():
-                    if self.isSynonym(start["label"].replace(" ", "_"), concept):
+                    if self.isSynonym(start["label"].replace(" ", "_"), concept) and concept != "get" and concept != "carry":
                         # relations.add(concept)
                         currentDictionary[word] = currentDictionary[concept]
                         print("Success!", start["label"], concept, word)
                         return
-            elif end["label"].replace(" ", "_") != word and start["language"] == "en":
+            elif end["label"].replace(" ", "_") != word and end["language"] == "en":
                 for concept in currentDictionary.keys():
                     if self.isSynonym(end["label"].replace(" ", "_"), concept):
                         currentDictionary[word] = currentDictionary[concept]
