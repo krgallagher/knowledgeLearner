@@ -207,10 +207,10 @@ class Learner:
     def createLearningFile(self, eventCalculusNeeded):
         file = open(self.filename, 'w')
         # add in the background knowledge only if using the event calculus
-        # if eventCalculusNeeded:
-        for rule in self.corpus.backgroundKnowledge:
-            file.write(rule)
-            file.write('\n')
+        if eventCalculusNeeded:
+            for rule in self.corpus.backgroundKnowledge:
+                file.write(rule)
+                file.write('\n')
 
         # add in the mode bias
         for bias in self.corpus.modeBias:

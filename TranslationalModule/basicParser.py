@@ -42,6 +42,9 @@ class BasicParser:
                 self.parse(story, sentence)
         # play around with the synonym dictionary
         self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
+        #to be removed at a later point
+        if "drop" in self.synonymDictionary.keys():
+            self.synonymDictionary["leave"] = self.synonymDictionary["drop"]
         self.updateFluents()
         self.setEventCalculusRepresentation()
         print(self.synonymDictionary)
@@ -88,7 +91,7 @@ class BasicParser:
 
         # find the concepts to explore
         conceptsToExplore = set()
-        if fluentBase.split('_')[0] != 'be':
+        if fluentBase.split('_')[0] != 'be' and not isinstance(statement, Question):
             conceptsToExplore.add(fluentBase)
             self.conceptsToExplore.update(conceptsToExplore)
 
@@ -286,7 +289,7 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    trainCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task4_train")
+    trainCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task17_train")
     testCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task4_train")
 
     # initialise parser

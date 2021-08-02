@@ -16,6 +16,8 @@ class Question(Statement):
     # TODO might want to fix this so that order does/does not matter when the size is greater than 1 for the answer set
     # To get around this might just store this in a different way.
     def isCorrectAnswer(self, answer):
+        if len(answer) >= 2 and self.isWhatQuestion():
+            return set(answer) == set(self.answer)
         return answer == self.answer
 
     def getQuestionWithAnswers(self, eventCalculusNeeded=True):

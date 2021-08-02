@@ -42,12 +42,21 @@ def getAnswer(fullMatch, representation):
     return None
 
 
-# TODO trying to tidy this up today
+def getTimeFromEventCalculusFluent(answer):
+    return int(answer.split(',')[-1].split(')')[0])
+
+
+def sortAccordingToTimeStamp(answers):
+    print(answers)
+    sorting = sorted(answers, key=answers.get)
+    print(sorting)
+    return sorted(answers, key=answers.get)
+
 
 # TODO rename this since this funciton is used for more than a "where" search
 def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded):
     # create a regular expression
-    answers = []
+    answers = {}
     if eventCalculusRepresentationNeeded:
         representation = question.getEventCalculusRepresentation()[0][0]
     else:
@@ -59,12 +68,13 @@ def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded
         result = compiledPattern.fullmatch(rule)
         if result:
             fullMatch = result[0]
-            answers.append(getAnswer(fullMatch, representation))
-    if eventCalculusRepresentationNeeded:
-        # sort the answers according to time stamp
-        pass
+            if eventCalculusRepresentationNeeded:
+                answers[getAnswer(fullMatch, representation)] = getTimeFromEventCalculusFluent(fullMatch)
+            else:
+                answers[getAnswer(fullMatch, representation)] = 0
 
-    return answers
+    return sortAccordingToTimeStamp(answers)
+
 
 
 # TODO edit this to have both the event calculus and non-event calculus representation taken into account
@@ -195,3 +205,8 @@ class Reasoner:
         temp.write('.\n')
         temp.close()
         return filename
+
+
+if __name__ == "__main__":
+    answers = ["holdsAt(carry(mary,football),5)"]
+    print(sortAccordingToTimeStamp(answers))
