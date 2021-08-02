@@ -7,6 +7,8 @@ from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 from TranslationalModule.EventCalculus import wrap
 
 
+# maybe go through at the beginning and grab 'similar terms' and try to parse
+
 def varWrapping(tag):
     return "var(" + tag + ")"
 
@@ -65,6 +67,8 @@ class BasicParser:
     def parse(self, story: Story, statement: Statement):
         doc = self.nlp(statement.getText())
 
+        usedTokens = []
+
         # check for coreferences
         pronouns = [token for token in doc if token.pos_ == "PRON"]
         if pronouns:
@@ -75,24 +79,53 @@ class BasicParser:
         if negation:
             statement.negatedVerb = True
 
-        # creating the fluent base
-        fluentBase = self.createFluentBase(doc)
+        # get the nouns of the sentence
+        nouns = [token for token in doc if "NN" in token.tag_]
+        # and token.text.lower() not in fluentBase.split('_')
 
-        # if the statement is not a question, then add concepts to explore
-        # if not isinstance(statement, Question):
+        # creating the fluent base
+        fluentBase = self.createFluentBase(doc, usedTokens, nouns, statement)
+
+        # find the concepts to explore
         conceptsToExplore = set()
-        if fluentBase.split('_')[0] != 'be' and not isinstance(statement, Question):
+        if fluentBase.split('_')[0] != 'be':
             conceptsToExplore.add(fluentBase)
             self.conceptsToExplore.update(conceptsToExplore)
 
-        # now we need to form a statement/question fluent
-        nouns = [token for token in doc if "NN" in token.tag_ and token.text.lower() not in fluentBase.split('_')]
         fluent = fluentBase + "("
         fluents = [[fluent]]
         modeBiasFluents = [[fluent]]
+
+        if isinstance(statement, Question):
+            if statement.isWhereQuestion() or statement.isWhatQuestion() or statement.isHowManyQuestion():
+                nounSubject = [token for token in doc if token.dep_ == "nsubj"][0]
+                if nounSubject.tag_ == "WP":
+                    self.addVariable(fluents, modeBiasFluents)
+                    fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns,
+                                                                              statement, usedTokens)
+                else:
+                    fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns,
+                                                                              statement, usedTokens)
+                    self.addVariable(fluents, modeBiasFluents)
+            else:
+                fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns,
+                                                                          statement, usedTokens)
+        else:
+            fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns, statement,
+                                                                      usedTokens)
+
+        for i in range(0, len(fluents)):
+            for j in range(0, len(fluents[i])):
+                fluents[i][j] += ")"
+                modeBiasFluents[i][j] += ")"
+        statement.setFluents(fluents)
+        statement.setModeBiasFluents(modeBiasFluents)
+        return
+
+    def createMainPortionOfFluent(self, doc, fluents, modeBiasFluents, nouns, statement, usedTokens):
         nounsCopy = nouns.copy()
         for noun in nouns:
-            if noun in nounsCopy:
+            if noun in nounsCopy and noun not in usedTokens:
                 disjunctive = isDisjunctive(noun, doc)
                 conjuncts = [noun] + list(noun.conjuncts)
                 newFluents = []
@@ -106,7 +139,7 @@ class BasicParser:
                         for conjunct in conjuncts:
                             for j in range(0, len(fluents[i])):
                                 newFluent, newMBFluent = self.addNounToFluent(statement, conjunct, fluents[i][j],
-                                                                              modeBiasFluents[i][j], nounsCopy)
+                                                                              modeBiasFluents[i][j], nounsCopy, nouns)
                                 orFluentList.append(newFluent)
                                 orMBFluentList.append(newMBFluent)
                         newFluents.append(orFluentList)
@@ -120,34 +153,26 @@ class BasicParser:
                                 resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
                                                                                           fluents[i][j],
                                                                                           modeBiasFluents[i][j],
-                                                                                          nounsCopy)
+                                                                                          nounsCopy, nouns)
                                 fluents1.append(resultingFluent)
                                 mbfluents1.append(resultingMBFluent)
                             newFluents.append(fluents1)
                             newMBFluents.append(mbfluents1)
                 fluents = newFluents
                 modeBiasFluents = newMBFluents
+        return fluents, modeBiasFluents
 
-        if isinstance(statement, Question):
-            if "where" in statement.getText().lower() or "what" in statement.getText().lower():
-                for i in range(0, len(fluents)):
-                    for j in range(0, len(fluents[i])):
-                        if not fluents[i][j][-1] == '(':
-                            fluents[i][j] += ','
-                            modeBiasFluents[i][j] += ','
-                        fluents[i][j] += "V1"
-                        modeBiasFluents[i][j] += varWrapping('nn')
-
+    def addVariable(self, fluents, modeBiasFluents):
         for i in range(0, len(fluents)):
             for j in range(0, len(fluents[i])):
-                fluents[i][j] += ")"
-                modeBiasFluents[i][j] += ")"
-        statement.setFluents(fluents)
-        statement.setModeBiasFluents(modeBiasFluents)
-        return
+                if not fluents[i][j][-1] == '(':
+                    fluents[i][j] += ','
+                    modeBiasFluents[i][j] += ','
+                fluents[i][j] += "V1"
+                modeBiasFluents[i][j] += varWrapping('nn')
 
-    def createFluentBase(self, doc):
-        # print(statement.getText())
+    def createFluentBase(self, doc, usedTokens, nouns, sentence: Statement):
+
         fluentBase = ""
 
         # get root verb or something similar to it...
@@ -156,27 +181,37 @@ class BasicParser:
         if childVerb:
             root = childVerb[0]
         fluentBase += root.lemma_
-        # print("Fluent Base:", fluentBase)
+        usedTokens.append(root)
 
-        # add modifiers, maybe include comaprators here?
-        verb_modifier = [token for token in doc if token.tag_ == 'JJR' or token.dep_ == "acomp"]
+        verb_modifier = [token for token in doc if
+                         token.tag_ == 'JJR' or token.dep_ == "acomp"]
+        #(token.dep_ == "attr" and token.tag_ != "WP")
+        #if isinstance(sentence, Question):
+        #    verb_modifier = [token for token in doc if
+        #                     (token.dep_ == "advmod" or token.pos_ == "ADV" or token.dep_ == "acomp") and "W" not in token.tag_]
+        #or (token.dep_ == "nsubj" and hasADPChild(token, doc) and len( nouns) == 2))
+        #print(sentence.text, verb_modifier)
+        #for token in verb_modifier:
+        #    print(token.text, token.pos_, token.dep_, token.tag_)
+
+        adposition = [token for token in doc if token.pos_ == "ADP" and (token.head == root or len(nouns) <= 2)]
         if verb_modifier:
             fluentBase += '_' + verb_modifier[0].lemma_
+            ADPModifierChildren = [token for token in doc if token.pos_ == "ADP" and token.head == verb_modifier[0]]
+            if ADPModifierChildren:
+                fluentBase += '_' + ADPModifierChildren[0].lemma_
+                usedTokens.append(ADPModifierChildren[0])
+            usedTokens.append(verb_modifier[0])
         # print("Verb modifiers: ", verb_modifier)
         # add adpositions
-        adposition = [token for token in doc if
-                      token.pos_ == "ADP" and (token.head == root or token.head.pos_ == "ADV")]
+
         # print("Adpositions", adposition)
-        if adposition:
-            # nouns = [token for token in doc if
-            #        token.head == adposition[0] and token.tag_ == 'NN' and hasADPChild(token, doc)]
-            # print("Adposition 0 nouns:", nouns)
-            # if nouns:
-            #    fluentBase += '_' + nouns[0].text.lower()
-            fluentBase += '_' + adposition[0].text.lower()
+        if adposition and adposition[-1] not in usedTokens:
+            fluentBase += '_' + adposition[-1].text.lower()
+            usedTokens.append(adposition[-1])
         return fluentBase
 
-    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns):
+    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns, allNouns):
         # might be able to have a loop here, something like, for choice in fluent.
         tag = noun.tag_.lower()
         # ignore plural
@@ -196,7 +231,7 @@ class BasicParser:
         descriptiveNoun += noun.lemma_.lower()
         for child in children:
             relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
-            if child.pos_ == "ADP" and nouns:
+            if child.pos_ == "ADP" and nouns and len(allNouns) > 2:
                 descriptiveNoun += "_" + child.text.lower() + "_" + relevantNouns[0].text.lower()
                 nouns.remove(nouns[0])
 
@@ -251,8 +286,8 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    trainCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_train")
-    testCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_test")
+    trainCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task4_train")
+    testCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task4_train")
 
     # initialise parser
     parser = BasicParser(trainCorpus, testCorpus)

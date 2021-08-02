@@ -13,7 +13,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # initialise reasoner
     reasoner = Reasoner(trainCorpus)
     # initialise learner
-    learner = Learner(trainCorpus)
+    learner = Learner(trainCorpus, useHints=True)
 
     if isEventCalculusNeeded(trainCorpus):
         trainCorpus.isEventCalculusNeeded = True
@@ -25,6 +25,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     train(trainCorpus, reasoner, learner, numExamples)
     # set hypotheses for testing corpus
     hypotheses = trainCorpus.getHypotheses()
+    testCorpus.setHypotheses(hypotheses)
     # testing data loop
     numQuestions = 0
     numCorrect = 0
@@ -61,10 +62,10 @@ def train(corpus, reasoner, learner, numExamples):
 
 if __name__ == '__main__':
     # process data
-    # trainingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt")
-    # testingReader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt")
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_test"
+    #trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt"
+    #testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)

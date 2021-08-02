@@ -14,7 +14,7 @@ class Question(Statement):
         return self.hints
 
     # TODO might want to fix this so that order does/does not matter when the size is greater than 1 for the answer set
-    #To get around this might just store this in a different way.
+    # To get around this might just store this in a different way.
     def isCorrectAnswer(self, answer):
         return answer == self.answer
 
@@ -25,7 +25,7 @@ class Question(Statement):
             questionWithAnswer.append(example)
         return questionWithAnswer
 
-    def createPartialInterpretation(self, answers, eventCalculusNeeded):
+    def createPartialInterpretation(self, eventCalculusNeeded, answers=None):
         if self.isYesNoMaybeQuestion():
             if eventCalculusNeeded:
                 representation = self.eventCalculusRepresentation[0][0]

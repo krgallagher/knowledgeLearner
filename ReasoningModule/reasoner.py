@@ -3,6 +3,7 @@ import re
 from StoryStructure.Question import Question
 from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange
+from num2words import num2words
 
 
 def createRegularExpression(representation):
@@ -43,7 +44,7 @@ def getAnswer(fullMatch, representation):
 
 # TODO trying to tidy this up today
 
-#TODO rename this since this funciton is used for more than a "where" search
+# TODO rename this since this funciton is used for more than a "where" search
 def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded):
     # create a regular expression
     answers = []
@@ -60,9 +61,8 @@ def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded
             fullMatch = result[0]
             answers.append(getAnswer(fullMatch, representation))
     if eventCalculusRepresentationNeeded:
-        #sort the answers according to time stamp
+        # sort the answers according to time stamp
         pass
-
 
     return answers
 
@@ -93,20 +93,25 @@ def isPossibleAnswer(question: Question, answerSets, eventCalculusRepresentation
 
 
 def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded):
-    if "where" in question.getText().lower() or "what" in question.getText().lower():
+    if question.isWhereQuestion() or question.isWhatQuestion():
         answers = []
         for answerSet in answerSets:
             newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
             answers += newAnswers
         if answers:
             return answers
-            #return [answers[0]]  # just choose the first element of the list
         return ["nothing"]
     elif question.isYesNoMaybeQuestion():
         return isPossibleAnswer(question, answerSets, eventCalculusRepresentationNeeded)
     elif question.isHowManyQuestion():
-
-        return []
+        answers = []
+        for answerSet in answerSets:
+            newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
+            answers += newAnswers
+        if answers:
+            return [num2words(len(answers))]
+        return ["none"]
+    return []
 
 
 def processClingoOutput(output):
@@ -138,8 +143,8 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
-        #file = open(filename, 'r')
-        #for line in file:
+        # file = open(filename, 'r')
+        # for line in file:
         #    print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)

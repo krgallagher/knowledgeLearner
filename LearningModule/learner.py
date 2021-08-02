@@ -9,9 +9,23 @@ from TranslationalModule.basicParser import BasicParser, varWrapping
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
 
+# gives the number of arguments before the event calculus wrapping
+def numberOfArguments(fluent):
+    return len(fluent.split(','))
+
+
+# currently have only
+def addConstraints(modeBiasFluent):
+    constraints = ",(positive"
+    if numberOfArguments(modeBiasFluent) == 2:
+        constraints += ", anti_reflexive)"
+    newMBFluent = modeBiasFluent[:-2]
+    newMBFluent += constraints + ")."
+    return newMBFluent
+
 class Learner:
     def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
-                 cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las"):
+                 cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useHints=False):
         # will probably eventually want to make the default be in the tmp bin, but this is okay for now I think
         self.filename = filename
         self.cachingFile = cachingFile
@@ -20,20 +34,24 @@ class Learner:
         self.previousStoryIndexForIncorrectQuestion = 0  # default to the first story
         self.previousExampleAddedIndex = 0  # the last index that has been added for a positive/negative example
         # need to store the index
+        self.useHints = useHints
 
     def learn(self, question: Question, story: Story, answer, eventCalculusNeeded=True):
         # check if the answer to the question is correct or not
         if question.isCorrectAnswer(answer):
-            if "where" in question.getText().lower() or "what" in question.getText().lower():
-                example = self.createPositiveExample(question, story, eventCalculusNeeded)
-            else:
-                if "yes" in answer or "maybe" in answer:
-                    example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                else:
-                    example = self.createNegativeExample(question, story, eventCalculusNeeded)
-            story.appendExample(example)
+            '''
+             if question.isWhereQuestion() or question.isWhatQuestion():
+                 example = self.createPositiveExample(question, story, eventCalculusNeeded)
+             else:
+                 if "yes" in answer or "maybe" in answer:
+                     example = self.createPositiveExample(question, story, eventCalculusNeeded)
+                 else:
+                     example = self.createNegativeExample(question, story, eventCalculusNeeded)
+             story.appendExample(example)
+             '''
+            pass
         else:
-            if "where" in question.getText().lower() or "what" in question.getText().lower():
+            if question.isWhereQuestion() or question.isWhatQuestion():
                 if answer == ["nothing"]:
                     example = self.createPositiveExample(question, story, eventCalculusNeeded)
                 else:
@@ -73,7 +91,7 @@ class Learner:
 
             print("HYPOTHESES", hypotheses)
             if hypotheses != unsatisfiable:
-                self.corpus.addHypotheses(hypotheses)
+                self.corpus.setHypotheses(hypotheses)
 
             print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
@@ -90,31 +108,21 @@ class Learner:
             return self.createCautiousPositiveExample(question, story, eventCalculusNeeded)
         return self.createBravePositiveExample(question, story, eventCalculusNeeded)
 
-    def createNegativeExample(self, question, story, eventCalculusNeeded, answer=[]):
+    def createNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=None):
         if self.corpus.choiceRulesPresent:
             return self.createCautiousNegativeExample(question, story, eventCalculusNeeded, answer)
         return self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
 
     def createBravePositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
-        positivePortion = question.createPartialInterpretation(question.getAnswer(), eventCalculusNeeded)
+        positivePortion = question.createPartialInterpretation(eventCalculusNeeded, question.getAnswer())
 
         context = self.createContext(question, story, eventCalculusNeeded)
 
         positiveExample = '#pos(' + positivePortion + ',{},' + context + ').'
         return positiveExample
 
-    def createBraveNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=[]):
-        negativeInterpretation = question.createPartialInterpretation(answer, eventCalculusNeeded)
-
-        # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story, eventCalculusNeeded)
-
-        # put it altogether to form the positive example and add the positive example to the story.
-        negativeExample = '#pos(' + '{},' + negativeInterpretation + ',' + context + ').'
-        return negativeExample
-
     def createCautiousPositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
-        positivePortion = question.createPartialInterpretation(question.getAnswer(), eventCalculusNeeded)
+        positivePortion = question.createPartialInterpretation(eventCalculusNeeded, question.getAnswer())
 
         # append all the extra event calculus and other predicates for the context aspect
         context = self.createContext(question, story, eventCalculusNeeded)
@@ -123,8 +131,28 @@ class Learner:
         positiveExample = '#neg(' + '{},' + positivePortion + "," + context + ').'
         return positiveExample
 
-    def createCautiousNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=[]):
-        negativeInterpretation = question.createPartialInterpretation(answer, eventCalculusNeeded)
+    def createBraveNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answers=None):
+        positiveInterpretation = '{}'
+        if not answers:
+            negativeInterpretation = question.createPartialInterpretation(eventCalculusNeeded)
+        else:
+            negativeInterpretation = '{}'
+            for answer in answers:
+                if question.isCorrectAnswer([answer]):
+                    positiveInterpretation = question.createPartialInterpretation(eventCalculusNeeded, [answer])
+                else:
+                    negativeInterpretation = question.createPartialInterpretation(eventCalculusNeeded, [answer])
+
+        # append all the extra event calculus and other predicates for the context aspect
+        context = self.createContext(question, story, eventCalculusNeeded)
+
+        # put it altogether to form the positive example and add the positive example to the story.
+        negativeExample = '#pos(' + positiveInterpretation + ',' + negativeInterpretation + ',' + context + ').'
+        return negativeExample
+
+    # TO DO might want to redo the above so that it works better
+    def createCautiousNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=None):
+        negativeInterpretation = question.createPartialInterpretation(eventCalculusNeeded, answer)
 
         # append all the extra event calculus and other predicates for the context aspect
         context = self.createContext(question, story, eventCalculusNeeded)
@@ -136,12 +164,18 @@ class Learner:
     def createContext(self, question: Question, story: Story, eventCalculusNeeded):
         predicates = set()
         context = '{'
-        for statement in story:
-            if not isinstance(statement, Question):
+        if self.useHints:
+            for hint in question.getHints():
+                statement = story.get(int(hint) - 1)
                 context = self.addRepresentation(statement, context, eventCalculusNeeded)
-            predicates.update(statement.getPredicates())
-            if statement == question:
-                break
+                predicates.update(statement.getPredicates())
+        else:
+            for statement in story:
+                if not isinstance(statement, Question):
+                    context = self.addRepresentation(statement, context, eventCalculusNeeded)
+                predicates.update(statement.getPredicates())
+                if statement == question:
+                    break
         context = self.addPredicates(predicates, context)
         if context[-1] != '{':
             context += '.\n'
@@ -180,7 +214,10 @@ class Learner:
 
         # add in the mode bias
         for bias in self.corpus.modeBias:
-            file.write(bias)
+            biasToAdd = bias
+            if not eventCalculusNeeded:
+                biasToAdd = addConstraints(bias)
+            file.write(biasToAdd)
             file.write('\n')
 
         # might want to make this so it starts with 4 variables and then gradually increases.
@@ -285,13 +322,19 @@ class Learner:
 
 
 if __name__ == '__main__':
+    modeBisFluent = "#modeb(holdsAt(be_in(var(nnp),var(nn)),var(time)))."
+    fluent = "holdsAt(be_in(sandra,kitchen),9)."
+    print(addConstraints(modeBisFluent))
+
     # process data
-    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+    # corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
 
     # initialise parser
-    parser = BasicParser(corpus)
+    # parser = BasicParser(corpus)
 
     # learner
+
+    '''
     learner = Learner(corpus)
     for story in corpus:
         statements = story.getSentences()
@@ -300,3 +343,4 @@ if __name__ == '__main__':
             if isinstance(statement, Question):
                 learner.learn(statement, story, "bedroom")
     print(corpus.getHypotheses())
+    '''

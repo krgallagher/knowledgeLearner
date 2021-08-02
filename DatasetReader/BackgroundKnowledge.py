@@ -7,4 +7,7 @@ def eventCalculusAxioms():
     axioms.add(axiom1)
     axioms.add(axiom2)
     axioms.add(axiom3)
+    #axioms.add(axiom4)
+    #axioms.add(axiom5)
+    #axioms.add(axiom6)
     return axioms

@@ -36,6 +36,8 @@ class ConceptNetIntegration:
                         break
         # if the concepts dictionary is not empty then try and relate these words in another way...
         currentDictionary["leave"] = "drop"
+        #currentDictionary["fit_inside"] = "fit_in"
+        #currentDictionary["fit_in"] = "fit_in"
         conceptsCopy.discard("leave")
         for concept in conceptsCopy:
             self.isMannerOf(concept, currentDictionary)
@@ -106,7 +108,17 @@ class ConceptNetIntegration:
         obj = requests.get(query).json()
         print(obj['edges'])
 
+    #takes fluent bases and checks for antonym relationships
+    def checkForAntonymRelationship(self, fluentBases):
+        for i in range(0, len(fluentBases)):
+            for j in range(i + 1, len(fluentBases)):
+                #if antonymRelationship
+                    #then create add that to a thing to create additional background knowledge based on these antonym relationships
+                pass
+
+        pass
+
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.isRelated("put", "leave"))
+    print(semanticNetwork.isSynonym("be", "be_in"))
