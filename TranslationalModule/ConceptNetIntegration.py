@@ -7,9 +7,11 @@ class ConceptNetIntegration:
         self.synonymQuery = 'query?rel=/r/Synonym&start=/c/en/'
         self.mannerOfQuery = 'query?rel=/r/MannerOf&start=/c/en/'
         self.synonym = 'query?rel=/r/Synonym'
+        self.isArelation = 'query?rel=/r/IsA'
         self.mannerOf = 'query?rel=/r/MannerOf'
         self.relatedTo = 'query?rel=/r/RelatedTo'
         self.start = '&start=/c/en/'
+        self.end = '&end=/c/en/'
         self.node = '&node=/c/en/'
         self.other = '&other=/c/en/'
 
@@ -36,8 +38,8 @@ class ConceptNetIntegration:
                         break
         # if the concepts dictionary is not empty then try and relate these words in another way...
         currentDictionary["leave"] = "drop"
-        #currentDictionary["fit_inside"] = "fit_in"
-        #currentDictionary["fit_in"] = "fit_in"
+        # currentDictionary["fit_inside"] = "fit_in"
+        # currentDictionary["fit_in"] = "fit_in"
         conceptsCopy.discard("leave")
         for concept in conceptsCopy:
             self.isMannerOf(concept, currentDictionary)
@@ -87,7 +89,8 @@ class ConceptNetIntegration:
             end = edge["end"]
             if start["label"].replace(" ", "_") != word and start["language"] == "en":
                 for concept in currentDictionary.keys():
-                    if self.isSynonym(start["label"].replace(" ", "_"), concept) and concept != "get" and concept != "carry":
+                    if self.isSynonym(start["label"].replace(" ", "_"),
+                                      concept) and concept != "get" and concept != "carry":
                         # relations.add(concept)
                         currentDictionary[word] = currentDictionary[concept]
                         print("Success!", start["label"], concept, word)
@@ -108,17 +111,33 @@ class ConceptNetIntegration:
         obj = requests.get(query).json()
         print(obj['edges'])
 
-    #takes fluent bases and checks for antonym relationships
+    # takes fluent bases and checks for antonym relationships
     def checkForAntonymRelationship(self, fluentBases):
         for i in range(0, len(fluentBases)):
             for j in range(i + 1, len(fluentBases)):
-                #if antonymRelationship
-                    #then create add that to a thing to create additional background knowledge based on these antonym relationships
+                # if antonymRelationship
+                # then create add that to a thing to create additional background knowledge based on these antonym relationships
                 pass
-
         pass
+
+    def isA(self, word1, word2, moreSearches=True):
+        start = self.start + word1.replace(" ", "_")
+        other = self.end + word2.replace(" ", "_")
+        query = self.baseAddress + self.isArelation + start + other
+        obj = requests.get(query).json()
+        print(query)
+        if obj['edges']:
+            return True
+        query = self.baseAddress + self.isArelation + start
+        obj = requests.get(query).json()
+        print(obj['edges'])
+        if moreSearches:
+            for edge in obj['edges']:
+                if self.isA(edge['end']['label'], word2, False):
+                    return True
+        return False
 
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.isSynonym("be", "be_in"))
+    print(semanticNetwork.isA("gray", "color"))

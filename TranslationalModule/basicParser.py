@@ -22,6 +22,14 @@ def isDisjunctive(noun, doc):
     return "or" in conjunctives
 
 
+def hasDetChild(token, sentence: Statement):
+    if isinstance(sentence, Question) and not sentence.isYesNoMaybeQuestion():
+        for child in token.children:
+            if child.pos_ == "DET":
+                return True
+    return False
+
+
 class BasicParser:
     def __init__(self, trainCorpus, testCorpus):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
@@ -30,19 +38,48 @@ class BasicParser:
         self.conceptsToExplore = set()
         self.trainCorpus = trainCorpus
         self.testCorpus = testCorpus
+        # self.modifiers = set()
+        # self.determiners = set()
+
+        # Set the doc for the training and testing corpus
+        for story in self.trainCorpus:
+            for sentence in story:
+                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
+        for story in self.testCorpus:
+            for sentence in story:
+                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
+        # -------------------------------------------------
+        '''
+        for story in self.trainCorpus:
+            for sentence in story:
+                modifiers = self.getModifiers(sentence)
+                determiners = self.getDeterminers(sentence)
+                self.modifiers.update(modifiers)
+                self.determiners.update(determiners)
+        for story in self.testCorpus:
+            for sentence in story:
+                modifiers = self.getModifiers(sentence)
+                self.modifiers.update(modifiers)
+                determiners = self.getDeterminers(sentence)
+                self.modifiers.update(modifiers)
+                self.determiners.update(determiners)
+        print(self.determiners)
+        exit(150)
+        '''
+        # -------------------------------------------------
 
         # parse the training set
         for story in self.trainCorpus:
             for sentence in story:
-                self.parse(story, sentence)
+                self.parse(sentence)
 
         # parse the testing set
         for story in self.testCorpus:
             for sentence in story:
-                self.parse(story, sentence)
+                self.parse(sentence)
         # play around with the synonym dictionary
         self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
-        #to be removed at a later point
+        # to be removed at a later point
         if "drop" in self.synonymDictionary.keys():
             self.synonymDictionary["leave"] = self.synonymDictionary["drop"]
         self.updateFluents()
@@ -59,7 +96,7 @@ class BasicParser:
         previousSentence = self.nlp(story.get(previousIndex).getText())
         pronoun = [token for token in currentSentence if token.pos_ == "PRON"]
         properNoun = [token for token in previousSentence if token.pos_ == "PROPN"]
-        if properNoun:
+        if pronoun and properNoun:
             replacementPhrase = properNoun[0].text
             if properNoun[0].conjuncts:  # might want to generalise for or conjuncts as well
                 for noun in properNoun[0].conjuncts:
@@ -67,15 +104,9 @@ class BasicParser:
             return statementText.replace(" " + pronoun[0].text + " ", " " + replacementPhrase + " ")
         return statementText
 
-    def parse(self, story: Story, statement: Statement):
-        doc = self.nlp(statement.getText())
-
+    def parse(self, statement: Statement):
+        doc = statement.doc
         usedTokens = []
-
-        # check for coreferences
-        pronouns = [token for token in doc if token.pos_ == "PRON"]
-        if pronouns:
-            doc = self.nlp(self.coreferenceFinder(statement, story))
 
         # check for negations
         negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
@@ -84,10 +115,12 @@ class BasicParser:
 
         # get the nouns of the sentence
         nouns = [token for token in doc if "NN" in token.tag_]
+
+        nounsAndAdjectiveComplements = [token for token in doc if "NN" in token.tag_ or "JJ" in token.tag_]
         # and token.text.lower() not in fluentBase.split('_')
 
         # creating the fluent base
-        fluentBase = self.createFluentBase(doc, usedTokens, nouns, statement)
+        fluentBase = self.createFluentBase(usedTokens, nouns, statement)
 
         # find the concepts to explore
         conceptsToExplore = set()
@@ -101,20 +134,24 @@ class BasicParser:
 
         if isinstance(statement, Question):
             if statement.isWhereQuestion() or statement.isWhatQuestion() or statement.isHowManyQuestion():
-                nounSubject = [token for token in doc if token.dep_ == "nsubj"][0]
-                if nounSubject.tag_ == "WP":
+                nounSubject = [token for token in doc if token.dep_ == "nsubj"]
+                if nounSubject and nounSubject[0].tag_ == "WP":
                     self.addVariable(fluents, modeBiasFluents)
-                    fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns,
+                    fluents, modeBiasFluents = self.createMainPortionOfFluent(fluents, modeBiasFluents,
+                                                                              nounsAndAdjectiveComplements,
                                                                               statement, usedTokens)
                 else:
-                    fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns,
+                    fluents, modeBiasFluents = self.createMainPortionOfFluent(fluents, modeBiasFluents,
+                                                                              nounsAndAdjectiveComplements,
                                                                               statement, usedTokens)
                     self.addVariable(fluents, modeBiasFluents)
             else:
-                fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns,
+                fluents, modeBiasFluents = self.createMainPortionOfFluent(fluents, modeBiasFluents,
+                                                                          nounsAndAdjectiveComplements,
                                                                           statement, usedTokens)
         else:
-            fluents, modeBiasFluents = self.createMainPortionOfFluent(doc, fluents, modeBiasFluents, nouns, statement,
+            fluents, modeBiasFluents = self.createMainPortionOfFluent(fluents, modeBiasFluents,
+                                                                      nounsAndAdjectiveComplements, statement,
                                                                       usedTokens)
 
         for i in range(0, len(fluents)):
@@ -125,11 +162,15 @@ class BasicParser:
         statement.setModeBiasFluents(modeBiasFluents)
         return
 
-    def createMainPortionOfFluent(self, doc, fluents, modeBiasFluents, nouns, statement, usedTokens):
+    def createMainPortionOfFluent(self, fluents, modeBiasFluents, nouns, statement, usedTokens):
         nounsCopy = nouns.copy()
         for noun in nouns:
+            whDeterminer = [token for token in noun.children if token.tag_ == "WDT"]
+            if whDeterminer:
+                usedTokens.append(noun)
             if noun in nounsCopy and noun not in usedTokens:
-                disjunctive = isDisjunctive(noun, doc)
+                #print(statement.text, nounsCopy)
+                disjunctive = isDisjunctive(noun, statement.doc)
                 conjuncts = [noun] + list(noun.conjuncts)
                 newFluents = []
                 newMBFluents = []
@@ -174,33 +215,32 @@ class BasicParser:
                 fluents[i][j] += "V1"
                 modeBiasFluents[i][j] += varWrapping('nn')
 
-    def createFluentBase(self, doc, usedTokens, nouns, sentence: Statement):
-
+    def createFluentBase(self, usedTokens, nouns, sentence: Statement):
         fluentBase = ""
 
         # get root verb or something similar to it...
-        root = [token for token in doc if token.head == token][0]
+        root = [token for token in sentence.doc if token.head == token][0]
         childVerb = [child for child in root.children if child.pos_ == 'VERB']
         if childVerb:
             root = childVerb[0]
         fluentBase += root.lemma_
         usedTokens.append(root)
 
-        verb_modifier = [token for token in doc if
-                         token.tag_ == 'JJR' or token.dep_ == "acomp"]
-        #(token.dep_ == "attr" and token.tag_ != "WP")
-        #if isinstance(sentence, Question):
-        #    verb_modifier = [token for token in doc if
-        #                     (token.dep_ == "advmod" or token.pos_ == "ADV" or token.dep_ == "acomp") and "W" not in token.tag_]
-        #or (token.dep_ == "nsubj" and hasADPChild(token, doc) and len( nouns) == 2))
-        #print(sentence.text, verb_modifier)
-        #for token in verb_modifier:
-        #    print(token.text, token.pos_, token.dep_, token.tag_)
+        typeDeterminer = [token.lemma_ for token in sentence.doc if hasDetChild(token, sentence)]
+        if typeDeterminer:
+            fluentBase = typeDeterminer[0]
+            return fluentBase
 
-        adposition = [token for token in doc if token.pos_ == "ADP" and (token.head == root or len(nouns) <= 2)]
-        if verb_modifier:
+        verb_modifier = [token for token in sentence.doc if token.tag_ == 'JJR' or token.dep_ == "acomp"]
+
+        adposition = [token for token in sentence.doc if
+                      token.pos_ == "ADP" and (token.head == root or len(nouns) <= 2)]
+
+        # TODO recent addition: only add if the length is greater than or equal to 2.
+        if verb_modifier and (len(nouns) >= 2 or isinstance(sentence, Question)):
             fluentBase += '_' + verb_modifier[0].lemma_
-            ADPModifierChildren = [token for token in doc if token.pos_ == "ADP" and token.head == verb_modifier[0]]
+            ADPModifierChildren = [token for token in sentence.doc if
+                                   token.pos_ == "ADP" and token.head == verb_modifier[0]]
             if ADPModifierChildren:
                 fluentBase += '_' + ADPModifierChildren[0].lemma_
                 usedTokens.append(ADPModifierChildren[0])
@@ -236,7 +276,8 @@ class BasicParser:
             relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
             if child.pos_ == "ADP" and nouns and len(allNouns) > 2:
                 descriptiveNoun += "_" + child.text.lower() + "_" + relevantNouns[0].text.lower()
-                nouns.remove(nouns[0])
+                nouns.remove(relevantNouns[0])
+                #print(nouns)
 
         if fluent[-1] != '(':
             fluent += ','
@@ -285,12 +326,25 @@ class BasicParser:
             for sentence in story:
                 wrap(sentence)
 
+    # might delete these functions
+    def getModifiers(self, sentence):
+        verb_modifier = [token.text for token in sentence.doc if
+                         token.tag_ == 'JJR' or token.dep_ == "acomp" or token.dep_ == "attr"]
+        # print(set(verb_modifier))
+        return set(verb_modifier)
+
+    def getDeterminers(self, sentence):
+        determiners = []
+        if isinstance(sentence, Question):
+            determiners = [token.text for token in sentence.doc if token.tag_ == "DET"]
+        return set(determiners)
+
 
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    trainCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task17_train")
-    testCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task4_train")
+    trainCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+    testCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
 
     # initialise parser
     parser = BasicParser(trainCorpus, testCorpus)

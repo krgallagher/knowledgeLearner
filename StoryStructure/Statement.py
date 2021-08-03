@@ -7,6 +7,7 @@ class Statement:
         self.modeBiasFluents = list(list())
         self.staticPredicates = set()  # might want to rename this to something else
         self.negatedVerb = False
+        self.doc = None  # maybe initialise this in the parser?
 
     def __eq__(self, other):
         return self.text == other.text and self.lineId == other.lineId

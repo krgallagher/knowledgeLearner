@@ -13,7 +13,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # initialise reasoner
     reasoner = Reasoner(trainCorpus)
     # initialise learner
-    learner = Learner(trainCorpus, useHints=False)
+    learner = Learner(trainCorpus, useHints=True)
 
     if isEventCalculusNeeded(trainCorpus):
         trainCorpus.isEventCalculusNeeded = True
@@ -30,7 +30,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     numQuestions = 0
     numCorrect = 0
     print("TEST")
-    #NEED TO REVISE THIS
+    # NEED TO REVISE THIS
     for story in testCorpus:
         for sentence in story:
             if isinstance(sentence, Question):
@@ -64,8 +64,8 @@ if __name__ == '__main__':
     # process data
     #trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt"
     #testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task8_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task8_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)
