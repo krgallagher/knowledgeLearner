@@ -5,7 +5,7 @@ from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
 from TranslationalModule.ExpressivityChecker import createChoiceRule
-from TranslationalModule.basicParser import BasicParser, varWrapping
+from TranslationalModule.BasicParser import BasicParser, varWrapping
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
 

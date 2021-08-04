@@ -14,9 +14,6 @@ class Question(Statement):
     def getHints(self):
         return self.hints
 
-
-
-
     def isCorrectAnswer(self, answer):
         if len(answer) >= 2 and self.isWhatQuestion():
             return set(answer) == set(self.answer)
@@ -73,3 +70,6 @@ class Question(Statement):
 
     def isWhatQuestion(self):
         return "what" in self.text.lower()
+
+    def isWhoQuestion(self):
+        return "who" in self.text.lower()

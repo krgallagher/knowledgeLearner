@@ -3,15 +3,17 @@ from LearningModule.learner import Learner
 from ReasoningModule.reasoner import Reasoner
 from StoryStructure.Question import Question
 from TranslationalModule.ChoiceRulesChecker import choiceRulesPresent
+from TranslationalModule.DatasetParser import DatasetParser
 from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
-from TranslationalModule.basicParser import BasicParser
 
 
 def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # initialise parser
-    parser = BasicParser(trainCorpus, testCorpus)
+    parser = DatasetParser(trainCorpus, testCorpus)
+
     # initialise reasoner
     reasoner = Reasoner(trainCorpus)
+
     # initialise learner
     learner = Learner(trainCorpus, useHints=False)
 
@@ -28,11 +30,12 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # set hypotheses for testing corpus
     hypotheses = trainCorpus.getHypotheses()
 
-    trainCorpus.setHypotheses(hypotheses)
     testCorpus.setHypotheses(hypotheses)
+
     # testing data loop
     numQuestions = 0
     numCorrect = 0
+
     print("TEST")
     # NEED TO REVISE THIS
     for story in testCorpus:
@@ -71,8 +74,8 @@ if __name__ == '__main__':
     # process data
     # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
     # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)

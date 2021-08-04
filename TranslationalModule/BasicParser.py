@@ -24,79 +24,20 @@ def isDisjunctive(noun, doc):
 
 def hasDetChild(token):
     for child in token.children:
-        if child.pos_ == "DET":
+        if child.tag_ == "WDT":
             return True
+        # if child.pos_ == "DET":
+        # return True
     return False
 
 
-
 class BasicParser:
-    def __init__(self, trainCorpus, testCorpus):
+    def __init__(self):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
         self.synonymDictionary = {}
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
-        self.trainCorpus = trainCorpus
-        self.testCorpus = testCorpus
         self.determiningConcepts = {}
-        # self.modifiers = set()
-        # self.determiners = set()
-
-        # Set the doc for the training and testing corpus
-        for story in self.trainCorpus:
-            for sentence in story:
-                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
-        for story in self.testCorpus:
-            for sentence in story:
-                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
-        # -------------------------------------------------
-        '''
-        for story in self.trainCorpus:
-            for sentence in story:
-                modifiers = self.getModifiers(sentence)
-                determiners = self.getDeterminers(sentence)
-                self.modifiers.update(modifiers)
-                self.determiners.update(determiners)
-        for story in self.testCorpus:
-            for sentence in story:
-                modifiers = self.getModifiers(sentence)
-                self.modifiers.update(modifiers)
-                determiners = self.getDeterminers(sentence)
-                self.modifiers.update(modifiers)
-                self.determiners.update(determiners)
-        print(self.determiners)
-        exit(150)
-        '''
-        # -------------------------------------------------
-
-        # parse the training set questions
-        for story in self.trainCorpus:
-            for sentence in story:
-                if isinstance(sentence, Question):
-                    self.parse(sentence)
-        # parse the testing set questions
-        for story in self.testCorpus:
-            for sentence in story:
-                if isinstance(sentence, Question):
-                    self.parse(sentence)
-        for story in self.trainCorpus:
-            for sentence in story:
-                if not isinstance(sentence, Question):
-                    self.parse(sentence)
-            # parse the testing set questions
-        for story in self.testCorpus:
-            for sentence in story:
-                if not isinstance(sentence, Question):
-                    self.parse(sentence)
-
-        # play around with the synonym dictionary
-        self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
-        # to be removed at a later point
-        if "drop" in self.synonymDictionary.keys():
-            self.synonymDictionary["leave"] = self.synonymDictionary["drop"]
-        self.updateFluents()
-        self.setEventCalculusRepresentation()
-        print(self.synonymDictionary)
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         statementText = statement.getText()
@@ -144,7 +85,7 @@ class BasicParser:
         modeBiasFluents = [[fluent]]
 
         if isinstance(statement, Question):
-            if statement.isWhereQuestion() or statement.isWhatQuestion() or statement.isHowManyQuestion():
+            if statement.isWhereQuestion() or statement.isWhatQuestion() or statement.isHowManyQuestion() or statement.isWhoQuestion():
                 nounSubject = [token for token in doc if token.dep_ == "nsubj"]
                 if nounSubject and nounSubject[0].tag_ == "WP":
                     self.addVariable(fluents, modeBiasFluents, statement)
@@ -180,7 +121,6 @@ class BasicParser:
             if whDeterminer:
                 usedTokens.append(noun)
             if noun in nounsCopy and noun not in usedTokens:
-                # print(statement.text, nounsCopy)
                 disjunctive = isDisjunctive(noun, statement.doc)
                 conjuncts = [noun] + list(noun.conjuncts)
                 newFluents = []
@@ -254,7 +194,6 @@ class BasicParser:
 
         adposition = [token for token in sentence.doc if
                       token.pos_ == "ADP" and (token.head == root or len(nouns) <= 2)]
-
         if verb_modifier and (len(nouns) >= 2 or isinstance(sentence, Question)):
             fluentBase += '_' + verb_modifier[0].lemma_
             ADPModifierChildren = [token for token in sentence.doc if
@@ -390,11 +329,11 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_train")
 
     # initialise parser
-    parser = BasicParser(trainCorpus1, testCorpus1)
+    parser = BasicParser()
 
     for story1 in trainCorpus1:
         for sentence1 in story1:

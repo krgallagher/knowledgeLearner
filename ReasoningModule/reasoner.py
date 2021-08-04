@@ -180,9 +180,9 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
-        file = open(filename, 'r')
-        for line in file:
-            print(line)
+        #file = open(filename, 'r')
+        #for line in file:
+        #    print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)
         answerSets = getAnswerSets(filename)
