@@ -1,10 +1,51 @@
 import os
 import re
 from StoryStructure.Question import Question
+from StoryStructure.Story import Story
 from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange
 from num2words import num2words
 
+'''
+def findSpecificAnswer(answers, question, story: Story):
+    if len(answers) == 1:
+        return answers
+    name = question.getFluents()[0][0].split('(')[1].split(',')[0]
+    print("Name", name)
+    animalPredicate = "be(" + name + ",V1)"
+    print("Animal Predicate Finder:", animalPredicate)
+    for sentence in story:
+        pattern = createRegularExpression(animalPredicate)
+        compiledPattern = re.compile(pattern)
+        rule = sentence.getFluents()[0][0]
+        result = compiledPattern.fullmatch(rule)
+        if result:
+            fullMatch = result[0]
+    animal = fullMatch.split(',')[1][:-1]
+    print("Animal:", animal)
+    index = 0
+    for sentence in story:
+        if animal in sentence.text and name not in sentence.text.lower():
+            index = story.getIndex(sentence)
+    animalName = story.get(index).getFluents()[0][0].split('(')[1].split(',')[0]
+    print("Name of previous animal:", animalName)
+    colorPredicate = "be_color(" + animalName + ",V1)"
+    print("Color predicate: ", colorPredicate)
+    answer = None
+    for sentence in story:
+        pattern = createRegularExpression(colorPredicate)
+        compiledPattern = re.compile(pattern)
+        rule = sentence.getFluents()[0][0]
+        result = compiledPattern.fullmatch(rule)
+        if result:
+            fullMatch = result[0]
+            answer = getAnswer(fullMatch, colorPredicate)
+    if answer in answers:
+        return [answer]
+    else:
+        return answers
+    #check if the animal is in a sentences text, and get the index of the last one
+'''
 
 def createRegularExpression(representation):
     # split with left hand parentheses
@@ -86,13 +127,14 @@ def isPossibleAnswer(question: Question, answerSets, eventCalculusRepresentation
         return ["no"]
 
 
-def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded):
+def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded, story):
     if question.isWhereQuestion() or question.isWhatQuestion():
         answers = []
         for answerSet in answerSets:
             newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
             answers += newAnswers
         if answers:
+            #return findSpecificAnswer(answers, question, story)
             return answers
         return ["nothing"]
     elif question.isYesNoMaybeQuestion():
@@ -109,6 +151,7 @@ def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationN
 
 
 def processClingoOutput(output):
+    #print(output)
     answerSets = []
     data = output.split('\n')
     index = 0
@@ -137,15 +180,15 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
-        # file = open(filename, 'r')
-        # for line in file:
-        #    print(line)
+        file = open(filename, 'r')
+        for line in file:
+            print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)
         answerSets = getAnswerSets(filename)
 
         # parse the answer sets accordingly to give an answer
-        answer = searchForAnswer(question, answerSets, eventCalculusNeeded)
+        answer = searchForAnswer(question, answerSets, eventCalculusNeeded, story)
 
         # delete the file
         os.remove(filename)
@@ -193,4 +236,3 @@ class Reasoner:
 
 if __name__ == "__main__":
     answers = ["holdsAt(carry(mary,football),5)"]
-

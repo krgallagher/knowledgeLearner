@@ -6,6 +6,7 @@ class Question(Statement):
         Statement.__init__(self, text, lineId)
         self.answer = answer
         self.hints = hints
+        self.variableTypes = {}
 
     def getAnswer(self):
         return self.answer
@@ -13,8 +14,9 @@ class Question(Statement):
     def getHints(self):
         return self.hints
 
-    # TODO might want to fix this so that order does/does not matter when the size is greater than 1 for the answer set
-    # To get around this might just store this in a different way.
+
+
+
     def isCorrectAnswer(self, answer):
         if len(answer) >= 2 and self.isWhatQuestion():
             return set(answer) == set(self.answer)

@@ -120,20 +120,20 @@ class ConceptNetIntegration:
                 pass
         pass
 
-    def isA(self, word1, word2, moreSearches=True):
-        start = self.start + word1.replace(" ", "_")
-        other = self.end + word2.replace(" ", "_")
+    #could store a dictionary mapping
+
+    def isA(self, word, concept, moreSearches=True):
+        start = self.start + word.replace(" ", "_")
+        other = self.end + concept.replace(" ", "_")
         query = self.baseAddress + self.isArelation + start + other
         obj = requests.get(query).json()
-        print(query)
         if obj['edges']:
             return True
         query = self.baseAddress + self.isArelation + start
         obj = requests.get(query).json()
-        print(obj['edges'])
         if moreSearches:
             for edge in obj['edges']:
-                if self.isA(edge['end']['label'], word2, False):
+                if self.isA(edge['end']['label'], concept, False):
                     return True
         return False
 

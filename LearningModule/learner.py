@@ -23,6 +23,7 @@ def addConstraints(modeBiasFluent):
     newMBFluent += constraints + ")."
     return newMBFluent
 
+
 class Learner:
     def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
                  cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useHints=False):
@@ -211,6 +212,11 @@ class Learner:
             for rule in self.corpus.backgroundKnowledge:
                 file.write(rule)
                 file.write('\n')
+
+        # ---------------------------------------------------------------------------
+        file.write("#modeh(be_color(var(nn),var(color))).\n")
+        file.write("#modeb(be_color(var(nn), var(color))).\n")
+        # ---------------------------------------------------------------------------
 
         # add in the mode bias
         for bias in self.corpus.modeBias:

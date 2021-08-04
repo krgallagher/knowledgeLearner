@@ -13,18 +13,22 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # initialise reasoner
     reasoner = Reasoner(trainCorpus)
     # initialise learner
-    learner = Learner(trainCorpus, useHints=True)
+    learner = Learner(trainCorpus, useHints=False)
 
     if isEventCalculusNeeded(trainCorpus):
         trainCorpus.isEventCalculusNeeded = True
+
     # potentially can add this information into the parser.
     if choiceRulesPresent(trainCorpus):
         trainCorpus.choiceRulesPresent = True
 
     # train the data
     train(trainCorpus, reasoner, learner, numExamples)
+
     # set hypotheses for testing corpus
     hypotheses = trainCorpus.getHypotheses()
+
+    trainCorpus.setHypotheses(hypotheses)
     testCorpus.setHypotheses(hypotheses)
     # testing data loop
     numQuestions = 0
@@ -38,8 +42,11 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
                 answerToQuestion = reasoner.computeAnswer(sentence, story, trainCorpus.isEventCalculusNeeded)
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
-                print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
-                      sentence.getAnswer(), answerToQuestion)
+                else:
+                    print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
+                          sentence.getAnswer(), answerToQuestion, sentence.getHints())
+                    for statement in story:
+                        print(statement.text, statement.getText())
     print("Number Correct: ", numCorrect)
     print("Number of Question: ", numQuestions)
     print("Accuracy: ", numCorrect / numQuestions)  # should theoretically be careful about dividing by zero
@@ -62,10 +69,10 @@ def train(corpus, reasoner, learner, numExamples):
 
 if __name__ == '__main__':
     # process data
-    #trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_train.txt"
-    #testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa6_yes-no-questions_test.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
+    # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
+    # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)
