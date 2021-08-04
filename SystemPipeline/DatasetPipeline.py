@@ -9,7 +9,7 @@ from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
 
 def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
     # initialise parser
-    parser = DatasetParser(trainCorpus, testCorpus)
+    DatasetParser(trainCorpus, testCorpus)
 
     # initialise reasoner
     reasoner = Reasoner(trainCorpus)

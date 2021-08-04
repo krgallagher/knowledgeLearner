@@ -5,6 +5,8 @@ from gtts import gTTS
 import os
 import speech_recognition as sr
 
+from TranslationalModule.InteractiveParser import InteractiveParser
+
 
 class InteractiveSystem:
     def __init__(self, audio=False):
@@ -12,6 +14,7 @@ class InteractiveSystem:
         self.language = "en"  # putting this here to make the code slightly more flexible
         self.corpus = Corpus()
         self.currentStory = Story()
+        self.parser = InteractiveParser()
 
         # get new input
         currentInput = self.getInput(
@@ -42,10 +45,8 @@ class InteractiveSystem:
             elif currentInput.lower() == "print corpus":
                 print(self.corpus)
 
-            # else process the sentence, if possible.
             else:
-                # process the sentence, pass this onto a helper function for clarity
-                pass
+                self.processInput(currentInput)
 
             # get new input
             currentInput = self.getInput()
@@ -86,8 +87,23 @@ class InteractiveSystem:
         else:
             print(currentText)
 
+    def processInput(self, currentInput):
+        # process the sentence
+        sentence = self.parser.createStatement(currentInput, self.currentStory)
+        print(sentence.getText(), sentence.getLineID())
+
+        # do an initial parsing of the sentence
+        self.parser.parse(sentence)
+        print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
+              sentence.getFluents(), sentence.getPredicates(), sentence.getModeBiasFluents())
+
 
 if __name__ == "__main__":
-    system = InteractiveSystem(True)
+    system = InteractiveSystem()
 # TODO: Implement a sort of timer.
 # in order to deal with audio and microphone, might be able to have different functions for printing etc.
+
+
+# --------------------------------------------------
+# Ideas
+# maybe if no punctuation is given then print a "sorry I didn't quite get that message"

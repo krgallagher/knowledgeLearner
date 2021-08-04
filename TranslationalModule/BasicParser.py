@@ -39,6 +39,7 @@ class BasicParser:
         self.conceptsToExplore = set()
         self.determiningConcepts = {}
 
+    # TODO edit this so that if it doesn't find anything in the preceeding sentence then it looks farther back in the story.
     def coreferenceFinder(self, statement: Statement, story: Story):
         statementText = statement.getText()
         index = story.getIndex(statement)
@@ -60,7 +61,6 @@ class BasicParser:
     def parse(self, statement: Statement):
         doc = statement.doc
         usedTokens = []
-
         # check for negations
         negation = [token for token in doc if token.dep_ == 'neg' and token.tag_ == 'RB']
         if negation:
@@ -85,7 +85,9 @@ class BasicParser:
         modeBiasFluents = [[fluent]]
 
         if isinstance(statement, Question):
-            if statement.isWhereQuestion() or statement.isWhatQuestion() or statement.isHowManyQuestion() or statement.isWhoQuestion():
+            # if statement.isWhereQuestion() or statement.isWhatQuestion() or statement.isHowManyQuestion()
+            # or statement.isWhoQuestion():
+            if not statement.isYesNoMaybeQuestion():
                 nounSubject = [token for token in doc if token.dep_ == "nsubj"]
                 if nounSubject and nounSubject[0].tag_ == "WP":
                     self.addVariable(fluents, modeBiasFluents, statement)
@@ -178,8 +180,7 @@ class BasicParser:
         fluentBase += root.lemma_
         usedTokens.append(root)
 
-        # there may be a better way to do this, but let's just do this for now.
-        # -----------------------------------------------
+
         if isinstance(sentence, Question) and not sentence.isYesNoMaybeQuestion():
             typeDeterminer = [token.lemma_ for token in sentence.doc if hasDetChild(token)]
             if typeDeterminer:
