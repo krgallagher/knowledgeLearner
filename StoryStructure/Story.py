@@ -43,8 +43,10 @@ class Story:
         return StoryIterator(self)
 
     def __str__(self):
+        sentenceRepresentation = ""
         for sentence in self.sentences:
-            print(sentence)
+            sentenceRepresentation += str(sentence) + " "
+        return sentenceRepresentation
 
 
 # iterator class

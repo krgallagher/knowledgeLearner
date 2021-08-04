@@ -60,8 +60,10 @@ class Corpus:
         return self.stories[index]
 
     def __str__(self):
+        sentenceRepresentation = ""
         for story in self.stories:
-            print(story)
+            sentenceRepresentation += str(story) + "\n\n"
+        return sentenceRepresentation
 
 
 class CorpusIterator:

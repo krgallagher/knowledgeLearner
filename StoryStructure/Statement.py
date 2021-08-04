@@ -43,4 +43,4 @@ class Statement:
         return self.staticPredicates
 
     def __str__(self):
-        print(self.text)
+        return self.text
