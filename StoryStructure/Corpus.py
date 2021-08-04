@@ -59,6 +59,11 @@ class Corpus:
     def get(self, index):
         return self.stories[index]
 
+    def __str__(self):
+        for story in self.stories:
+            print(story)
+
+
 class CorpusIterator:
     ''' Iterator class '''
 

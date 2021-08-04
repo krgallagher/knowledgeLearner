@@ -41,3 +41,6 @@ class Statement:
 
     def getPredicates(self):
         return self.staticPredicates
+
+    def __str__(self):
+        print(self.text)

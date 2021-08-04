@@ -42,6 +42,10 @@ class Story:
         ''' Returns the Iterator object '''
         return StoryIterator(self)
 
+    def __str__(self):
+        for sentence in self.sentences:
+            print(sentence)
+
 
 # iterator class
 class StoryIterator:
