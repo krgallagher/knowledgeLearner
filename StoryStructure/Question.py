@@ -65,7 +65,8 @@ class Question(Statement):
     def isYesNoMaybeQuestion(self):
         if self.answer:
             return "yes" in self.answer or "no" in self.answer or "maybe" in self.answer
-        firstWord = self.text.split()[0].lower()
+        #need to get the token here.
+        firstWord = self.doc[0].lemma_.lower()
         # TODO check for modal or auxiliary verbs (right now we are only checking for auxiliary verbs)
         return firstWord == "be" or firstWord == "do" or firstWord == "have"
 

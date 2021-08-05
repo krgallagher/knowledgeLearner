@@ -66,16 +66,18 @@ def train(corpus, reasoner, learner, numExamples):
                     return
                 answerToQuestion = reasoner.computeAnswer(sentence, story, corpus.isEventCalculusNeeded)
                 print(answerToQuestion, sentence.getAnswer(), sentence.getText(), sentence.getLineID())
-                learner.learn(sentence, story, answerToQuestion, corpus.isEventCalculusNeeded)
                 count += 1
+                if not sentence.isCorrectAnswer(answerToQuestion):
+                    learner.learn(sentence, story, answerToQuestion, corpus.isEventCalculusNeeded)
+
 
 
 if __name__ == '__main__':
     # process data
     # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
     # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)

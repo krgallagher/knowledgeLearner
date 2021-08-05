@@ -17,7 +17,7 @@ def convertListToString(answerToQuestion):
     stringAnswer = ""
     for index in range(0, len(answerToQuestion)):
         stringAnswer += answerToQuestion[index] + " "
-        if index != len(answerToQuestion - 1):
+        if index != len(answerToQuestion) - 1:
             stringAnswer += "and "
     return stringAnswer
 
@@ -132,7 +132,6 @@ class InteractiveSystem:
         if isinstance(sentence, Question):
             answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)
 
-            incorrectAnswer = []
             if answerToQuestion:
                 currentInput = self.getInput(convertListToString(answerToQuestion) + "\nIs this correct?\n")
                 if "y" in currentInput:

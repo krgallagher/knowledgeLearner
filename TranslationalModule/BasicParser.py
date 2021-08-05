@@ -5,6 +5,7 @@ from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 
+
 # maybe go through at the beginning and grab 'similar terms' and try to parse
 
 def varWrapping(tag):
@@ -24,8 +25,6 @@ def hasDetChild(token):
     for child in token.children:
         if child.tag_ == "WDT":
             return True
-        # if child.pos_ == "DET":
-        # return True
     return False
 
 
@@ -37,7 +36,34 @@ class BasicParser:
         self.conceptsToExplore = set()
         self.determiningConcepts = {}
 
-    # TODO edit this so that if it doesn't find anything in the preceeding sentence then it looks farther back in the story.
+    # ---------------------------------------------------------
+    # what should the return type be?
+    # could be none or a tuple with the "most likely candidates for what is being coreferenced
+    # from the previous sentences in the particular story
+    # most likely comes first?
+    # otherwise we can just have this return none
+
+    # for later-- check this out to see if it is actually working, for the coreferencer for the automatic system,
+    # can just call the subclass and do the substitution there
+    def coreferenceFinder2(self, statement: Statement, story: Story):
+        index = story.getIndex(statement)
+        pronoun = [token for token in statement.doc if token.pos_ == "PRON"]
+        if index == 0 or not pronoun:
+            return None
+        possibleReferences = []
+
+        for i in range(0, index - 1):
+            properNoun = [token for token in story.get(index - 1 - i).doc if token.pos_ == "PROPN"]
+            if properNoun:
+                replacementPhrase = properNoun[0].text
+                if properNoun[0].conjuncts:
+                    for noun in properNoun[0].conjuncts:
+                        replacementPhrase += " and " + noun.text
+                possibleReferences.append(replacementPhrase)
+        return pronoun[0], possibleReferences
+
+    # ---------------------------------------------------------
+
     def coreferenceFinder(self, statement: Statement, story: Story):
         statementText = statement.getText()
         index = story.getIndex(statement)
@@ -178,7 +204,6 @@ class BasicParser:
         fluentBase += root.lemma_
         usedTokens.append(root)
 
-
         if isinstance(sentence, Question) and not sentence.isYesNoMaybeQuestion():
             typeDeterminer = [token.lemma_ for token in sentence.doc if hasDetChild(token)]
             if typeDeterminer:
@@ -294,8 +319,6 @@ class BasicParser:
                 currentFluents.append(updatedFluent)
             newFluents.append(currentFluents)
         return newFluents
-
-
 
     # might delete these functions
     def getModifiers(self, sentence):
