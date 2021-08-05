@@ -36,51 +36,23 @@ class BasicParser:
         self.conceptsToExplore = set()
         self.determiningConcepts = {}
 
-    # ---------------------------------------------------------
-    # what should the return type be?
-    # could be none or a tuple with the "most likely candidates for what is being coreferenced
-    # from the previous sentences in the particular story
-    # most likely comes first?
-    # otherwise we can just have this return none
-
-    # for later-- check this out to see if it is actually working, for the coreferencer for the automatic system,
-    # can just call the subclass and do the substitution there
-    def coreferenceFinder2(self, statement: Statement, story: Story):
+    def coreferenceFinder(self, statement: Statement, story: Story):
         index = story.getIndex(statement)
-        pronoun = [token for token in statement.doc if token.pos_ == "PRON"]
+        sentenceDoc = self.nlp(statement.text)
+        pronoun = [token for token in sentenceDoc if token.pos_ == "PRON"]
         if index == 0 or not pronoun:
-            return None
+            return None, []
         possibleReferences = []
-
-        for i in range(0, index - 1):
-            properNoun = [token for token in story.get(index - 1 - i).doc if token.pos_ == "PROPN"]
+        for i in range(0, index):
+            currentSentenceDoc = self.nlp(story.get(index - i - 1).text)
+            properNoun = [token for token in currentSentenceDoc if token.pos_ == "PROPN"]
             if properNoun:
                 replacementPhrase = properNoun[0].text
                 if properNoun[0].conjuncts:
                     for noun in properNoun[0].conjuncts:
                         replacementPhrase += " and " + noun.text
                 possibleReferences.append(replacementPhrase)
-        return pronoun[0], possibleReferences
-
-    # ---------------------------------------------------------
-
-    def coreferenceFinder(self, statement: Statement, story: Story):
-        statementText = statement.getText()
-        index = story.getIndex(statement)
-        if index == 0:
-            return statementText
-        previousIndex = index - 1
-        currentSentence = self.nlp(statementText)
-        previousSentence = self.nlp(story.get(previousIndex).getText())
-        pronoun = [token for token in currentSentence if token.pos_ == "PRON"]
-        properNoun = [token for token in previousSentence if token.pos_ == "PROPN"]
-        if pronoun and properNoun:
-            replacementPhrase = properNoun[0].text
-            if properNoun[0].conjuncts:
-                for noun in properNoun[0].conjuncts:
-                    replacementPhrase += " and " + noun.text
-            return statementText.replace(" " + pronoun[0].text + " ", " " + replacementPhrase + " ")
-        return statementText
+        return pronoun[0].text, possibleReferences
 
     def parse(self, statement: Statement):
         doc = statement.doc
