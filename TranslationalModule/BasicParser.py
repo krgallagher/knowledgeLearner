@@ -4,8 +4,6 @@ from StoryStructure import Story
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from TranslationalModule.EventCalculus import wrap
-
 
 # maybe go through at the beginning and grab 'similar terms' and try to parse
 

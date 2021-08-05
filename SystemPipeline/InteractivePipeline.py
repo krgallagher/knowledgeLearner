@@ -1,5 +1,4 @@
 import speech_recognition
-
 from LearningModule.learner import Learner
 from ReasoningModule.reasoner import Reasoner
 from StoryStructure.Corpus import Corpus
@@ -8,12 +7,20 @@ from StoryStructure.Story import Story
 from gtts import gTTS
 import os
 import speech_recognition as sr
-
 from TranslationalModule.EventCalculus import wrap
 from TranslationalModule.InteractiveParser import InteractiveParser
 
 
 # TODO think about when I am adding the story to the corpus
+
+def convertListToString(answerToQuestion):
+    stringAnswer = ""
+    for index in range(0, len(answerToQuestion)):
+        stringAnswer += answerToQuestion[index] + " "
+        if index != len(answerToQuestion - 1):
+            stringAnswer += "and "
+    return stringAnswer
+
 
 class InteractiveSystem:
     def __init__(self, audio=False):
@@ -125,31 +132,21 @@ class InteractiveSystem:
         if isinstance(sentence, Question):
             answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)
 
+            incorrectAnswer = []
             if answerToQuestion:
-
-                currentInput = self.getInput(self.convertListToString(answerToQuestion) + "\nIs this correct?\n")
-
+                currentInput = self.getInput(convertListToString(answerToQuestion) + "\nIs this correct?\n")
                 if "y" in currentInput:
                     return
-                currentInput = self.getInput("\nPlease tell me the answer.\n")
+                currentInput = self.getInput("\nPlease tell me the answer: " + sentence.text + "\n")
             else:
                 currentInput = self.getInput("I do not know. Please tell me.\n")
 
             sentence.setAnswer([currentInput])
-            self.learner.learn(sentence, self.currentStory, ["nothing"])
-
-        # output the answer
-        # if answer is wrong etc...
-
-    def convertListToString(self, answerToQuestion):
-        stringAnswer = ""
-        for answer in answerToQuestion:
-            stringAnswer += answer + "\n"
-        return stringAnswer
+            self.learner.learn(sentence, self.currentStory, answerToQuestion)
 
 
 if __name__ == "__main__":
-    system = InteractiveSystem()
+    system = InteractiveSystem(False)
 # TODO: Implement a sort of timer.
 # in order to deal with audio and microphone, might be able to have different functions for printing etc.
 

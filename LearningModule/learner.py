@@ -43,7 +43,7 @@ class Learner:
     # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer, eventCalculusNeeded=True):
         if question.isWhereQuestion() or question.isWhatQuestion():
-            if answer == ["nothing"] or answer == []:
+            if answer == ["nothing"] or not answer or question.isCorrectAnswer(answer):
                 example = self.createPositiveExample(question, story, eventCalculusNeeded)
             else:
                 example = self.createNegativeExample(question, story, eventCalculusNeeded, answer)
