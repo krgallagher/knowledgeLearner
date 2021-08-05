@@ -126,8 +126,8 @@ class InteractiveSystem:
             answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)
 
             if answerToQuestion:
-                # need to figure out the string/list situation
-                currentInput = self.getInput(answerToQuestion + "\nIs this correct?\n")
+
+                currentInput = self.getInput(self.convertListToString(answerToQuestion) + "\nIs this correct?\n")
 
                 if "y" in currentInput:
                     return
@@ -140,6 +140,12 @@ class InteractiveSystem:
 
         # output the answer
         # if answer is wrong etc...
+
+    def convertListToString(self, answerToQuestion):
+        stringAnswer = ""
+        for answer in answerToQuestion:
+            stringAnswer += answer + "\n"
+        return stringAnswer
 
 
 if __name__ == "__main__":
