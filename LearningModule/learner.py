@@ -8,7 +8,8 @@ from TranslationalModule.ExpressivityChecker import createChoiceRule
 from TranslationalModule.BasicParser import BasicParser, varWrapping
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
-#Refactor learner, do not need the event calculus
+
+# Refactor learner, do not need the event calculus
 
 
 # gives the number of arguments before the event calculus wrapping
@@ -39,64 +40,51 @@ class Learner:
         # need to store the index
         self.useHints = useHints
 
+    # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer, eventCalculusNeeded=True):
-        # check if the answer to the question is correct or not
-        if question.isCorrectAnswer(answer):
-            '''
-             if question.isWhereQuestion() or question.isWhatQuestion():
-                 example = self.createPositiveExample(question, story, eventCalculusNeeded)
-             else:
-                 if "yes" in answer or "maybe" in answer:
-                     example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                 else:
-                     example = self.createNegativeExample(question, story, eventCalculusNeeded)
-             story.appendExample(example)
-             '''
-            pass
+        if question.isWhereQuestion() or question.isWhatQuestion():
+            if answer == ["nothing"] or answer == []:
+                example = self.createPositiveExample(question, story, eventCalculusNeeded)
+            else:
+                example = self.createNegativeExample(question, story, eventCalculusNeeded, answer)
         else:
-            if question.isWhereQuestion() or question.isWhatQuestion():
-                if answer == ["nothing"]:
-                    example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                else:
-                    example = self.createNegativeExample(question, story, eventCalculusNeeded, answer)
+            if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
+                example = self.createPositiveExample(question, story, eventCalculusNeeded)
             else:
-                if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
-                    example = self.createPositiveExample(question, story, eventCalculusNeeded)
-                else:
-                    example = self.createNegativeExample(question, story, eventCalculusNeeded)
-            story.appendExample(example)
+                example = self.createNegativeExample(question, story, eventCalculusNeeded)
+        story.appendExample(example)
 
-            # possibly refactor this bit.
-            unsatisfiable = set()
-            unsatisfiable.add("UNSATISFIABLE")
+        # possibly refactor this bit.
+        unsatisfiable = set()
+        unsatisfiable.add("UNSATISFIABLE")
 
-            # store the old mode bias
-            self.oldModeBias = self.corpus.modeBias.copy()
+        # store the old mode bias
+        self.oldModeBias = self.corpus.modeBias.copy()
 
-            # update the old mode bias.
-            self.updateModeBias(story, question)
+        # update the old mode bias.
+        self.updateModeBias(story, question)
 
-            if self.oldModeBias == self.corpus.modeBias:
-                self.appendExamplesToLearningFile(story)
-            else:
-                if os.path.exists(self.cachingFile):
-                    os.remove(self.cachingFile)
-                self.createLearningFile(eventCalculusNeeded)
+        if self.oldModeBias == self.corpus.modeBias:
+            self.appendExamplesToLearningFile(story)
+        else:
+            if os.path.exists(self.cachingFile):
+                os.remove(self.cachingFile)
+            self.createLearningFile(eventCalculusNeeded)
 
-            # update the index of the previous story to have a question wrong.
-            self.previousStoryIndexForIncorrectQuestion = self.corpus.getIndex(story)
+        # update the index of the previous story to have a question wrong.
+        self.previousStoryIndexForIncorrectQuestion = self.corpus.getIndex(story)
 
-            file = open(self.filename, 'r')
-            for line in file:
-                print(line)
+        file = open(self.filename, 'r')
+        for line in file:
+            print(line)
 
-            hypotheses = self.solveILASPtask()
+        hypotheses = self.solveILASPtask()
 
-            print("HYPOTHESES", hypotheses)
-            if hypotheses != unsatisfiable:
-                self.corpus.setHypotheses(hypotheses)
+        print("HYPOTHESES", hypotheses)
+        if hypotheses != unsatisfiable:
+            self.corpus.setHypotheses(hypotheses)
 
-            print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
+        print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
     # TODO uncomment this later on and remove the pass
     def __del__(self):
