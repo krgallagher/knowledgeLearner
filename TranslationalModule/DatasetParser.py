@@ -1,5 +1,6 @@
 from StoryStructure.Question import Question
 from TranslationalModule.BasicParser import BasicParser
+from TranslationalModule.EventCalculus import wrap
 
 
 class DatasetParser(BasicParser):
@@ -44,3 +45,11 @@ class DatasetParser(BasicParser):
         self.updateFluents()
         self.setEventCalculusRepresentation()
         print(self.synonymDictionary)
+
+    def setEventCalculusRepresentation(self):
+        for story in self.trainCorpus:
+            for sentence in story:
+                wrap(sentence)
+        for story in self.testCorpus:
+            for sentence in story:
+                wrap(sentence)

@@ -1,6 +1,6 @@
 import os
 from DatasetReader.bAbIReader import bAbIReader
-from StoryStructure import Sentence
+from StoryStructure import Statement
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
@@ -9,7 +9,7 @@ from Utilities.ILASPSyntax import createTimeRange
 
 
 # TODO change the way we work with yes/no questions for the expressivity constraints etc.
-def createExpressivityConstraint(sentence: Sentence, questionWithAnswers):
+def createExpressivityConstraint(sentence: Statement, questionWithAnswers):
     constraint = ":- "
     for predicate in questionWithAnswers:
         if questionWithAnswers.index(predicate) != 0:
@@ -94,8 +94,8 @@ def isEventCalculusNeeded(corpus: Corpus):
         # create a clingo file that evaluates the expressivitiy of the corpus
         filename = createExpressivityClingoFile(story, corpus)
 
-        #file = open(filename, 'r')
-        #for line in file:
+        # file = open(filename, 'r')
+        # for line in file:
         #    print(line)
 
         # run the file with clingo

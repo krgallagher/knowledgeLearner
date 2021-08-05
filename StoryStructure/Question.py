@@ -11,6 +11,9 @@ class Question(Statement):
     def getAnswer(self):
         return self.answer
 
+    def setAnswer(self, answer):
+        self.answer = answer
+
     def getHints(self):
         return self.hints
 

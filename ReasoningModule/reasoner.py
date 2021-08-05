@@ -47,6 +47,7 @@ def findSpecificAnswer(answers, question, story: Story):
     #check if the animal is in a sentences text, and get the index of the last one
 '''
 
+
 def createRegularExpression(representation):
     # split with left hand parentheses
     leftSplit = representation.split('(')
@@ -134,9 +135,12 @@ def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationN
             newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
             answers += newAnswers
         if answers:
-            #return findSpecificAnswer(answers, question, story)
+            # return findSpecificAnswer(answers, question, story)
             return answers
-        return ["nothing"]
+        if question.isWhatQuestion():
+            return ["nothing"]
+        else:
+            return []
     elif question.isYesNoMaybeQuestion():
         return isPossibleAnswer(question, answerSets, eventCalculusRepresentationNeeded)
     elif question.isHowManyQuestion():
@@ -151,7 +155,7 @@ def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationN
 
 
 def processClingoOutput(output):
-    #print(output)
+    # print(output)
     answerSets = []
     data = output.split('\n')
     index = 0
@@ -180,8 +184,8 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story, eventCalculusNeeded)
 
-        #file = open(filename, 'r')
-        #for line in file:
+        # file = open(filename, 'r')
+        # for line in file:
         #    print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)

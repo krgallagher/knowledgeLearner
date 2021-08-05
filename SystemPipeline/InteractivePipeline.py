@@ -1,12 +1,19 @@
 import speech_recognition
+
+from LearningModule.learner import Learner
+from ReasoningModule.reasoner import Reasoner
 from StoryStructure.Corpus import Corpus
+from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 from gtts import gTTS
 import os
 import speech_recognition as sr
 
+from TranslationalModule.EventCalculus import wrap
 from TranslationalModule.InteractiveParser import InteractiveParser
 
+
+# TODO think about when I am adding the story to the corpus
 
 class InteractiveSystem:
     def __init__(self, audio=False):
@@ -15,6 +22,14 @@ class InteractiveSystem:
         self.corpus = Corpus()
         self.currentStory = Story()
         self.parser = InteractiveParser()
+        self.reasoner = Reasoner(self.corpus)
+        self.learner = Learner(self.corpus)
+
+        # append the first story
+        self.corpus.append(self.currentStory)
+
+        # set the event calculus needed
+        self.corpus.isEventCalculusNeeded = True
 
         # get new input
         currentInput = self.getInput(
@@ -32,7 +47,6 @@ class InteractiveSystem:
 
             elif currentInput.lower() == "new story":
                 if len(self.currentStory) > 0:
-                    self.corpus.append(self.currentStory)  # will have to check later that this works correctly.
                     self.currentStory = Story()
                 print("Tell me a new story.")
 
@@ -49,7 +63,7 @@ class InteractiveSystem:
                 self.processInput(currentInput)
 
             # get new input
-            currentInput = self.getInput()
+            currentInput = self.getInput("Please continue your story.\n")
 
     def printHelpMenu(self):
         print("****************Help Menu****************")
@@ -92,10 +106,40 @@ class InteractiveSystem:
         sentence = self.parser.createStatement(currentInput, self.currentStory)
         print(sentence.getText(), sentence.getLineID())
 
+        # do coreferencing here and have it be interactive.
+
         # do an initial parsing of the sentence
         self.parser.parse(sentence)
+
+        # search for synonyms -- will likely need to create a new component for this since it is interactive
+
+        # update fluents
+
+        # set event calculus representation
+        wrap(sentence)
+
         print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
               sentence.getFluents(), sentence.getPredicates(), sentence.getModeBiasFluents())
+
+        # if it is a question, then use the reasoner
+        if isinstance(sentence, Question):
+            answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)
+
+            if answerToQuestion:
+                # need to figure out the string/list situation
+                currentInput = self.getInput(answerToQuestion + "\nIs this correct?\n")
+
+                if "y" in currentInput:
+                    return
+                currentInput = self.getInput("\nPlease tell me the answer.\n")
+            else:
+                currentInput = self.getInput("I do not know. Please tell me.\n")
+
+            sentence.setAnswer([currentInput])
+            self.learner.learn(sentence, self.currentStory, ["nothing"])
+
+        # output the answer
+        # if answer is wrong etc...
 
 
 if __name__ == "__main__":
@@ -106,4 +150,6 @@ if __name__ == "__main__":
 
 # --------------------------------------------------
 # Ideas
+
+# assume that the event calculus is needed? Not sure how to deal with this here.
 # maybe if no punctuation is given then print a "sorry I didn't quite get that message"

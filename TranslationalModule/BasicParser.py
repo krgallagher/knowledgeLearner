@@ -52,7 +52,7 @@ class BasicParser:
         properNoun = [token for token in previousSentence if token.pos_ == "PROPN"]
         if pronoun and properNoun:
             replacementPhrase = properNoun[0].text
-            if properNoun[0].conjuncts:  # might want to generalise for or conjuncts as well
+            if properNoun[0].conjuncts:
                 for noun in properNoun[0].conjuncts:
                     replacementPhrase += " and " + noun.text
             return statementText.replace(" " + pronoun[0].text + " ", " " + replacementPhrase + " ")
@@ -297,13 +297,7 @@ class BasicParser:
             newFluents.append(currentFluents)
         return newFluents
 
-    def setEventCalculusRepresentation(self):
-        for story in self.trainCorpus:
-            for sentence in story:
-                wrap(sentence)
-        for story in self.testCorpus:
-            for sentence in story:
-                wrap(sentence)
+
 
     # might delete these functions
     def getModifiers(self, sentence):

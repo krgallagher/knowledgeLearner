@@ -8,6 +8,8 @@ from TranslationalModule.ExpressivityChecker import createChoiceRule
 from TranslationalModule.BasicParser import BasicParser, varWrapping
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
 
+#Refactor learner, do not need the event calculus
+
 
 # gives the number of arguments before the event calculus wrapping
 def numberOfArguments(fluent):
