@@ -1,10 +1,10 @@
 import os
 import re
+from num2words import num2words
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange
-from num2words import num2words
 
 '''
 def findSpecificAnswer(answers, question, story: Story):
@@ -84,76 +84,6 @@ def getAnswer(fullMatch, representation):
     return None
 
 
-# TODO rename this since this funciton is used for more than a "where" search
-def whereSearch(question: Question, answerSet, eventCalculusRepresentationNeeded):
-    # create a regular expression
-    answers = []
-    if eventCalculusRepresentationNeeded:
-        representation = question.getEventCalculusRepresentation()[0][0]
-    else:
-        representation = question.getFluents()[0][0]
-    representation = representation
-    pattern = createRegularExpression(representation)
-    compiledPattern = re.compile(pattern)
-    for rule in answerSet:
-        result = compiledPattern.fullmatch(rule)
-        if result:
-            fullMatch = result[0]
-            answers.append(getAnswer(fullMatch, representation))
-    return answers
-
-
-# TODO edit this to have both the event calculus and non-event calculus representation taken into account
-def isPossibleAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded):
-    # create regular expression pattern to be matched
-    if eventCalculusRepresentationNeeded:
-        representation = question.getEventCalculusRepresentation()[0][0]
-    else:
-        representation = question.getFluents()[0][0]
-    representation = representation
-    pattern = createRegularExpression(representation)
-    compiledPattern = re.compile(pattern)
-    numAnswerSetsIn = 0
-    for answerSet in answerSets:
-        for rule in answerSet:
-            result = compiledPattern.fullmatch(rule)
-            if result:
-                numAnswerSetsIn += 1
-                break
-    if numAnswerSetsIn == len(answerSets):
-        return ["yes"]
-    elif numAnswerSetsIn >= 1:
-        return ["maybe"]
-    else:
-        return ["no"]
-
-
-def searchForAnswer(question: Question, answerSets, eventCalculusRepresentationNeeded, story):
-    if question.isWhereQuestion() or question.isWhatQuestion():
-        answers = []
-        for answerSet in answerSets:
-            newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
-            answers += newAnswers
-        if answers:
-            # return findSpecificAnswer(answers, question, story)
-            return answers
-        if question.isWhatQuestion():
-            return ["nothing"]
-        else:
-            return []
-    elif question.isYesNoMaybeQuestion():
-        return isPossibleAnswer(question, answerSets, eventCalculusRepresentationNeeded)
-    elif question.isHowManyQuestion():
-        answers = []
-        for answerSet in answerSets:
-            newAnswers = whereSearch(question, answerSet, eventCalculusRepresentationNeeded)
-            answers += newAnswers
-        if answers:
-            return [num2words(len(answers))]
-        return ["none"]
-    return []
-
-
 def processClingoOutput(output):
     # print(output)
     answerSets = []
@@ -180,9 +110,9 @@ class Reasoner:
     def __init__(self, corpus):
         self.corpus = corpus
 
-    def computeAnswer(self, question, story, eventCalculusNeeded=True):
+    def computeAnswer(self, question, story):
         # create Clingo file
-        filename = self.createClingoFile(question, story, eventCalculusNeeded)
+        filename = self.createClingoFile(question, story)
 
         # file = open(filename, 'r')
         # for line in file:
@@ -192,14 +122,14 @@ class Reasoner:
         answerSets = getAnswerSets(filename)
 
         # parse the answer sets accordingly to give an answer
-        answer = searchForAnswer(question, answerSets, eventCalculusNeeded, story)
+        answer = self.searchForAnswer(question, answerSets)
 
         # delete the file
         os.remove(filename)
 
         return answer
 
-    def createClingoFile(self, question, story, eventCalculusNeeded):
+    def createClingoFile(self, question, story: Story):
         filename = '/tmp/ClingoFile.las'
         temp = open(filename, 'w')
 
@@ -217,7 +147,7 @@ class Reasoner:
         # add in the statements from the story
         for statement in story:
             if not isinstance(statement, Question):
-                if eventCalculusNeeded:
+                if self.corpus.isEventCalculusNeeded:
                     representation = statement.getEventCalculusRepresentation()
                 else:
                     representation = statement.getFluents()
@@ -237,6 +167,66 @@ class Reasoner:
         temp.close()
         return filename
 
+    def searchForAnswer(self, question: Question, answerSets):
+        if question.isWhereQuestion() or question.isWhatQuestion():
+            answers = []
+            for answerSet in answerSets:
+                newAnswers = self.whereSearch(question, answerSet)
+                answers += newAnswers
+            if answers:
+                return answers
+            if question.isWhatQuestion():
+                return ["nothing"]
+            else:
+                return []
+        elif question.isYesNoMaybeQuestion():
+            return self.isPossibleAnswer(question, answerSets)
+        elif question.isHowManyQuestion():
+            answers = []
+            for answerSet in answerSets:
+                newAnswers = self.whereSearch(question, answerSet)
+                answers += newAnswers
+            if answers:
+                return [num2words(len(answers))]
+            return ["none"]
+        return []
 
-if __name__ == "__main__":
-    answers = ["holdsAt(carry(mary,football),5)"]
+    # TODO rename this since this funciton is used for more than a "where" search
+    def whereSearch(self, question: Question, answerSet):
+        # create a regular expression
+        answers = []
+        if self.corpus.isEventCalculusNeeded:
+            representation = question.getEventCalculusRepresentation()[0][0]
+        else:
+            representation = question.getFluents()[0][0]
+        pattern = createRegularExpression(representation)
+        compiledPattern = re.compile(pattern)
+        for rule in answerSet:
+            result = compiledPattern.fullmatch(rule)
+            if result:
+                fullMatch = result[0]
+                answers.append(getAnswer(fullMatch, representation))
+        return answers
+
+    # TODO edit this to have both the event calculus and non-event calculus representation taken into account
+    def isPossibleAnswer(self, question: Question, answerSets):
+        # create regular expression pattern to be matched
+        if self.corpus.isEventCalculusNeeded:
+            representation = question.getEventCalculusRepresentation()[0][0]
+        else:
+            representation = question.getFluents()[0][0]
+        pattern = createRegularExpression(representation)
+        compiledPattern = re.compile(pattern)
+        numAnswerSetsIn = 0
+        for answerSet in answerSets:
+            for rule in answerSet:
+                result = compiledPattern.fullmatch(rule)
+                if result:
+                    numAnswerSetsIn += 1
+                    break
+        if numAnswerSetsIn == len(answerSets):
+            return ["yes"]
+        elif numAnswerSetsIn >= 1:
+            return ["maybe"]
+        else:
+            return ["no"]

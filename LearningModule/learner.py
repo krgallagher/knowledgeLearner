@@ -1,15 +1,11 @@
 import os
-from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
+from TranslationalModule.BasicParser import varWrapping
 from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
 from TranslationalModule.ExpressivityChecker import createChoiceRule
-from TranslationalModule.BasicParser import BasicParser, varWrapping
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
-
-
-# Refactor learner, do not need the event calculus
 
 
 # gives the number of arguments before the event calculus wrapping
@@ -41,17 +37,17 @@ class Learner:
         self.useHints = useHints
 
     # only learn something if the answer is incorrect. (Can always revert this change back)
-    def learn(self, question: Question, story: Story, answer, eventCalculusNeeded=True):
+    def learn(self, question: Question, story: Story, answer):
         if question.isWhereQuestion() or question.isWhatQuestion():
             if answer == ["nothing"] or not answer or question.isCorrectAnswer(answer):
-                example = self.createPositiveExample(question, story, eventCalculusNeeded)
+                example = self.createPositiveExample(question, story)
             else:
-                example = self.createNegativeExample(question, story, eventCalculusNeeded, answer)
+                example = self.createNegativeExample(question, story, answer)
         else:
             if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
-                example = self.createPositiveExample(question, story, eventCalculusNeeded)
+                example = self.createPositiveExample(question, story)
             else:
-                example = self.createNegativeExample(question, story, eventCalculusNeeded)
+                example = self.createNegativeExample(question, story)
         story.appendExample(example)
 
         # possibly refactor this bit.
@@ -69,7 +65,7 @@ class Learner:
         else:
             if os.path.exists(self.cachingFile):
                 os.remove(self.cachingFile)
-            self.createLearningFile(eventCalculusNeeded)
+            self.createLearningFile()
 
         # update the index of the previous story to have a question wrong.
         self.previousStoryIndexForIncorrectQuestion = self.corpus.getIndex(story)
@@ -92,92 +88,94 @@ class Learner:
         # os.remove(self.filename)
         pass
 
-    def createPositiveExample(self, question, story, eventCalculusNeeded):
+    def createPositiveExample(self, question, story):
         if "maybe" in question.getAnswer():
-            return self.createBravePositiveExample(question, story, eventCalculusNeeded)
+            return self.createBravePositiveExample(question, story)
         if self.corpus.choiceRulesPresent:
-            return self.createCautiousPositiveExample(question, story, eventCalculusNeeded)
-        return self.createBravePositiveExample(question, story, eventCalculusNeeded)
+            return self.createCautiousPositiveExample(question, story)
+        return self.createBravePositiveExample(question, story)
 
-    def createNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=None):
+    def createNegativeExample(self, question: Question, story: Story, answer=None):
         if self.corpus.choiceRulesPresent:
-            return self.createCautiousNegativeExample(question, story, eventCalculusNeeded, answer)
-        return self.createBraveNegativeExample(question, story, eventCalculusNeeded, answer)
+            return self.createCautiousNegativeExample(question, story, answer)
+        return self.createBraveNegativeExample(question, story, answer)
 
-    def createBravePositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
-        positivePortion = question.createPartialInterpretation(eventCalculusNeeded, question.getAnswer())
+    def createBravePositiveExample(self, question: Question, story: Story):
+        positivePortion = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded, question.getAnswer())
 
-        context = self.createContext(question, story, eventCalculusNeeded)
+        context = self.createContext(question, story)
 
         positiveExample = '#pos(' + positivePortion + ',{},' + context + ').'
         return positiveExample
 
-    def createCautiousPositiveExample(self, question: Question, story: Story, eventCalculusNeeded):
-        positivePortion = question.createPartialInterpretation(eventCalculusNeeded, question.getAnswer())
+    def createCautiousPositiveExample(self, question: Question, story: Story):
+        positivePortion = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded, question.getAnswer())
 
         # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story, eventCalculusNeeded)
+        context = self.createContext(question, story)
 
         # put it altogether to form the positive example and add the positive example to the story.
         positiveExample = '#neg(' + '{},' + positivePortion + "," + context + ').'
         return positiveExample
 
-    def createBraveNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answers=None):
+    def createBraveNegativeExample(self, question: Question, story: Story, answers=None):
         positiveInterpretation = '{}'
         if not answers:
-            negativeInterpretation = question.createPartialInterpretation(eventCalculusNeeded)
+            negativeInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded)
         else:
             negativeInterpretation = '{}'
             for answer in answers:
                 if question.isCorrectAnswer([answer]):
-                    positiveInterpretation = question.createPartialInterpretation(eventCalculusNeeded, [answer])
+                    positiveInterpretation = question.createPartialInterpretation(
+                        self.corpus.isEventCalculusNeeded, [answer])
                 else:
-                    negativeInterpretation = question.createPartialInterpretation(eventCalculusNeeded, [answer])
+                    negativeInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded,
+                                                                                  [answer])
 
         # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story, eventCalculusNeeded)
+        context = self.createContext(question, story)
 
         # put it altogether to form the positive example and add the positive example to the story.
         negativeExample = '#pos(' + positiveInterpretation + ',' + negativeInterpretation + ',' + context + ').'
         return negativeExample
 
     # TO DO might want to redo the above so that it works better
-    def createCautiousNegativeExample(self, question: Question, story: Story, eventCalculusNeeded, answer=None):
-        negativeInterpretation = question.createPartialInterpretation(eventCalculusNeeded, answer)
+    def createCautiousNegativeExample(self, question: Question, story: Story, answer=None):
+        negativeInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded, answer)
 
         # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story, eventCalculusNeeded)
+        context = self.createContext(question, story)
 
         # put it altogether to form the positive example and add the positive example to the story.
         negativeExample = '#neg(' + negativeInterpretation + ',{},' + context + ').'
         return negativeExample
 
-    def createContext(self, question: Question, story: Story, eventCalculusNeeded):
+    def createContext(self, question: Question, story: Story):
         predicates = set()
         context = '{'
         if self.useHints:
             for hint in question.getHints():
                 statement = story.get(int(hint) - 1)
-                context = self.addRepresentation(statement, context, eventCalculusNeeded)
+                context = self.addRepresentation(statement, context)
                 predicates.update(statement.getPredicates())
         else:
             for statement in story:
                 if not isinstance(statement, Question):
-                    context = self.addRepresentation(statement, context, eventCalculusNeeded)
+                    context = self.addRepresentation(statement, context)
                 predicates.update(statement.getPredicates())
                 if statement == question:
                     break
         context = self.addPredicates(predicates, context)
         if context[-1] != '{':
             context += '.\n'
-            if eventCalculusNeeded:
+            if self.corpus.isEventCalculusNeeded:
                 context += createTimeRange(question.getLineID())
                 context += '.\n'
         context += '}\n'
         return context
 
-    def addRepresentation(self, statement: Statement, context, eventCalculusNeeded):
-        if eventCalculusNeeded:
+    def addRepresentation(self, statement: Statement, context):
+        if self.corpus.isEventCalculusNeeded:
             representation = statement.getEventCalculusRepresentation()
         else:
             representation = statement.getFluents()
@@ -195,10 +193,10 @@ class Learner:
             context += predicate
         return context
 
-    def createLearningFile(self, eventCalculusNeeded):
+    def createLearningFile(self):
         file = open(self.filename, 'w')
         # add in the background knowledge only if using the event calculus
-        if eventCalculusNeeded:
+        if self.corpus.isEventCalculusNeeded:
             for rule in self.corpus.backgroundKnowledge:
                 file.write(rule)
                 file.write('\n')
@@ -211,13 +209,13 @@ class Learner:
         # add in the mode bias
         for bias in self.corpus.modeBias:
             biasToAdd = bias
-            if not eventCalculusNeeded:
+            if not self.corpus.isEventCalculusNeeded:
                 biasToAdd = addConstraints(bias)
             file.write(biasToAdd)
             file.write('\n')
 
         # might want to make this so it starts with 4 variables and then gradually increases.
-        if eventCalculusNeeded:
+        if self.corpus.isEventCalculusNeeded:
             file.write("#maxv(4)")
         else:
             file.write("#maxv(3)")
