@@ -53,19 +53,19 @@ def createExpressivityClingoFile(story: Story, corpus: Corpus):
     for sentence in story:
         representation = sentence.getEventCalculusRepresentation()
         if isinstance(sentence, Question):
-            # TODO change this into a boolean function
-            if "yes" in sentence.getAnswer() or "no" in sentence.getAnswer() or "maybe" in sentence.getAnswer():
-                rule = createYesNoRule(sentence)
-                temp.write(rule)
-                temp.write('.\n')
-            else:
-                questionWithAnswers = sentence.getQuestionWithAnswers()
-                for predicate in questionWithAnswers:
-                    temp.write(predicate)
+            if sentence.answer:
+                if sentence.isYesNoMaybeQuestion():
+                    rule = createYesNoRule(sentence)
+                    temp.write(rule)
                     temp.write('.\n')
-                expressivityConstraint = createExpressivityConstraint(sentence, questionWithAnswers)
-                temp.write(expressivityConstraint)
-                temp.write('.\n')
+                else:
+                    questionWithAnswers = sentence.getQuestionWithAnswers()
+                    for predicate in questionWithAnswers:
+                        temp.write(predicate)
+                        temp.write('.\n')
+                    expressivityConstraint = createExpressivityConstraint(sentence, questionWithAnswers)
+                    temp.write(expressivityConstraint)
+                    temp.write('.\n')
 
         else:
             for i in range(0, len(representation)):
@@ -93,9 +93,9 @@ def isEventCalculusNeeded(corpus: Corpus):
         # create a clingo file that evaluates the expressivitiy of the corpus
         filename = createExpressivityClingoFile(story, corpus)
 
-        # file = open(filename, 'r')
-        # for line in file:
-        #    print(line)
+        file = open(filename, 'r')
+        for line in file:
+            print(line)
 
         # run the file with clingo
         answerSets = runClingo(filename)
@@ -116,9 +116,9 @@ if __name__ == "__main__":
     trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_train")
     testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_test")
     # initialise parser
-    #parser = BasicParser()
+    # parser = BasicParser()
 
-    #if isEventCalculusNeeded(trainingCorpus):
-     #   print("EVENT CALCULUS IS NEEDED!")
-    #else:
-     #   print("EVENT CALCULUS IS NOT NEEDED!")
+    # if isEventCalculusNeeded(trainingCorpus):
+    #   print("EVENT CALCULUS IS NEEDED!")
+    # else:
+    #   print("EVENT CALCULUS IS NOT NEEDED!")

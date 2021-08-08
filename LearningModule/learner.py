@@ -34,6 +34,7 @@ class Learner:
         self.previousExampleAddedIndex = 0  # the last index that has been added for a positive/negative example
         # need to store the index
         self.useHints = useHints
+        self.wasEventCalculusNeededPreviously = False
 
     # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer):
@@ -57,7 +58,11 @@ class Learner:
         self.oldModeBias = self.corpus.modeBias.copy()
 
         # update the old mode bias.
-        self.updateModeBias(story, question)
+        if self.wasEventCalculusNeededPreviously != self.corpus.isEventCalculusNeeded:
+            self.corpus.modeBias = set()
+            self.addModeBias(story, question)
+        else:
+            self.updateModeBias(story, question)
 
         if self.oldModeBias == self.corpus.modeBias:
             self.appendExamplesToLearningFile(story)
@@ -78,6 +83,8 @@ class Learner:
         print("HYPOTHESES", hypotheses)
         if hypotheses != unsatisfiable:
             self.corpus.setHypotheses(hypotheses)
+
+        self.wasEventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
 
         print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
@@ -265,8 +272,16 @@ class Learner:
 
         # add the mode bias for current story
         for index in range(0, story.getIndex(question) + 1):
-            currentStatement = story.get(index)
-            self.addStatementModeBias(currentStatement)
+            self.addStatementModeBias(story.get(index))
+
+    # new function that might need to change a bit
+    def addModeBias(self, story: Story, question: Statement):
+        for storyIndex in range(0, self.corpus.getIndex(story)):
+            for sentence in self.corpus.stories[storyIndex]:
+                self.addStatementModeBias(sentence)
+
+        for index in range(0, story.getIndex(question) + 1):
+            self.addStatementModeBias(story.get(index))
 
     def addStatementModeBias(self, statement):
         modeBiasFluents = statement.getModeBiasFluents()

@@ -8,6 +8,7 @@ from gtts import gTTS
 import os
 import speech_recognition as sr
 from TranslationalModule.EventCalculus import wrap
+from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
 from TranslationalModule.InteractiveParser import InteractiveParser
 
 
@@ -36,7 +37,7 @@ class InteractiveSystem:
         self.corpus.append(self.currentStory)
 
         # set the event calculus needed
-        self.corpus.isEventCalculusNeeded = True
+       #self.corpus.isEventCalculusNeeded = True
 
         # get new input
         currentInput = self.getInput(
@@ -132,8 +133,6 @@ class InteractiveSystem:
 
         # if it is a question, then use the reasoner
         if isinstance(sentence, Question):
-            # if the event calculus is so far not needed, then do an expressivity checker here.
-
             answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)
 
             if answerToQuestion:
@@ -145,6 +144,10 @@ class InteractiveSystem:
                 currentInput = self.getInput("I do not know. Please tell me.\n")
 
             sentence.setAnswer([currentInput])
+
+            if not self.corpus.isEventCalculusNeeded and isEventCalculusNeeded(self.corpus):
+                self.corpus.isEventCalculusNeeded = True
+
             self.learner.learn(sentence, self.currentStory, answerToQuestion)
 
     def doCoreferencingAndSetDoc(self, sentence):
