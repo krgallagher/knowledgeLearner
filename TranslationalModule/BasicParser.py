@@ -1,3 +1,4 @@
+import re
 import spacy
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure import Story
@@ -7,9 +8,15 @@ from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 
 
 # maybe go through at the beginning and grab 'similar terms' and try to parse
+from Utilities.ILASPSyntax import varWrapping
 
-def varWrapping(tag):
-    return "var(" + tag + ")"
+
+def createPronounRegularExpression(pronoun):
+    return re.compile("(^| )" + pronoun + "( |[.!?]$)")
+
+
+def createNameRegularExpression(name):
+    return "\\1" + name + "\\2"
 
 
 def hasADPChild(noun, doc):
@@ -313,6 +320,11 @@ class BasicParser:
         self.determiningConcepts[entry]["inclusions"] = set()
         self.determiningConcepts[entry]["exclusions"] = set()
         pass
+
+    def getSubstitutedText(self, pronoun, substitution, statement):
+        pronounRegularExpression = createPronounRegularExpression(pronoun)
+        nameRegularExpression = createNameRegularExpression(substitution)
+        return re.sub(pronounRegularExpression, nameRegularExpression, statement.text)
 
 
 if __name__ == '__main__':

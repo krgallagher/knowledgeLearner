@@ -2,10 +2,9 @@ import os
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
-from TranslationalModule.BasicParser import varWrapping
 from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
 from TranslationalModule.ExpressivityChecker import createChoiceRule
-from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping
+from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping, varWrapping
 
 
 # gives the number of arguments before the event calculus wrapping

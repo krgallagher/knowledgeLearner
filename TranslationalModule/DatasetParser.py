@@ -1,9 +1,12 @@
+import re
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.BasicParser import BasicParser
 from TranslationalModule.EventCalculus import wrap
+
+
 
 
 class DatasetParser(BasicParser):
@@ -53,8 +56,7 @@ class DatasetParser(BasicParser):
         pronoun, possibilities = super().coreferenceFinder(statement, story)
         if not pronoun or not possibilities:
             return statement.text
-        statementText = statement.text
-        return statementText.replace(" " + pronoun + " ", " " + possibilities[0] + " ")
+        return self.getSubstitutedText(pronoun, possibilities[0], statement)
 
     def setEventCalculusRepresentation(self):
         for story in self.trainCorpus:
@@ -66,12 +68,9 @@ class DatasetParser(BasicParser):
 
 
 if __name__ == '__main__':
-    # process data
-    # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
     trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train")
     testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train")
 
-    # initialise parser
     parser = DatasetParser(trainCorpus1, testCorpus1)
 
     for story1 in trainCorpus1:

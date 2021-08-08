@@ -4,7 +4,6 @@ from StoryStructure import Statement
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
-from TranslationalModule.BasicParser import BasicParser
 from Utilities.ILASPSyntax import createTimeRange
 
 
@@ -117,9 +116,9 @@ if __name__ == "__main__":
     trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_train")
     testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_test")
     # initialise parser
-    parser = BasicParser()
+    #parser = BasicParser()
 
-    if isEventCalculusNeeded(trainingCorpus):
-        print("EVENT CALCULUS IS NEEDED!")
-    else:
-        print("EVENT CALCULUS IS NOT NEEDED!")
+    #if isEventCalculusNeeded(trainingCorpus):
+     #   print("EVENT CALCULUS IS NEEDED!")
+    #else:
+     #   print("EVENT CALCULUS IS NOT NEEDED!")

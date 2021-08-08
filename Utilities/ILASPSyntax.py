@@ -11,3 +11,6 @@ def modeHWrapping(predicate):
 
 def modeBWrapping(predicate):
     return "#modeb(" + predicate + ")."
+
+def varWrapping(tag):
+    return "var(" + tag + ")"

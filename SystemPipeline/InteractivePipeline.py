@@ -157,14 +157,13 @@ class InteractiveSystem:
                 phrase = "Does \"" + pronoun + "\" refer to " + possibleReferences[i] + "?\n"
                 inputText = self.getInput(phrase)
                 if "y" in inputText:
-                    statementText = sentence.text.replace(pronoun + " ", possibleReferences[i] + " ")
+                    statementText = self.parser.getSubstitutedText(pronoun, possibleReferences[i], sentence)
                     print(statementText)
                     self.parser.setDoc(statementText, sentence)
                     return
         phrase = "Who does \"" + pronoun + "\" refer to?\n"
         inputText = self.getInput(phrase).lower()
-        statementText = sentence.text.replace(" " + pronoun + " ", " " + inputText + " ")
-        self.parser.setDoc(statementText, sentence)
+        self.parser.setDoc(self.parser.getSubstitutedText(pronoun, inputText, sentence.text), sentence)
 
 
 if __name__ == "__main__":
