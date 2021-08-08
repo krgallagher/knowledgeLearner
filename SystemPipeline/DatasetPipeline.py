@@ -42,7 +42,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
         for sentence in story:
             if isinstance(sentence, Question):
                 numQuestions += 1
-                answerToQuestion = reasoner.computeAnswer(sentence, story, trainCorpus.isEventCalculusNeeded)
+                answerToQuestion = reasoner.computeAnswer(sentence, story)
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
                 else:
@@ -64,20 +64,19 @@ def train(corpus, reasoner, learner, numExamples):
             if isinstance(sentence, Question):
                 if count >= numExamples:
                     return
-                answerToQuestion = reasoner.computeAnswer(sentence, story, corpus.isEventCalculusNeeded)
+                answerToQuestion = reasoner.computeAnswer(sentence, story)
                 print(answerToQuestion, sentence.getAnswer(), sentence.getText(), sentence.getLineID())
                 count += 1
                 if not sentence.isCorrectAnswer(answerToQuestion):
-                    learner.learn(sentence, story, answerToQuestion, corpus.isEventCalculusNeeded)
-
+                    learner.learn(sentence, story, answerToQuestion)
 
 
 if __name__ == '__main__':
     # process data
     # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
     # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)

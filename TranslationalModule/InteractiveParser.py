@@ -21,6 +21,12 @@ class InteractiveParser(BasicParser):
             sentence = Question(lineID, text)
         else:
             sentence = Statement(lineID, text)
-        sentence.doc = self.nlp(text)
+        # will set the doc in the coreferencing part of the pipeline
+
+        # sentence.doc = self.nlp(text)
         story.addSentence(sentence)
         return sentence
+
+    def setDoc(self, text, sentence: Statement):
+        sentence.doc = self.nlp(text)
+

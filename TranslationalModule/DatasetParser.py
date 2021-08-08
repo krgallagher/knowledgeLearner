@@ -15,10 +15,10 @@ class DatasetParser(BasicParser):
         # Set the doc for the training and testing corpus
         for story in self.trainCorpus:
             for sentence in story:
-                sentence.doc = self.nlp(self.coreferenceFinder2(sentence, story))
+                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
         for story in self.testCorpus:
             for sentence in story:
-                sentence.doc = self.nlp(self.coreferenceFinder2(sentence, story))
+                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
 
         # parse the training set questions
         for story in self.trainCorpus:
@@ -49,14 +49,12 @@ class DatasetParser(BasicParser):
         self.setEventCalculusRepresentation()
         print(self.synonymDictionary)
 
-    def coreferenceFinder2(self, statement: Statement, story: Story):
-        pronoun, possibilities = super().coreferenceFinder2(statement, story)
-        #print(pronoun, possibilities)
+    def coreferenceFinder(self, statement: Statement, story: Story):
+        pronoun, possibilities = super().coreferenceFinder(statement, story)
         if not pronoun or not possibilities:
             return statement.text
         statementText = statement.text
         return statementText.replace(" " + pronoun + " ", " " + possibilities[0] + " ")
-
 
     def setEventCalculusRepresentation(self):
         for story in self.trainCorpus:
@@ -66,11 +64,12 @@ class DatasetParser(BasicParser):
             for sentence in story:
                 wrap(sentence)
 
+
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task13_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task13_train")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train")
 
     # initialise parser
     parser = DatasetParser(trainCorpus1, testCorpus1)

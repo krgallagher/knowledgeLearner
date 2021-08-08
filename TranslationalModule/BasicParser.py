@@ -39,7 +39,7 @@ class BasicParser:
     def coreferenceFinder(self, statement: Statement, story: Story):
         index = story.getIndex(statement)
         sentenceDoc = self.nlp(statement.text)
-        pronoun = [token for token in sentenceDoc if token.pos_ == "PRON"]
+        pronoun = [token for token in sentenceDoc if token.tag_ == "PRP"]
         if index == 0 or not pronoun:
             return None, []
         possibleReferences = []
@@ -51,7 +51,8 @@ class BasicParser:
                 if properNoun[0].conjuncts:
                     for noun in properNoun[0].conjuncts:
                         replacementPhrase += " and " + noun.text
-                possibleReferences.append(replacementPhrase)
+                if replacementPhrase not in possibleReferences:
+                    possibleReferences.append(replacementPhrase)
         return pronoun[0].text, possibleReferences
 
     def parse(self, statement: Statement):
@@ -317,8 +318,8 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_train")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
 
     # initialise parser
     parser = BasicParser()

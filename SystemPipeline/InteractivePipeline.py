@@ -109,11 +109,13 @@ class InteractiveSystem:
             print(currentText)
 
     def processInput(self, currentInput):
+
         # process the sentence
         sentence = self.parser.createStatement(currentInput, self.currentStory)
         print(sentence.getText(), sentence.getLineID())
 
         # do coreferencing here and have it be interactive.
+        self.doCoreferencingAndSetDoc(sentence)
 
         # do an initial parsing of the sentence
         self.parser.parse(sentence)
@@ -130,6 +132,8 @@ class InteractiveSystem:
 
         # if it is a question, then use the reasoner
         if isinstance(sentence, Question):
+            # if the event calculus is so far not needed, then do an expressivity checker here.
+
             answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)
 
             if answerToQuestion:
@@ -142,6 +146,25 @@ class InteractiveSystem:
 
             sentence.setAnswer([currentInput])
             self.learner.learn(sentence, self.currentStory, answerToQuestion)
+
+    def doCoreferencingAndSetDoc(self, sentence):
+        pronoun, possibleReferences = self.parser.coreferenceFinder(sentence, self.currentStory)
+        if not pronoun:
+            self.parser.setDoc(sentence.text, sentence)
+            return
+        if possibleReferences:
+            for i in range(0, len(possibleReferences)):
+                phrase = "Does \"" + pronoun + "\" refer to " + possibleReferences[i] + "?\n"
+                inputText = self.getInput(phrase)
+                if "y" in inputText:
+                    statementText = sentence.text.replace(pronoun + " ", possibleReferences[i] + " ")
+                    print(statementText)
+                    self.parser.setDoc(statementText, sentence)
+                    return
+        phrase = "Who does \"" + pronoun + "\" refer to?\n"
+        inputText = self.getInput(phrase).lower()
+        statementText = sentence.text.replace(" " + pronoun + " ", " " + inputText + " ")
+        self.parser.setDoc(statementText, sentence)
 
 
 if __name__ == "__main__":
