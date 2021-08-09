@@ -5,9 +5,6 @@ from StoryStructure import Story
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-
-
-# maybe go through at the beginning and grab 'similar terms' and try to parse
 from Utilities.ILASPSyntax import varWrapping
 
 
@@ -89,8 +86,6 @@ class BasicParser:
         modeBiasFluents = [[fluent]]
 
         if isinstance(statement, Question):
-            # if statement.isWhereQuestion() or statement.isWhatQuestion() or statement.isHowManyQuestion()
-            # or statement.isWhoQuestion():
             if not statement.isYesNoMaybeQuestion():
                 nounSubject = [token for token in doc if token.dep_ == "nsubj"]
                 if nounSubject and nounSubject[0].tag_ == "WP":

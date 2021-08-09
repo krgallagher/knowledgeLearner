@@ -1,12 +1,9 @@
-import re
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.BasicParser import BasicParser
 from TranslationalModule.EventCalculus import wrap
-
-
 
 
 class DatasetParser(BasicParser):
@@ -68,8 +65,8 @@ class DatasetParser(BasicParser):
 
 
 if __name__ == '__main__':
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train")
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 

@@ -330,10 +330,7 @@ class Learner:
 
 
 if __name__ == '__main__':
-    modeBisFluent = "#modeb(holdsAt(be_in(var(nnp),var(nn)),var(time)))."
-    fluent = "holdsAt(be_in(sandra,kitchen),9)."
-    print(addConstraints(modeBisFluent))
-
+    pass
     # process data
     # corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
 
