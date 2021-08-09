@@ -2,7 +2,7 @@ from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
-from TranslationalModule.BasicParser import BasicParser
+from TranslationalModule.BasicParser import BasicParser, getSubstitutedText
 from TranslationalModule.EventCalculus import wrap
 
 
@@ -53,7 +53,7 @@ class DatasetParser(BasicParser):
         pronoun, possibilities = super().coreferenceFinder(statement, story)
         if not pronoun or not possibilities:
             return statement.text
-        return self.getSubstitutedText(pronoun, possibilities[0], statement)
+        return getSubstitutedText(pronoun, possibilities[0], statement)
 
     def setEventCalculusRepresentation(self):
         for story in self.trainCorpus:
@@ -62,6 +62,18 @@ class DatasetParser(BasicParser):
         for story in self.testCorpus:
             for sentence in story:
                 wrap(sentence)
+
+    def updateFluents(self):
+        for story in self.trainCorpus:
+            for sentence in story:
+                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
+                sentence.setFluents(self.update(fluents))
+                sentence.setModeBiasFluents(self.update(modeBiasFluents))
+        for story in self.testCorpus:
+            for sentence in story:
+                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
+                sentence.setFluents(self.update(fluents))
+                sentence.setModeBiasFluents(self.update(modeBiasFluents))
 
 
 if __name__ == '__main__':

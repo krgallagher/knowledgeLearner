@@ -16,10 +16,6 @@ def createNameRegularExpression(name):
     return "\\1" + name + "\\2"
 
 
-def hasADPChild(noun, doc):
-    return [token for token in doc if token.head == noun and token.pos_ == "ADP"]
-
-
 def isDisjunctive(noun, doc):
     conjunctives = [token.text.lower() for token in doc if token.head == noun and token.pos_ == "CCONJ"]
     return "or" in conjunctives
@@ -30,6 +26,12 @@ def hasDetChild(token):
         if child.tag_ == "WDT":
             return True
     return False
+
+
+def getSubstitutedText(pronoun, substitution, statement):
+    pronounRegularExpression = createPronounRegularExpression(pronoun)
+    nameRegularExpression = createNameRegularExpression(substitution)
+    return re.sub(pronounRegularExpression, nameRegularExpression, statement.text)
 
 
 class BasicParser:
@@ -170,13 +172,11 @@ class BasicParser:
                 modeBiasFluents[i][j] += varWrapping(statement.variableTypes["V1"])
 
     def createFluentBase(self, usedTokens, nouns, sentence: Statement):
-        fluentBase = ""
-        # get root verb or something similar to it...
         root = [token for token in sentence.doc if token.head == token][0]
         childVerb = [child for child in root.children if child.pos_ == 'VERB']
         if childVerb:
             root = childVerb[0]
-        fluentBase += root.lemma_
+        fluentBase = root.lemma_
         usedTokens.append(root)
 
         if isinstance(sentence, Question) and not sentence.isYesNoMaybeQuestion():
@@ -266,18 +266,6 @@ class BasicParser:
         replacement = self.determiningConcepts[concept]["fluentBase"] + '('
         return fluent.replace(oldFluentBase, replacement), modeBiasFluent.replace(oldFluentBase, replacement)
 
-    def updateFluents(self):
-        for story in self.trainCorpus:
-            for sentence in story:
-                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
-                sentence.setFluents(self.update(fluents))
-                sentence.setModeBiasFluents(self.update(modeBiasFluents))
-        for story in self.testCorpus:
-            for sentence in story:
-                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
-                sentence.setFluents(self.update(fluents))
-                sentence.setModeBiasFluents(self.update(modeBiasFluents))
-
     def update(self, fluents):
         newFluents = []
         for i in range(0, len(fluents)):
@@ -295,18 +283,6 @@ class BasicParser:
             newFluents.append(currentFluents)
         return newFluents
 
-    # might delete these functions
-    def getModifiers(self, sentence):
-        verb_modifier = [token.text for token in sentence.doc if
-                         token.tag_ == 'JJR' or token.dep_ == "acomp" or token.dep_ == "attr"]
-        return set(verb_modifier)
-
-    def getDeterminers(self, sentence):
-        determiners = []
-        if isinstance(sentence, Question):
-            determiners = [token.text for token in sentence.doc if token.tag_ == "DET"]
-        return set(determiners)
-
     def createDeterminingConceptsEntry(self, entry, fluentBase):
         if entry in self.determiningConcepts.keys():
             return
@@ -314,12 +290,6 @@ class BasicParser:
         self.determiningConcepts[entry]["fluentBase"] = fluentBase
         self.determiningConcepts[entry]["inclusions"] = set()
         self.determiningConcepts[entry]["exclusions"] = set()
-        pass
-
-    def getSubstitutedText(self, pronoun, substitution, statement):
-        pronounRegularExpression = createPronounRegularExpression(pronoun)
-        nameRegularExpression = createNameRegularExpression(substitution)
-        return re.sub(pronounRegularExpression, nameRegularExpression, statement.text)
 
 
 if __name__ == '__main__':
