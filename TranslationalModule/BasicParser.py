@@ -35,7 +35,7 @@ def getSubstitutedText(pronoun, substitution, statement):
 
 
 def hasDativeParent(token):
-    return True
+    return token.head.dep_ == "dative"
 
 
 class BasicParser:
