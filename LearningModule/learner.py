@@ -17,6 +17,8 @@ def addConstraints(modeBiasFluent):
     constraints = ",(positive"
     if numberOfArguments(modeBiasFluent) == 2:
         constraints += ", anti_reflexive)"
+    else:
+        constraints += ")"
     newMBFluent = modeBiasFluent[:-2]
     newMBFluent += constraints + ")."
     return newMBFluent
@@ -38,7 +40,7 @@ class Learner:
 
     # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer):
-        if question.isWhereQuestion() or question.isWhatQuestion():
+        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion():
             if answer == ["nothing"] or not answer or question.isCorrectAnswer(answer):
                 example = self.createPositiveExample(question, story)
             else:
@@ -206,11 +208,6 @@ class Learner:
             for rule in self.corpus.backgroundKnowledge:
                 file.write(rule)
                 file.write('\n')
-
-        # ---------------------------------------------------------------------------
-        file.write("#modeh(be_color(var(nn),var(color))).\n")
-        file.write("#modeb(be_color(var(nn), var(color))).\n")
-        # ---------------------------------------------------------------------------
 
         # add in the mode bias
         for bias in self.corpus.modeBias:

@@ -4,6 +4,7 @@ from StoryStructure import Statement
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
+from TranslationalModule.DatasetParser import DatasetParser
 from Utilities.ILASPSyntax import createTimeRange
 
 
@@ -19,7 +20,7 @@ def createExpressivityConstraint(sentence: Statement, questionWithAnswers):
 
     # will also need to change the way answers are stored here...
     for answer in sentence.getAnswer():
-        constraint += ', ' + 'V1 != ' + answer
+        constraint += ', ' + 'V1 != ' + answer.lower()
     return constraint
 
 
@@ -85,6 +86,7 @@ def isUnsatisfiable(output):
 def runClingo(filename):
     command = "Clingo -W none -n 0 " + filename
     output = os.popen(command).read()
+    print(output)
     return output
 
 
@@ -113,12 +115,12 @@ if __name__ == "__main__":
     # process the data
     # trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_train.txt")
     # testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_test.txt")
-    trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_train")
-    testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task16_test")
+    trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train")
+    testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test")
     # initialise parser
-    # parser = BasicParser()
+    parser = DatasetParser(trainingCorpus, testingCorpus)
 
-    # if isEventCalculusNeeded(trainingCorpus):
-    #   print("EVENT CALCULUS IS NEEDED!")
-    # else:
-    #   print("EVENT CALCULUS IS NOT NEEDED!")
+    if isEventCalculusNeeded(trainingCorpus):
+        print("EVENT CALCULUS IS NEEDED!")
+    else:
+        print("EVENT CALCULUS IS NOT NEEDED!")

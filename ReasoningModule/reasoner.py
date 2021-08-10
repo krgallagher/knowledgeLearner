@@ -85,7 +85,7 @@ def getAnswer(fullMatch, representation):
 
 
 def processClingoOutput(output):
-    # print(output)
+    print(output)
     answerSets = []
     data = output.split('\n')
     index = 0
@@ -114,8 +114,8 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story)
 
-        # file = open(filename, 'r')
-        # for line in file:
+        #file = open(filename, 'r')
+        #for line in file:
         #    print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)
@@ -134,10 +134,10 @@ class Reasoner:
         temp = open(filename, 'w')
 
         # add in the background knowledge
-        # if eventCalculusNeeded:
-        for rule in self.corpus.backgroundKnowledge:
-            temp.write(rule)
-            temp.write('\n')
+        if self.corpus.isEventCalculusNeeded:
+            for rule in self.corpus.backgroundKnowledge:
+                temp.write(rule)
+                temp.write('\n')
 
         # add in the hypotheses
         for hypothesis in self.corpus.hypotheses:
@@ -168,7 +168,7 @@ class Reasoner:
         return filename
 
     def searchForAnswer(self, question: Question, answerSets):
-        if question.isWhereQuestion() or question.isWhatQuestion():
+        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion():
             answers = []
             for answerSet in answerSets:
                 newAnswers = self.whereSearch(question, answerSet)

@@ -34,6 +34,10 @@ def getSubstitutedText(pronoun, substitution, statement):
     return re.sub(pronounRegularExpression, nameRegularExpression, statement.text)
 
 
+def hasDativeParent(token):
+    return True
+
+
 class BasicParser:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
@@ -45,8 +49,8 @@ class BasicParser:
     def coreferenceFinder(self, statement: Statement, story: Story):
         index = story.getIndex(statement)
         sentenceDoc = self.nlp(statement.text)
-        pronoun = [token for token in sentenceDoc if token.tag_ == "PRP"]
-        if index == 0 or not pronoun:
+        personalPronoun = [token for token in sentenceDoc if token.tag_ == "PRP"]
+        if index == 0 or not personalPronoun:
             return None, []
         possibleReferences = []
         for i in range(0, index):
@@ -59,7 +63,7 @@ class BasicParser:
                         replacementPhrase += " and " + noun.text
                 if replacementPhrase not in possibleReferences:
                     possibleReferences.append(replacementPhrase)
-        return pronoun[0].text, possibleReferences
+        return personalPronoun[0].text, possibleReferences
 
     def parse(self, statement: Statement):
         usedTokens = []
@@ -68,25 +72,21 @@ class BasicParser:
         if negation:
             statement.negatedVerb = True
 
-        nouns = [token for token in statement.doc if "NN" in token.tag_]
+        # might want to add the W pronouns into this mix and maybe also need to rename this...
+        nounsAndAdjectiveComplements = [token for token in statement.doc if
+                                        "NN" in token.tag_ or "JJ" in token.tag_ or "W" in token.tag_]
 
-        nounsAndAdjectiveComplements = [token for token in statement.doc if "NN" in token.tag_ or "JJ" in token.tag_]
+        fluentBase = self.createFluentBase(usedTokens, statement)
 
-        fluentBase = self.createFluentBase(usedTokens, nouns, statement)
-
-        # only for a non-question and need to do this before doing more with the fluent base
-        if fluentBase.split('_')[0] != 'be' and not isinstance(statement, Question):
-            self.conceptsToExplore.add(fluentBase)
-
-        # need this for both the question and statement
         fluent = fluentBase + "("
-        statement.setFluents([[fluent]])  # setting to make things easier for later
-        statement.setModeBiasFluents([[fluent]])  # setting to make things easier for later
+        statement.setFluents([[fluent]])
+        statement.setModeBiasFluents([[fluent]])
 
-        # perhaps should refactor this into a separate function, call it createMainPortionOfFluentForQuestion
         if isinstance(statement, Question):
             self.createMainPortionOfFluentForQuestion(nounsAndAdjectiveComplements, statement, usedTokens)
         else:
+            if fluentBase.split('_')[0] != 'be':
+                self.conceptsToExplore.add(fluentBase)
             self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
 
         for i in range(0, len(statement.fluents)):
@@ -94,78 +94,110 @@ class BasicParser:
                 statement.fluents[i][j] += ")"
                 statement.modeBiasFluents[i][j] += ")"
 
-    def createMainPortionOfFluentForQuestion(self, nounsAndAdjectiveComplements, statement, usedTokens):
-        if statement.isYesNoMaybeQuestion():
-            self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
-        else:
-            nounSubject = [token for token in statement.doc if token.dep_ == "nsubj"]
-            if nounSubject and nounSubject[0].tag_ == "WP":
-                self.addVariable(statement)
-                self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
-            else:
-                self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
-                self.addVariable(statement)
+    def createMainPortionOfFluentForQuestion(self, nounsAndAdjectiveComplements, question: Question, usedTokens):
+        self.createMainPortionOfFluent(nounsAndAdjectiveComplements, question, usedTokens)
+        if not question.isYesNoMaybeQuestion():
+            self.addVariable(question)  # will need to edit what the add variable actually does...
 
+    # TODO for afterwards: get rid of nounsCopy and condense into the used tokens section
     def createMainPortionOfFluent(self, nouns, statement, usedTokens):
         nounsCopy = nouns.copy()
+        # add the nsubj, if applicable
+        nounSubject = [token for token in statement.doc if token.dep_ == "nsubj"]
+        if nounSubject:
+            self.considerNounForFluent(nounSubject[0], nouns, nounsCopy, statement, usedTokens)
+
+        # add the direct object, if applicable
+        directObject = [token for token in statement.doc if token.dep_ == "dobj"]
+        if directObject:
+            self.considerNounForFluent(directObject[0], nouns, nounsCopy, statement, usedTokens)
+
+        # add the indirect object, if applicable
+        indirectObject = [token for token in statement.doc if token.dep_ == "pobj" and hasDativeParent(token)]
+        if indirectObject:
+            self.considerNounForFluent(indirectObject[0], nouns, nounsCopy, statement, usedTokens)
+
+        # add everything else
         for noun in nouns:
-            whDeterminer = [token for token in noun.children if token.tag_ == "WDT"]
-            if whDeterminer:
-                usedTokens.append(noun)
-            if noun in nounsCopy and noun not in usedTokens:
-                disjunctive = isDisjunctive(noun, statement)
-                conjuncts = [noun] + list(noun.conjuncts)
-                newFluents = []
-                newMBFluents = []
-                for conjunct in conjuncts:
-                    nounsCopy.remove(conjunct)
-                if disjunctive:
-                    for i in range(0, len(statement.fluents)):
-                        orFluentList = []
-                        orMBFluentList = []
-                        for conjunct in conjuncts:
-                            for j in range(0, len(statement.fluents[i])):
-                                newFluent, newMBFluent = self.addNounToFluent(statement, conjunct,
-                                                                              statement.fluents[i][j],
-                                                                              statement.modeBiasFluents[i][j],
-                                                                              nounsCopy, nouns)
-                                orFluentList.append(newFluent)
-                                orMBFluentList.append(newMBFluent)
-                        newFluents.append(orFluentList)
-                        newMBFluents.append(orMBFluentList)
-                else:
-                    for i in range(0, len(statement.fluents)):
-                        for conjunct in conjuncts:
-                            fluents1 = []
-                            mbfluents1 = []
-                            for j in range(0, len(statement.fluents[i])):
-                                resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
-                                                                                          statement.fluents[i][j],
-                                                                                          statement.modeBiasFluents[i][
-                                                                                              j],
-                                                                                          nounsCopy, nouns)
-                                fluents1.append(resultingFluent)
-                                mbfluents1.append(resultingMBFluent)
-                            newFluents.append(fluents1)
-                            newMBFluents.append(mbfluents1)
-                statement.setFluents(newFluents)
-                statement.setModeBiasFluents(newMBFluents)
+            self.considerNounForFluent(noun, nouns, nounsCopy, statement, usedTokens)
 
-    def addVariable(self, statement: Question):
+    def considerNounForFluent(self, noun, nouns, nounsCopy, statement, usedTokens):
+        whDeterminer = [token for token in noun.children if token.tag_ == "WDT"]
+        if whDeterminer:
+            usedTokens.append(noun)
+        if noun in nounsCopy and noun not in usedTokens:
+            disjunctive = isDisjunctive(noun, statement)
+            conjuncts = [noun] + list(noun.conjuncts)
+            for conjunct in conjuncts:
+                nounsCopy.remove(conjunct)
+            newFluents = []
+            newMBFluents = []
+            if disjunctive:
+                self.addDisjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement)
+            else:
+                self.addConjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement)
+            statement.setFluents(newFluents)
+            statement.setModeBiasFluents(newMBFluents)
+
+    def addConjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement):
         for i in range(0, len(statement.fluents)):
-            for j in range(0, len(statement.fluents[i])):
-                if not statement.fluents[i][j][-1] == '(':
-                    statement.fluents[i][j] += ','
-                    statement.modeBiasFluents[i][j] += ','
-                statement.fluents[i][j] += "V1"
-                if "V1" not in statement.variableTypes.keys():
-                    statement.variableTypes["V1"] = 'nn'
-                statement.modeBiasFluents[i][j] += varWrapping(statement.variableTypes["V1"])
-        print(statement.text, statement.getFluents(), statement.getModeBiasFluents())
+            for conjunct in conjuncts:
+                fluents1 = []
+                mbfluents1 = []
+                for j in range(0, len(statement.fluents[i])):
+                    resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
+                                                                              statement.fluents[i][j],
+                                                                              statement.modeBiasFluents[i][
+                                                                                  j],
+                                                                              nounsCopy, nouns)
+                    fluents1.append(resultingFluent)
+                    mbfluents1.append(resultingMBFluent)
+                newFluents.append(fluents1)
+                newMBFluents.append(mbfluents1)
 
-    def createFluentBase(self, usedTokens, nouns, statement: Statement):
+    def addDisjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement):
+        for i in range(0, len(statement.fluents)):
+            orFluentList = []
+            orMBFluentList = []
+            for conjunct in conjuncts:
+                for j in range(0, len(statement.fluents[i])):
+                    newFluent, newMBFluent = self.addNounToFluent(statement, conjunct,
+                                                                  statement.fluents[i][j],
+                                                                  statement.modeBiasFluents[i][j],
+                                                                  nounsCopy, nouns)
+                    orFluentList.append(newFluent)
+                    orMBFluentList.append(newMBFluent)
+            newFluents.append(orFluentList)
+            newMBFluents.append(orMBFluentList)
+
+    # basically need to replace, "what", "where" and "who" with V1s
+    def addVariable(self, question: Question):
+        for i in range(0, len(question.fluents)):
+            for j in range(0, len(question.fluents[i])):
+                if question.isWhoQuestion():
+                    question.fluents[i][j] = question.fluents[i][j].replace("who", "V1")
+                    if "V1" not in question.variableTypes.keys():
+                        question.variableTypes["V1"] = 'nnp'
+                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("who", varWrapping(
+                        question.variableTypes["V1"]))
+                elif question.isWhereQuestion():
+                    question.fluents[i][j] = question.fluents[i][j].replace("where", "V1")
+                    if "V1" not in question.variableTypes.keys():
+                        question.variableTypes["V1"] = 'nn'
+                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("where", varWrapping(
+                        question.variableTypes["V1"]))
+                elif question.isWhatQuestion():
+                    question.fluents[i][j] = question.fluents[i][j].replace("what", "V1")
+                    if "V1" not in question.variableTypes.keys():
+                        question.variableTypes["V1"] = 'nn'
+                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("what", varWrapping(
+                        question.variableTypes["V1"]))
+
+    def createFluentBase(self, usedTokens, statement: Statement):
+        nouns = [token for token in statement.doc if "NN" in token.tag_]
         root = [token for token in statement.doc if token.head == token][0]
         childVerb = [child for child in root.children if child.pos_ == 'VERB']
+
         if childVerb:
             root = childVerb[0]
         fluentBase = root.lemma_
@@ -204,6 +236,11 @@ class BasicParser:
         # ignore plural
         if tag == 'nns':
             tag = 'nn'
+        if 'w' in tag:
+            if noun.text.lower() == "who":
+                tag = 'nnp'
+            else:
+                tag = 'nn'
 
         # perhaps can store some data in a dictionary so that I don't do as many lookups
         for concept in self.determiningConcepts:

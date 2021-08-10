@@ -77,8 +77,8 @@ class DatasetParser(BasicParser):
 
 
 if __name__ == '__main__':
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_train")
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 
@@ -87,6 +87,6 @@ if __name__ == '__main__':
             print(sentence1.getText(), sentence1.getLineID(), sentence1.getFluents(),
                   sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(), sentence1.getModeBiasFluents())
             if isinstance(sentence1, Question):
-                print(sentence1.getModeBiasFluents())
+                print(sentence1.getModeBiasFluents(), sentence1.getAnswer())
     print(trainCorpus1.modeBias)
     print(parser.synonymDictionary)

@@ -75,8 +75,8 @@ if __name__ == '__main__':
     # process data
     # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
     # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task11_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus)
