@@ -107,15 +107,15 @@ class BasicParser:
         if nounSubject:
             self.considerNounForFluent(nounSubject[0], nouns, nounsCopy, statement, usedTokens)
 
-        # add the direct object, if applicable
-        directObject = [token for token in statement.doc if token.dep_ == "dobj"]
-        if directObject:
-            self.considerNounForFluent(directObject[0], nouns, nounsCopy, statement, usedTokens)
+            # add the direct object, if applicable
+            directObject = [token for token in statement.doc if token.dep_ == "dobj"]
+            if directObject:
+                self.considerNounForFluent(directObject[0], nouns, nounsCopy, statement, usedTokens)
 
-        # add the indirect object, if applicable
-        indirectObject = [token for token in statement.doc if token.dep_ == "pobj" and hasDativeParent(token)]
-        if indirectObject:
-            self.considerNounForFluent(indirectObject[0], nouns, nounsCopy, statement, usedTokens)
+            # add the indirect object, if applicable
+            indirectObject = [token for token in statement.doc if token.dep_ == "pobj" and hasDativeParent(token)]
+            if indirectObject:
+                self.considerNounForFluent(indirectObject[0], nouns, nounsCopy, statement, usedTokens)
 
         # add everything else
         for noun in nouns:
