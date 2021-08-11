@@ -19,18 +19,30 @@ class ConceptNetIntegration:
         conceptsCopy = concepts.copy()
         currentDictionary = {}
 
+        # for each concept
+        # if it is the synonym with a value then assign it that value
+        # otherwise if it is a synonym with a key then assign it that value
+        # otherwise check all the other concepts that have not been yet assigned and connect them
+
         for concept in concepts:
             values = currentDictionary.values()
             keys = currentDictionary.keys()
-            if concept in values:
-                currentDictionary[concept] = concept
-                conceptsCopy.discard(concept)
-            for key in keys:
-                if self.isSynonym(concept, key):
-                    currentDictionary[concept] = currentDictionary[key]
-                    conceptsCopy.discard(concept)
-                    break
-            if concept not in keys and concept not in values:
+            if concept in conceptsCopy:
+                for value in values:
+                    if self.isSynonym(concept, value):
+                        currentDictionary[concept] = value
+                        conceptsCopy.discard(concept)
+                        break
+            # if concept in values:
+            #    currentDictionary[concept] = concept
+            #    conceptsCopy.discard(concept)
+            if concept in conceptsCopy:
+                for key in keys:
+                    if self.isSynonym(concept, key):
+                        currentDictionary[concept] = currentDictionary[key]
+                        conceptsCopy.discard(concept)
+                        break
+            if concept not in keys and concept not in values and concept in conceptsCopy:
                 for concept2 in conceptsCopy:
                     if concept != concept2 and self.isSynonym(concept, concept2):
                         currentDictionary[concept] = concept2
@@ -69,6 +81,16 @@ class ConceptNetIntegration:
                 return True
         return False
 
+    # TODO refactor to
+    def hasTemporalAspect(self, word):
+        query = self.baseAddress + self.isArelation + self.start + word
+        obj = requests.get(query).json()
+        for edge in obj['edges']:
+            end = edge["end"]
+            if "day" in end["label"]:
+                return True
+        return False
+
     def isRelated(self, word1, word2):
         node = self.node + word1
         other = self.other + word2
@@ -104,13 +126,6 @@ class ConceptNetIntegration:
                         return
         # print(relations)
 
-    def test(self, word):
-        node = self.node + word
-        query = self.baseAddress + self.mannerOf + node
-        print(query)
-        obj = requests.get(query).json()
-        print(obj['edges'])
-
     # takes fluent bases and checks for antonym relationships
     def checkForAntonymRelationship(self, fluentBases):
         for i in range(0, len(fluentBases)):
@@ -120,7 +135,7 @@ class ConceptNetIntegration:
                 pass
         pass
 
-    #could store a dictionary mapping
+    # could store a dictionary mapping
 
     def isA(self, word, concept, moreSearches=True):
         start = self.start + word.replace(" ", "_")
@@ -140,4 +155,4 @@ class ConceptNetIntegration:
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.isA("gray", "color"))
+    print(semanticNetwork.hasTemporalAspect("evening"))

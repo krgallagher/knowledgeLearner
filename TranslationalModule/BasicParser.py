@@ -5,7 +5,7 @@ from StoryStructure import Story
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from Utilities.ILASPSyntax import varWrapping
+from Utilities.ILASPSyntax import varWrapping, constWrapping, createConstantTerm
 
 
 def createPronounRegularExpression(pronoun):
@@ -45,6 +45,7 @@ class BasicParser:
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
         self.determiningConcepts = {}
+        self.temporalConstants = {}
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         index = story.getIndex(statement)
@@ -97,27 +98,13 @@ class BasicParser:
     def createMainPortionOfFluentForQuestion(self, nounsAndAdjectiveComplements, question: Question, usedTokens):
         self.createMainPortionOfFluent(nounsAndAdjectiveComplements, question, usedTokens)
         if not question.isYesNoMaybeQuestion():
-            self.addVariable(question)  # will need to edit what the add variable actually does...
+            self.addVariable(question)
 
-    # TODO for afterwards: get rid of nounsCopy and condense into the used tokens section
+            # TODO for afterwards: get rid of nounsCopy and condense into the used tokens section
+
     def createMainPortionOfFluent(self, nouns, statement, usedTokens):
         nounsCopy = nouns.copy()
-        # add the nsubj, if applicable
-        nounSubject = [token for token in statement.doc if token.dep_ == "nsubj"]
-        if nounSubject:
-            self.considerNounForFluent(nounSubject[0], nouns, nounsCopy, statement, usedTokens)
-
-            # add the direct object, if applicable
-            directObject = [token for token in statement.doc if token.dep_ == "dobj"]
-            if directObject:
-                self.considerNounForFluent(directObject[0], nouns, nounsCopy, statement, usedTokens)
-
-            # add the indirect object, if applicable
-            indirectObject = [token for token in statement.doc if token.dep_ == "pobj" and hasDativeParent(token)]
-            if indirectObject:
-                self.considerNounForFluent(indirectObject[0], nouns, nounsCopy, statement, usedTokens)
-
-        # add everything else
+        nouns = self.orderNouns(nouns, statement)
         for noun in nouns:
             self.considerNounForFluent(noun, nouns, nounsCopy, statement, usedTokens)
 
@@ -262,7 +249,6 @@ class BasicParser:
                     break
                 else:
                     self.determiningConcepts[concept]["exclusions"].add(noun.text)
-        # print(self.determiningConcepts)
 
         children = [child for child in noun.children]
         descriptiveNoun = ""
@@ -284,7 +270,14 @@ class BasicParser:
             fluent += ','
             modeBiasFluent += ','
         fluent += descriptiveNoun
-        modeBiasFluent += varWrapping(tag)
+        if self.isConstant(noun.text.lower()):
+            wrapping = constWrapping(tag)
+            statement.addConstantModeBias(createConstantTerm(tag, noun.text))
+        else:
+            wrapping = varWrapping(tag)
+
+        modeBiasFluent += wrapping
+
         # add tag predicates
         relevantPredicate = tag + '(' + descriptiveNoun + ')'
         statement.addPredicate(relevantPredicate)
@@ -321,11 +314,45 @@ class BasicParser:
         self.determiningConcepts[entry]["exclusions"] = set()
 
 
+    def isConstant(self, noun):
+        if noun in self.temporalConstants.keys():
+            return self.temporalConstants[noun]
+        self.temporalConstants[noun] = self.conceptNet.hasTemporalAspect(noun)
+        return self.temporalConstants[noun]
+
+        #return
+        #return noun.text.lower() in ["yesterday", "morning", "afternoon", "evening"]
+        # if self.conceptNet.hasTemporalAspect(noun):
+        #    return True
+
+    def orderNouns(self, nouns, statement: Statement):
+        sortedNouns = []
+        nounSubject = [token for token in statement.doc if token.dep_ == "nsubj"]
+        if nounSubject:
+            sortedNouns.append(nounSubject[0])
+            directObject = [token for token in statement.doc if token.dep_ == "dobj"]
+            if directObject:
+                sortedNouns.append(directObject[0])
+
+            indirectObject = [token for token in statement.doc if token.dep_ == "pobj" and hasDativeParent(token)]
+            if indirectObject:
+                sortedNouns.append(indirectObject[0])
+
+        constants = [noun for noun in nouns if self.isConstant(noun.text.lower()) and noun not in sortedNouns]
+        # add everything else
+        for noun in nouns:
+            if noun not in sortedNouns and noun not in constants:
+                sortedNouns.append(noun)
+        for noun in constants:
+            sortedNouns.append(noun)
+        return sortedNouns
+
+
 if __name__ == '__main__':
     # process data
-    # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_single-supporting-fact_train.txt")
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train")
+    # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_train.txt")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_test")
 
     # initialise parser
     parser = BasicParser()

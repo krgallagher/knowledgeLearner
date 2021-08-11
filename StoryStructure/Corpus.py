@@ -6,6 +6,7 @@ from StoryStructure.Story import Story
 
 class Corpus:
     def __init__(self):
+        self.constantModeBias = set()
         self.stories = []
         self.backgroundKnowledge = eventCalculusAxioms()
         self.modeBias = set()
@@ -48,6 +49,9 @@ class Corpus:
 
     def updateModeBias(self, modeBias):
         self.modeBias.update(modeBias)
+
+    def addConstantModeBias(self, constantBias):
+        self.constantModeBias.add(constantBias)
 
     def shuffle(self):
         random.seed(4)

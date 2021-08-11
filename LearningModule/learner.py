@@ -4,24 +4,7 @@ from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
 from TranslationalModule.ExpressivityChecker import createChoiceRule
-from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping, varWrapping
-
-
-# gives the number of arguments before the event calculus wrapping
-def numberOfArguments(fluent):
-    return len(fluent.split(','))
-
-
-# currently have only
-def addConstraints(modeBiasFluent):
-    constraints = ",(positive"
-    if numberOfArguments(modeBiasFluent) == 2:
-        constraints += ", anti_reflexive)"
-    else:
-        constraints += ")"
-    newMBFluent = modeBiasFluent[:-2]
-    newMBFluent += constraints + ")."
-    return newMBFluent
+from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping, varWrapping, addConstraints
 
 
 class Learner:
@@ -32,16 +15,17 @@ class Learner:
         self.cachingFile = cachingFile
         self.corpus = corpus
         self.oldModeBias = set()
+        self.oldConstantBias = set()
         self.previousStoryIndexForIncorrectQuestion = 0  # default to the first story
         self.previousExampleAddedIndex = 0  # the last index that has been added for a positive/negative example
-        # need to store the index
-        self.useHints = useSupervision
+        self.useSupervision = useSupervision
         self.wasEventCalculusNeededPreviously = False
 
     # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer):
         if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion():
             if answer == ["nothing"] or not answer or question.isCorrectAnswer(answer):
+                # might be able to get rid of the question.isCorrectAnswer, just think about the interactive system
                 example = self.createPositiveExample(question, story)
             else:
                 example = self.createNegativeExample(question, story, answer)
@@ -58,15 +42,17 @@ class Learner:
 
         # store the old mode bias
         self.oldModeBias = self.corpus.modeBias.copy()
+        self.oldConstantBias = self.corpus.constantModeBias.copy()
 
         # update the old mode bias.
         if self.wasEventCalculusNeededPreviously != self.corpus.isEventCalculusNeeded:
             self.corpus.modeBias = set()
+            self.corpus.constantModeBias = set()
             self.addModeBias(story, question)
         else:
             self.updateModeBias(story, question)
 
-        if self.oldModeBias == self.corpus.modeBias:
+        if self.oldModeBias == self.corpus.modeBias and self.oldConstantBias == self.corpus.constantModeBias:
             self.appendExamplesToLearningFile(story)
         else:
             if os.path.exists(self.cachingFile):
@@ -80,7 +66,7 @@ class Learner:
         for line in file:
             print(line)
 
-        hypotheses = self.solveILASPtask()
+        hypotheses = self.solveILASPTask()
 
         print("HYPOTHESES", hypotheses)
         if hypotheses != unsatisfiable:
@@ -96,7 +82,7 @@ class Learner:
         # os.remove(self.filename)
         pass
 
-    def createPositiveExample(self, question, story):
+    def createPositiveExample(self, question: Question, story: Story):
         if "maybe" in question.getAnswer():
             return self.createBravePositiveExample(question, story)
         if self.corpus.choiceRulesPresent:
@@ -139,6 +125,9 @@ class Learner:
                 else:
                     negativeInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded,
                                                                                   [answer])
+            if positiveInterpretation == '{}' and question.answer != ["nothing"]:
+                positiveInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded,
+                                                                              question.getAnswer())
 
         # append all the extra event calculus and other predicates for the context aspect
         context = self.createContext(question, story)
@@ -161,7 +150,7 @@ class Learner:
     def createContext(self, question: Question, story: Story):
         predicates = set()
         context = '{'
-        if self.useHints:
+        if self.useSupervision:
             for hint in question.getHints():
                 statement = story.get(int(hint) - 1)
                 context = self.addRepresentation(statement, context)
@@ -212,9 +201,13 @@ class Learner:
         # add in the mode bias
         for bias in self.corpus.modeBias:
             biasToAdd = bias
-            if not self.corpus.isEventCalculusNeeded:
-                biasToAdd = addConstraints(bias)
+            # if not self.corpus.isEventCalculusNeeded:
+            #    biasToAdd = addConstraints(bias)
             file.write(biasToAdd)
+            file.write('\n')
+
+        for constantBias in self.corpus.constantModeBias:
+            file.write(constantBias)
             file.write('\n')
 
         # might want to make this so it starts with 4 variables and then gradually increases.
@@ -227,7 +220,7 @@ class Learner:
         # add in examples for the stories thus far
         for story in self.corpus:
             self.addExamplesFromStory(file, story)
-        file.close()
+        # file.close()
 
     def appendExamplesToLearningFile(self, story: Story):
         file = open(self.filename, 'a')
@@ -251,9 +244,9 @@ class Learner:
             file.write(example)
             file.write('\n')
 
-    def solveILASPtask(self):
+    def solveILASPTask(self):
         # command = "FastLAS --nopl" + filename
-        command = "ILASP -q -nc -ml=2 --version=4 --cache-path=" + self.cachingFile + " " + self.filename
+        command = "ILASP -q -nc --version=4 --cache-path=" + self.cachingFile + " " + self.filename
         output = os.popen(command).read()
         return self.processILASP(output)
 
@@ -266,19 +259,23 @@ class Learner:
         for storyIndex in range(self.previousStoryIndexForIncorrectQuestion, self.corpus.getIndex(story)):
             for sentence in self.corpus.stories[storyIndex]:
                 self.addStatementModeBias(sentence)
+                self.addConstantModeBias(sentence)
 
         # add the mode bias for current story
         for index in range(0, story.getIndex(question) + 1):
             self.addStatementModeBias(story.get(index))
+            self.addConstantModeBias(story.get(index))
 
     # new function that might need to change a bit
     def addModeBias(self, story: Story, question: Statement):
         for storyIndex in range(0, self.corpus.getIndex(story)):
             for sentence in self.corpus.stories[storyIndex]:
                 self.addStatementModeBias(sentence)
+                self.addConstantModeBias(sentence)
 
         for index in range(0, story.getIndex(question) + 1):
             self.addStatementModeBias(story.get(index))
+            self.addConstantModeBias(story.get(index))
 
     def addStatementModeBias(self, statement):
         modeBiasFluents = statement.getModeBiasFluents()
@@ -325,24 +322,6 @@ class Learner:
                 bias.add(modeBWrapping(modeBiasFluent))
         return bias
 
-
-if __name__ == '__main__':
-    pass
-    # process data
-    # corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
-
-    # initialise parser
-    # parser = BasicParser(corpus)
-
-    # learner
-
-    '''
-    learner = Learner(corpus)
-    for story in corpus:
-        statements = story.getSentences()
-        for statement in statements:
-            parser.parse(statements, statement)
-            if isinstance(statement, Question):
-                learner.learn(statement, story, "bedroom")
-    print(corpus.getHypotheses())
-    '''
+    def addConstantModeBias(self, sentence):
+        for constantBias in sentence.constantModeBias:
+            self.corpus.addConstantModeBias(constantBias)

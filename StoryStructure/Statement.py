@@ -5,12 +5,16 @@ class Statement:
         self.fluents = list(list())
         self.eventCalculusRepresentation = list(list())
         self.modeBiasFluents = list(list())
+        self.constantModeBias = set()
         self.staticPredicates = set()  # might want to rename this to something else
         self.negatedVerb = False
         self.doc = None  # maybe initialise this in the parser?
 
     def __eq__(self, other):
         return self.text == other.text and self.lineId == other.lineId
+
+    def addConstantModeBias(self, constantModeBias):
+        self.constantModeBias.add(constantModeBias)
 
     def getText(self):
         return self.text

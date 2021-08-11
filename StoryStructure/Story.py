@@ -7,7 +7,7 @@ class Story:
         self.examples = []  # list of positive and negative examples
 
     def reset(self):
-        self.examples = set()
+        self.examples = []
 
     def __len__(self):
         return len(self.sentences)

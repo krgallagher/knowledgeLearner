@@ -113,8 +113,8 @@ class Reasoner:
         # create Clingo file
         filename = self.createClingoFile(question, story)
 
-        #file = open(filename, 'r')
-        #for line in file:
+        # file = open(filename, 'r')
+        # for line in file:
         #    print(line)
 
         # use clingo to gather the answer sets from the file (if there are any)

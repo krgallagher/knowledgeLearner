@@ -4,6 +4,7 @@ from StoryStructure import Statement
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
+from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 from TranslationalModule.DatasetParser import DatasetParser
 from Utilities.ILASPSyntax import createTimeRange
 
@@ -86,19 +87,25 @@ def isUnsatisfiable(output):
 def runClingo(filename):
     command = "Clingo -W none -n 0 " + filename
     output = os.popen(command).read()
-    print(output)
+    # print(output)
     return output
 
 
 def isEventCalculusNeeded(corpus: Corpus):
+    semanticNetwork = ConceptNetIntegration()
+    for story in corpus:
+        for sentence in story:
+            for rule in sentence.constantModeBias:
+                if semanticNetwork.hasTemporalAspect(rule.split(',')[1].split(')')[0]):
+                    return False
     for story in corpus:
         # create a clingo file that evaluates the expressivitiy of the corpus
-        print(story)
+        # print(story)
         filename = createExpressivityClingoFile(story, corpus)
 
-        file = open(filename, 'r')
-        for line in file:
-            print(line)
+        # file = open(filename, 'r')
+        # for line in file:
+        #    print(line)
 
         # run the file with clingo
         answerSets = runClingo(filename)
@@ -114,10 +121,10 @@ def isEventCalculusNeeded(corpus: Corpus):
 
 if __name__ == "__main__":
     # process the data
-    # trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_train.txt")
-    # testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_test.txt")
-    trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
-    testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test")
+    # trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_train.txt")
+    # testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_test.txt")
+    trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train")
+    testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test")
     # initialise parser
     parser = DatasetParser(trainingCorpus, testingCorpus)
 
