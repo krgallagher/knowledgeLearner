@@ -104,6 +104,10 @@ class Reasoner:
         self.filename = filename
         self.corpus = corpus
 
+    def __del__(self):
+        # delete file from computer
+        os.remove(self.filename)
+
     def computeAnswer(self, question: Question, story):
         # create Clingo file
         self.createClingoFile(question, story)
