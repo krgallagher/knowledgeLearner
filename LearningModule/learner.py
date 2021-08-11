@@ -20,6 +20,7 @@ class Learner:
         self.previousExampleAddedIndex = 0  # the last index that has been added for a positive/negative example
         self.useSupervision = useSupervision
         self.wasEventCalculusNeededPreviously = False
+        self.currentExamplesIndex = 0
 
     # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer):
@@ -34,11 +35,9 @@ class Learner:
                 example = self.createPositiveExample(question, story)
             else:
                 example = self.createNegativeExample(question, story)
-        story.appendExample(example)
+        self.corpus.addExample(example)
 
-        # possibly refactor this bit.
-        unsatisfiable = set()
-        unsatisfiable.add("UNSATISFIABLE")
+
 
         # store the old mode bias
         self.oldModeBias = self.corpus.modeBias.copy()
@@ -53,7 +52,7 @@ class Learner:
             self.updateModeBias(story, question)
 
         if self.oldModeBias == self.corpus.modeBias and self.oldConstantBias == self.corpus.constantModeBias:
-            self.appendExamplesToLearningFile(story)
+            self.appendExamplesToLearningFile()
         else:
             if os.path.exists(self.cachingFile):
                 os.remove(self.cachingFile)
@@ -67,6 +66,11 @@ class Learner:
             print(line)
 
         hypotheses = self.solveILASPTask()
+
+        #refactor this
+        unsatisfiable = set()
+        unsatisfiable.add("UNSATISFIABLE")
+
 
         print("HYPOTHESES", hypotheses)
         if hypotheses != unsatisfiable:
@@ -217,32 +221,23 @@ class Learner:
             file.write("#maxv(3)")
         file.write('.\n')
 
+        for example in self.corpus.examples:
+            file.write(example)
+            file.write('\n')
+        self.currentExamplesIndex = len(self.corpus.examples)
+
         # add in examples for the stories thus far
-        for story in self.corpus:
-            self.addExamplesFromStory(file, story)
+        # for story in self.corpus:
+        #    self.addExamplesFromStory(file, story)
         # file.close()
 
-    def appendExamplesToLearningFile(self, story: Story):
+    def appendExamplesToLearningFile(self):
         file = open(self.filename, 'a')
-        lastStory = self.corpus.get(self.previousStoryIndexForIncorrectQuestion)
-        for index in range(self.previousExampleAddedIndex + 1, len(lastStory.examples) - 1):
-            example = lastStory.examples[index]
-            file.write(example)
+        for index in range(self.currentExamplesIndex, len(self.corpus.examples)):
+            file.write(self.corpus.examples[index])
             file.write('\n')
-
-        for index in range(self.previousStoryIndexForIncorrectQuestion + 1, self.corpus.getIndex(story)):
-            previousStory = self.corpus.stories[index]
-            self.addExamplesFromStory(file, previousStory)
-
-        self.addExamplesFromStory(file, story)
-        # TODO need to move this up
-        self.previousExampleAddedIndex = len(story.examples) - 1
+        self.currentExamplesIndex = len(self.corpus.examples)
         file.close()
-
-    def addExamplesFromStory(self, file, story: Story):
-        for example in story.getExamples():
-            file.write(example)
-            file.write('\n')
 
     def solveILASPTask(self):
         # command = "FastLAS --nopl" + filename

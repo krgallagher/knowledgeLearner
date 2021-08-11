@@ -13,17 +13,20 @@ class Corpus:
         self.hypotheses = set()
         self.isEventCalculusNeeded = False
         self.choiceRulesPresent = False
+        self.examples = []
 
     def append(self, story):
         self.stories.append(story)
+
+    def addExample(self, example):
+        self.examples.append(example)
 
     def reset(self):
         self.modeBias = set()
         self.hypotheses = set()
         self.isEventCalculusNeeded = False
         self.choiceRulesPresent = False
-        for story in self.stories:
-            story.reset()
+        self.examples = []
 
     def __iter__(self):
         ''' Returns the Iterator object '''
