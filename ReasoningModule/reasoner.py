@@ -99,49 +99,46 @@ def processClingoOutput(output):
     return answerSets
 
 
-def getAnswerSets(filename):
-    command = "Clingo -W none -n 0 " + filename
-    output = os.popen(command).read()
-    return processClingoOutput(output)
-
-
 class Reasoner:
-    def __init__(self, corpus):
+    def __init__(self, corpus, filename='/tmp/ClingoFile.las'):
+        self.filename = filename
         self.corpus = corpus
 
-    def computeAnswer(self, question, story):
+    def computeAnswer(self, question: Question, story):
         # create Clingo file
-        filename = self.createClingoFile(question, story)
+        self.createClingoFile(question, story)
 
-        # file = open(filename, 'r')
+        # file = open(self.filename, 'r')
         # for line in file:
         #    print(line)
 
-        # use clingo to gather the answer sets from the file (if there are any)
-        answerSets = getAnswerSets(filename)
+        answerSets = self.getAnswerSets()
 
-        # parse the answer sets accordingly to give an answer
         answer = self.searchForAnswer(question, answerSets)
 
         # delete the file
-        os.remove(filename)
+        os.remove(self.filename)
 
         return answer
 
-    def createClingoFile(self, question, story: Story):
-        filename = '/tmp/ClingoFile.las'
-        temp = open(filename, 'w')
+    def getAnswerSets(self):
+        command = "Clingo -W none -n 0 " + self.filename
+        output = os.popen(command).read()
+        return processClingoOutput(output)
+
+    def createClingoFile(self, question: Question, story: Story):
+        file = open(self.filename, 'w')
 
         # add in the background knowledge
         if self.corpus.isEventCalculusNeeded:
             for rule in self.corpus.backgroundKnowledge:
-                temp.write(rule)
-                temp.write('\n')
+                file.write(rule)
+                file.write('\n')
 
         # add in the hypotheses
         for hypothesis in self.corpus.hypotheses:
-            temp.write(hypothesis)
-            temp.write('\n')
+            file.write(hypothesis)
+            file.write('\n')
 
         # add in the statements from the story
         for statement in story:
@@ -152,19 +149,18 @@ class Reasoner:
                     representation = statement.getFluents()
                 for i in range(0, len(representation)):
                     choiceRule = createChoiceRule(representation[i])
-                    temp.write(choiceRule)
-                    temp.write('.\n')
+                    file.write(choiceRule)
+                    file.write('.\n')
 
             # write the predicates even if the statement is a question
             for predicate in statement.getPredicates():
-                temp.write(predicate)
-                temp.write('.\n')
+                file.write(predicate)
+                file.write('.\n')
             if statement == question:
                 break
-        temp.write(createTimeRange(question.getLineID()))
-        temp.write('.\n')
-        temp.close()
-        return filename
+        file.write(createTimeRange(question.getLineID()))
+        file.write('.\n')
+        file.close()
 
     def searchForAnswer(self, question: Question, answerSets):
         if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion():
