@@ -93,6 +93,7 @@ def runClingo(filename):
 def isEventCalculusNeeded(corpus: Corpus):
     for story in corpus:
         # create a clingo file that evaluates the expressivitiy of the corpus
+        print(story)
         filename = createExpressivityClingoFile(story, corpus)
 
         file = open(filename, 'r')
@@ -115,8 +116,8 @@ if __name__ == "__main__":
     # process the data
     # trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_train.txt")
     # testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa8_lists-sets_test.txt")
-    trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train")
-    testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test")
+    trainingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+    testingCorpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test")
     # initialise parser
     parser = DatasetParser(trainingCorpus, testingCorpus)
 

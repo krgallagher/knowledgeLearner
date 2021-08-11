@@ -26,7 +26,7 @@ def addConstraints(modeBiasFluent):
 
 class Learner:
     def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
-                 cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useHints=False):
+                 cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useSupervision=False):
         # will probably eventually want to make the default be in the tmp bin, but this is okay for now I think
         self.filename = filename
         self.cachingFile = cachingFile
@@ -35,7 +35,7 @@ class Learner:
         self.previousStoryIndexForIncorrectQuestion = 0  # default to the first story
         self.previousExampleAddedIndex = 0  # the last index that has been added for a positive/negative example
         # need to store the index
-        self.useHints = useHints
+        self.useHints = useSupervision
         self.wasEventCalculusNeededPreviously = False
 
     # only learn something if the answer is incorrect. (Can always revert this change back)

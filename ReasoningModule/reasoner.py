@@ -85,7 +85,6 @@ def getAnswer(fullMatch, representation):
 
 
 def processClingoOutput(output):
-    print(output)
     answerSets = []
     data = output.split('\n')
     index = 0

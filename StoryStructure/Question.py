@@ -4,9 +4,11 @@ from StoryStructure.Statement import Statement
 class Question(Statement):
     def __init__(self, text, lineId, answer=None, hints=None):
         Statement.__init__(self, text, lineId)
-        for i in range(0, len(answer)):
-            answer[i] = answer[i].lower()
-        self.answer = answer
+        # possibly spruce this up a bit
+        if answer:
+            self.answer = [ans.lower() for ans in answer]
+        else:
+            self.answer = None
         self.hints = hints
         self.variableTypes = {}
 
@@ -19,14 +21,10 @@ class Question(Statement):
     def getHints(self):
         return self.hints
 
+    # TODO fix this up a bit
     def isCorrectAnswer(self, answer):
         if len(answer) >= 2 and self.isWhatQuestion():
-            return {item.lower() in answer for item in answer} == {item.lower() in self.answer for item in self.answer}
-            # return set(answer) == set(self.answer)
-        for i in range(0, len(self.answer)):
-            self.answer[i] = self.answer[i].lower()
-        for j in range(0, len(answer)):
-            answer[j] = answer[j].lower()
+            return set(answer) == set(self.answer)
         return answer == self.answer
 
     def getQuestionWithAnswers(self, eventCalculusNeeded=True):
@@ -52,10 +50,6 @@ class Question(Statement):
         interpretation += '}'
         return interpretation
 
-    # holdsAt(give(Bill,V1,Fred),1).
-    # holdsAt(give(V1,football,Fred),1).
-
-    # need to consider the scenario where the thing we want to fill in is the first in the representation
     def answerFiller(self, answer, eventCalculusNeeded):
         if eventCalculusNeeded:
             representation = self.getEventCalculusRepresentation()[0][0]

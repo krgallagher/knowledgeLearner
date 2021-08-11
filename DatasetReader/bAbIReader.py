@@ -38,8 +38,8 @@ def createStatement(line):
 
 
 if __name__ == "__main__":
-    corpus = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task8_train")
-    for story1 in corpus:
+    corpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task8_test")
+    for story1 in corpus1:
         sentences = story1.getSentences()
         for statement in sentences:
             print(statement.getLineID(), statement.getText())

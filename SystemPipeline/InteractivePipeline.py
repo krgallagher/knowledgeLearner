@@ -7,6 +7,8 @@ from StoryStructure.Story import Story
 from gtts import gTTS
 import os
 import speech_recognition as sr
+
+from TranslationalModule.BasicParser import getSubstitutedText
 from TranslationalModule.EventCalculus import wrap
 from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
 from TranslationalModule.InteractiveParser import InteractiveParser
