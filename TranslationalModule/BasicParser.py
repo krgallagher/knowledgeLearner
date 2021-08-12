@@ -83,6 +83,7 @@ class BasicParser:
         statement.setFluents([[fluent]])
         statement.setModeBiasFluents([[fluent]])
 
+        # TODO can probably refactor this and get rid of a couple of lines here
         if isinstance(statement, Question):
             self.createMainPortionOfFluentForQuestion(nounsAndAdjectiveComplements, statement, usedTokens)
         else:
@@ -120,13 +121,15 @@ class BasicParser:
             newFluents = []
             newMBFluents = []
             if disjunctive:
-                self.addDisjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement)
+                self.addDisjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement,
+                                             usedTokens)
             else:
-                self.addConjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement)
+                self.addConjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement,
+                                             usedTokens)
             statement.setFluents(newFluents)
             statement.setModeBiasFluents(newMBFluents)
 
-    def addConjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement):
+    def addConjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement, usedTokens):
         for i in range(0, len(statement.fluents)):
             for conjunct in conjuncts:
                 fluents1 = []
@@ -135,23 +138,21 @@ class BasicParser:
                     resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
                                                                               statement.fluents[i][j],
                                                                               statement.modeBiasFluents[i][
-                                                                                  j],
-                                                                              nounsCopy, nouns)
+                                                                                  j], nounsCopy, nouns, usedTokens)
                     fluents1.append(resultingFluent)
                     mbfluents1.append(resultingMBFluent)
                 newFluents.append(fluents1)
                 newMBFluents.append(mbfluents1)
 
-    def addDisjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement):
+    def addDisjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement, usedTokens):
         for i in range(0, len(statement.fluents)):
             orFluentList = []
             orMBFluentList = []
             for conjunct in conjuncts:
                 for j in range(0, len(statement.fluents[i])):
-                    newFluent, newMBFluent = self.addNounToFluent(statement, conjunct,
-                                                                  statement.fluents[i][j],
-                                                                  statement.modeBiasFluents[i][j],
-                                                                  nounsCopy, nouns)
+                    newFluent, newMBFluent = self.addNounToFluent(statement, conjunct, statement.fluents[i][j],
+                                                                  statement.modeBiasFluents[i][j], nounsCopy, nouns,
+                                                                  usedTokens)
                     orFluentList.append(newFluent)
                     orMBFluentList.append(newMBFluent)
             newFluents.append(orFluentList)
@@ -204,6 +205,8 @@ class BasicParser:
 
         adposition = [token for token in statement.doc if
                       token.pos_ == "ADP" and (token.head == root or len(nouns) <= 2)]
+        print(adposition, statement.text)
+
         if verb_modifier and (len(nouns) >= 2 or isinstance(statement, Question)):
             fluentBase += '_' + verb_modifier[0].lemma_
             ADPModifierChildren = [token for token in statement.doc if
@@ -216,9 +219,10 @@ class BasicParser:
         if adposition and adposition[-1] not in usedTokens:
             fluentBase += '_' + adposition[-1].text.lower()
             usedTokens.append(adposition[-1])
+        print(usedTokens)
         return fluentBase
 
-    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns, allNouns):
+    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns, allNouns, usedTokens):
         tag = noun.tag_.lower()
         # ignore plural
         if tag == 'nns':
@@ -262,7 +266,8 @@ class BasicParser:
         descriptiveNoun += noun.lemma_.lower()
         for child in children:
             relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
-            if child.pos_ == "ADP" and nouns and len(allNouns) > 2:
+            # TODO EDITED THIS LINE, NEED TO CHECK ALL OTHER TASKS STILL PARSE OKAY
+            if child.pos_ == "ADP" and nouns and len(allNouns) > 2 and child not in usedTokens:
                 descriptiveNoun += "_" + child.text.lower() + "_" + relevantNouns[0].text.lower()
                 nouns.remove(relevantNouns[0])
 
@@ -313,15 +318,14 @@ class BasicParser:
         self.determiningConcepts[entry]["inclusions"] = set()
         self.determiningConcepts[entry]["exclusions"] = set()
 
-
     def isConstant(self, noun):
         if noun in self.temporalConstants.keys():
             return self.temporalConstants[noun]
         self.temporalConstants[noun] = self.conceptNet.hasTemporalAspect(noun)
         return self.temporalConstants[noun]
 
-        #return
-        #return noun.text.lower() in ["yesterday", "morning", "afternoon", "evening"]
+        # return
+        # return noun.text.lower() in ["yesterday", "morning", "afternoon", "evening"]
         # if self.conceptNet.hasTemporalAspect(noun):
         #    return True
 

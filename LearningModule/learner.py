@@ -7,9 +7,6 @@ from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping, varWrapping, addConstraints
 
 
-# could generate the mode bias in one full swoop, might end up being better because then can always do caching.qu
-
-
 class Learner:
     def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
                  cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useSupervision=False):
@@ -226,7 +223,6 @@ class Learner:
                 file.write('\n')
         self.currentExamplesIndex = len(self.corpus.nonEventCalculusExamples)
 
-
     def appendExamplesToLearningFile(self):
         file = open(self.filename, 'a')
         for index in range(self.currentExamplesIndex, len(self.corpus.nonEventCalculusExamples)):
@@ -321,6 +317,5 @@ class Learner:
             self.corpus.addConstantModeBias(constantBias)
 
     def addExamples(self, NonECExample, ECExample):
-
         self.corpus.addNonECExample(NonECExample)
         self.corpus.addECExample(ECExample)
