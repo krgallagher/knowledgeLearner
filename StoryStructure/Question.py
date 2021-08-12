@@ -34,21 +34,30 @@ class Question(Statement):
             questionWithAnswer.append(example)
         return questionWithAnswer
 
-    def createPartialInterpretation(self, eventCalculusNeeded, answers=None):
+    def createPartialInterpretation(self, answers=None):
         if self.isYesNoMaybeQuestion():
-            if eventCalculusNeeded:
-                representation = self.eventCalculusRepresentation[0][0]
-            else:
-                representation = self.getFluents().copy()[0][0]
-            return '{' + representation + '}'
-        interpretation = '{'
+            ECInterpretation = '{' + self.eventCalculusRepresentation[0][0] + '}'
+            nonECInterpretation = '{' + self.getFluents().copy()[0][0] + '}'
+            return nonECInterpretation, ECInterpretation
+        # possibly could refactor this even more depending on where the answer filler is used... investigate this more later!
+        ECInterpretation = '{'
         for answer in answers:
             if answers.index(answer) != 0:
-                interpretation += ','
-            example = self.answerFiller(answer, eventCalculusNeeded)
-            interpretation += example
-        interpretation += '}'
-        return interpretation
+                ECInterpretation += ','
+            example = self.answerFiller(answer, eventCalculusNeeded=True)
+            ECInterpretation += example
+        ECInterpretation += '}'
+        nonECInterpretation = '{'
+        for answer in answers:
+            if answers.index(answer) != 0:
+                nonECInterpretation += ','
+            example = self.answerFiller(answer, eventCalculusNeeded=False)
+            nonECInterpretation += example
+        nonECInterpretation += '}'
+        return nonECInterpretation, ECInterpretation
+
+        # ------------------------------------------------------------------------#
+
 
     def answerFiller(self, answer, eventCalculusNeeded):
         if eventCalculusNeeded:

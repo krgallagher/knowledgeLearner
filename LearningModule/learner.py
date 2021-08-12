@@ -7,6 +7,9 @@ from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping, varWrapping, addConstraints
 
 
+# could generate the mode bias in one full swoop, might end up being better because then can always do caching.qu
+
+
 class Learner:
     def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
                  cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useSupervision=False):
@@ -27,17 +30,14 @@ class Learner:
         if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion():
             if answer == ["nothing"] or not answer or question.isCorrectAnswer(answer):
                 # might be able to get rid of the question.isCorrectAnswer, just think about the interactive system
-                example = self.createPositiveExample(question, story)
+                self.createPositiveExample(question, story)
             else:
-                example = self.createNegativeExample(question, story, answer)
+                self.createNegativeExample(question, story, answer)
         else:
             if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
-                example = self.createPositiveExample(question, story)
+                self.createPositiveExample(question, story)
             else:
-                example = self.createNegativeExample(question, story)
-        self.corpus.addExample(example)
-
-
+                self.createNegativeExample(question, story)
 
         # store the old mode bias
         self.oldModeBias = self.corpus.modeBias.copy()
@@ -67,10 +67,9 @@ class Learner:
 
         hypotheses = self.solveILASPTask()
 
-        #refactor this
+        # refactor this
         unsatisfiable = set()
         unsatisfiable.add("UNSATISFIABLE")
-
 
         print("HYPOTHESES", hypotheses)
         if hypotheses != unsatisfiable:
@@ -88,104 +87,100 @@ class Learner:
 
     def createPositiveExample(self, question: Question, story: Story):
         if "maybe" in question.getAnswer():
-            return self.createBravePositiveExample(question, story)
-        if self.corpus.choiceRulesPresent:
-            return self.createCautiousPositiveExample(question, story)
-        return self.createBravePositiveExample(question, story)
+            self.createBravePositiveExample(question, story)
+        elif self.corpus.choiceRulesPresent:
+            self.createCautiousPositiveExample(question, story)
+        else:
+            self.createBravePositiveExample(question, story)
 
     def createNegativeExample(self, question: Question, story: Story, answer=None):
         if self.corpus.choiceRulesPresent:
-            return self.createCautiousNegativeExample(question, story, answer)
-        return self.createBraveNegativeExample(question, story, answer)
+            self.createCautiousNegativeExample(question, story, answer)
+        else:
+            self.createBraveNegativeExample(question, story, answer)
 
     def createBravePositiveExample(self, question: Question, story: Story):
-        positivePortion = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded, question.getAnswer())
-
-        context = self.createContext(question, story)
-
-        positiveExample = '#pos(' + positivePortion + ',{},' + context + ').'
-        return positiveExample
+        positiveNonECPortion, positiveECPortion = question.createPartialInterpretation(question.getAnswer())
+        nonECContext, ECContext = self.createContext(question, story)
+        positiveNonECExample = '#pos(' + positiveNonECPortion + ',{},' + nonECContext + ').'
+        positiveECExample = '#pos(' + positiveECPortion + ',{},' + ECContext + ').'
+        self.addExamples(positiveNonECExample, positiveECExample)
 
     def createCautiousPositiveExample(self, question: Question, story: Story):
-        positivePortion = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded, question.getAnswer())
-
-        # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story)
-
-        # put it altogether to form the positive example and add the positive example to the story.
-        positiveExample = '#neg(' + '{},' + positivePortion + "," + context + ').'
-        return positiveExample
+        positiveNonECPortion, positiveECPortion = question.createPartialInterpretation(question.getAnswer())
+        nonECContext, ECContext = self.createContext(question, story)
+        positiveNonECExample = '#neg(' + '{},' + positiveNonECPortion + "," + nonECContext + ').'
+        positiveECExample = '#neg(' + '{},' + positiveECPortion + "," + ECContext + ').'
+        self.addExamples(positiveNonECExample, positiveECExample)
 
     def createBraveNegativeExample(self, question: Question, story: Story, answers=None):
-        positiveInterpretation = '{}'
+        positiveNonECPortion, positiveECPortion = '{}', '{}'
         if not answers:
-            negativeInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded)
+            negativeNonECPortion, negativeECPortion = question.createPartialInterpretation()
         else:
-            negativeInterpretation = '{}'
+            negativeNonECPortion, negativeECPortion = '{}', '{}'
             for answer in answers:
                 if question.isCorrectAnswer([answer]):
-                    positiveInterpretation = question.createPartialInterpretation(
-                        self.corpus.isEventCalculusNeeded, [answer])
+                    positiveNonECPortion, positiveECPortion = question.createPartialInterpretation([answer])
                 else:
-                    negativeInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded,
-                                                                                  [answer])
-            if positiveInterpretation == '{}' and question.answer != ["nothing"]:
-                positiveInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded,
-                                                                              question.getAnswer())
+                    negativeNonECPortion, negativeECPortion = question.createPartialInterpretation([answer])
+            if positiveNonECPortion == '{}' and question.answer != ["nothing"]:
+                positiveNonECPortion, positiveECPortion = question.createPartialInterpretation(question.getAnswer())
 
         # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story)
-
-        # put it altogether to form the positive example and add the positive example to the story.
-        negativeExample = '#pos(' + positiveInterpretation + ',' + negativeInterpretation + ',' + context + ').'
-        return negativeExample
+        nonECContext, ECContext = self.createContext(question, story)
+        negativeNonECExample = '#pos(' + positiveNonECPortion + ',' + negativeNonECPortion + ',' + nonECContext + ').'
+        negativeECExample = '#pos(' + positiveECPortion + ',' + negativeECPortion + ',' + ECContext + ').'
+        self.addExamples(negativeNonECExample, negativeECExample)
 
     # TO DO might want to redo the above so that it works better
     def createCautiousNegativeExample(self, question: Question, story: Story, answer=None):
-        negativeInterpretation = question.createPartialInterpretation(self.corpus.isEventCalculusNeeded, answer)
-
-        # append all the extra event calculus and other predicates for the context aspect
-        context = self.createContext(question, story)
-
-        # put it altogether to form the positive example and add the positive example to the story.
-        negativeExample = '#neg(' + negativeInterpretation + ',{},' + context + ').'
-        return negativeExample
+        negativeNonECPortion, negativeECPortion = question.createPartialInterpretation(answer)
+        nonECContext, ECContext = self.createContext(question, story)
+        negativeNonECExample = '#neg(' + negativeNonECPortion + ',{},' + nonECContext + ').'
+        negativeECExample = '#neg(' + negativeECPortion + ',{},' + ECContext + ').'
+        self.addExamples(negativeNonECExample, negativeECExample)
 
     def createContext(self, question: Question, story: Story):
         predicates = set()
+        nonECContext, ECContext = '{', '{'
         context = '{'
         if self.useSupervision:
             for hint in question.getHints():
                 statement = story.get(int(hint) - 1)
-                context = self.addRepresentation(statement, context)
+                nonECContext, ECContext = self.addRepresentation(statement, nonECContext, ECContext)
                 predicates.update(statement.getPredicates())
         else:
             for statement in story:
                 if not isinstance(statement, Question):
-                    context = self.addRepresentation(statement, context)
+                    nonECContext, ECContext = self.addRepresentation(statement, nonECContext, ECContext)
                 predicates.update(statement.getPredicates())
                 if statement == question:
                     break
-        context = self.addPredicates(predicates, context)
-        if context[-1] != '{':
-            context += '.\n'
-            if self.corpus.isEventCalculusNeeded:
-                context += createTimeRange(question.getLineID())
-                context += '.\n'
-        context += '}\n'
-        return context
+        nonECContext, ECContext = self.addPredicates(predicates, nonECContext), self.addPredicates(predicates,
+                                                                                                   ECContext)
 
-    def addRepresentation(self, statement: Statement, context):
-        if self.corpus.isEventCalculusNeeded:
-            representation = statement.getEventCalculusRepresentation()
-        else:
-            representation = statement.getFluents()
-        for i in range(0, len(representation)):
-            rule = createChoiceRule(representation[i])
-            if context[-1] != '{' and context[-1] != '\n':
-                context += '.\n'
-            context += rule
-        return context
+        if nonECContext[-1] != '{':
+            nonECContext += '.\n'
+            ECContext += '.\n'
+            ECContext += createTimeRange(question.getLineID())
+            ECContext += '.\n'
+        nonECContext += '}\n'
+        ECContext += '}\n'
+        return nonECContext, ECContext
+
+    def addRepresentation(self, statement: Statement, nonECContext, ECContext):
+        ECRepresentation = statement.getEventCalculusRepresentation()
+        nonECRepresentation = statement.getFluents()
+        for i in range(0, len(ECRepresentation)):
+            ECRule = createChoiceRule(ECRepresentation[i])
+            nonECRule = createChoiceRule(nonECRepresentation[i])
+            if nonECContext[-1] != '{' and nonECContext[-1] != '\n':
+                nonECContext += '.\n'
+                ECContext += '.\n'
+            nonECContext += nonECRule
+            ECContext += ECRule
+        return nonECContext, ECContext
 
     def addPredicates(self, predicates, context):
         for predicate in predicates:
@@ -221,22 +216,26 @@ class Learner:
             file.write("#maxv(3)")
         file.write('.\n')
 
-        for example in self.corpus.examples:
-            file.write(example)
-            file.write('\n')
-        self.currentExamplesIndex = len(self.corpus.examples)
+        if self.corpus.isEventCalculusNeeded:
+            for example in self.corpus.eventCalculusExamples:
+                file.write(example)
+                file.write('\n')
+        else:
+            for example in self.corpus.nonEventCalculusExamples:
+                file.write(example)
+                file.write('\n')
+        self.currentExamplesIndex = len(self.corpus.nonEventCalculusExamples)
 
-        # add in examples for the stories thus far
-        # for story in self.corpus:
-        #    self.addExamplesFromStory(file, story)
-        # file.close()
 
     def appendExamplesToLearningFile(self):
         file = open(self.filename, 'a')
-        for index in range(self.currentExamplesIndex, len(self.corpus.examples)):
-            file.write(self.corpus.examples[index])
+        for index in range(self.currentExamplesIndex, len(self.corpus.nonEventCalculusExamples)):
+            if self.corpus.isEventCalculusNeeded:
+                file.write(self.corpus.eventCalculusExamples[index])
+            else:
+                file.write(self.corpus.nonEventCalculusExamples[index])
             file.write('\n')
-        self.currentExamplesIndex = len(self.corpus.examples)
+        self.currentExamplesIndex = len(self.corpus.nonEventCalculusExamples)
         file.close()
 
     def solveILASPTask(self):
@@ -320,3 +319,8 @@ class Learner:
     def addConstantModeBias(self, sentence):
         for constantBias in sentence.constantModeBias:
             self.corpus.addConstantModeBias(constantBias)
+
+    def addExamples(self, NonECExample, ECExample):
+
+        self.corpus.addNonECExample(NonECExample)
+        self.corpus.addECExample(ECExample)

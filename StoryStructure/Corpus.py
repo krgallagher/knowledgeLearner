@@ -13,20 +13,25 @@ class Corpus:
         self.hypotheses = set()
         self.isEventCalculusNeeded = False
         self.choiceRulesPresent = False
-        self.examples = []
+        self.nonEventCalculusExamples = []
+        self.eventCalculusExamples = []
+        # store examples in both representations?
 
     def append(self, story):
         self.stories.append(story)
 
-    def addExample(self, example):
-        self.examples.append(example)
+    def addNonECExample(self, example):
+        self.nonEventCalculusExamples.append(example)
+
+    def addECExample(self, example):
+        self.eventCalculusExamples.append(example)
 
     def reset(self):
         self.modeBias = set()
         self.hypotheses = set()
         self.isEventCalculusNeeded = False
         self.choiceRulesPresent = False
-        self.examples = []
+        self.nonEventCalculusExamples = []
 
     def __iter__(self):
         ''' Returns the Iterator object '''

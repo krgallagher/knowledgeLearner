@@ -106,7 +106,8 @@ class Reasoner:
 
     def __del__(self):
         # delete file from computer
-        os.remove(self.filename)
+        #        os.remove(self.filename)
+        pass
 
     def computeAnswer(self, question: Question, story):
         # create Clingo file
