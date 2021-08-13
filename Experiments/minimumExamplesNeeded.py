@@ -1,5 +1,3 @@
-import random
-
 from DatasetReader.bAbIReader import bAbIReader
 from SystemPipeline.DatasetPipeline import mainPipeline
 

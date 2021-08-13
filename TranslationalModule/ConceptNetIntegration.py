@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+
 import requests
 
 
@@ -84,11 +86,14 @@ class ConceptNetIntegration:
     # TODO refactor to
     def hasTemporalAspect(self, word):
         query = self.baseAddress + self.isArelation + self.start + word
-        obj = requests.get(query).json()
-        for edge in obj['edges']:
-            end = edge["end"]
-            if "day" in end["label"]:
-                return True
+        try:
+            obj = requests.get(query).json()
+            for edge in obj['edges']:
+                end = edge["end"]
+                if "day" in end["label"]:
+                    return True
+        except JSONDecodeError:
+            pass
         return False
 
     def isRelated(self, word1, word2):

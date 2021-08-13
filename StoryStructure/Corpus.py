@@ -1,8 +1,8 @@
 from DatasetReader.BackgroundKnowledge import eventCalculusAxioms
 import random
 
+from StoryStructure.Question import Question
 from StoryStructure.Story import Story
-
 
 class Corpus:
     def __init__(self):
@@ -94,6 +94,21 @@ class CorpusIterator:
             return result
         # End of Iteration
         raise StopIteration
+
+
+def pruneCorpus(corpus: Corpus, numExamples):
+    newCorpus = Corpus()
+    numQuestions = 0
+    for story in corpus:
+        currentStory = Story()
+        newCorpus.append(currentStory)
+        for sentence in story:
+            if numQuestions >= numExamples:
+                return newCorpus
+            currentStory.addSentence(sentence)
+            if isinstance(sentence, Question):
+                numQuestions += 1
+
 
 
 if __name__ == "__main__":

@@ -1,21 +1,29 @@
+import time
 from DatasetReader.bAbIReader import bAbIReader
 from LearningModule.learner import Learner
 from ReasoningModule.reasoner import Reasoner
+from StoryStructure.Corpus import pruneCorpus
 from StoryStructure.Question import Question
 from TranslationalModule.ChoiceRulesChecker import choiceRulesPresent
 from TranslationalModule.DatasetParser import DatasetParser
 from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
 
 
-def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
+def mainPipeline(trainCorpus, testCorpus, numExamples=10000, useSupervision=False):
+    startTime = time.time()
+
+    if numExamples < 10000:  # alternatively could do 1000
+        trainCorpus = pruneCorpus(trainCorpus, numExamples)
+
     # initialise parser
     DatasetParser(trainCorpus, testCorpus)
+    parseEndTime = time.time()
 
     # initialise reasoner
     reasoner = Reasoner(trainCorpus)
 
     # initialise learner
-    learner = Learner(trainCorpus, useHints=False)
+    learner = Learner(trainCorpus, useSupervision=useSupervision)
 
     if isEventCalculusNeeded(trainCorpus):
         trainCorpus.isEventCalculusNeeded = True
@@ -26,10 +34,10 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
 
     # train the data
     train(trainCorpus, reasoner, learner, numExamples)
+    learningTime = time.time()
 
     # set hypotheses for testing corpus
     hypotheses = trainCorpus.getHypotheses()
-
     testCorpus.setHypotheses(hypotheses)
 
     # testing data loop
@@ -46,15 +54,18 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000):
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
                 else:
-                    print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
-                          sentence.getAnswer(), answerToQuestion, sentence.getHints())
-                    for statement in story:
-                        print(statement.text, statement.getText())
+                    print(story)
+                print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
+                      sentence.getAnswer(), answerToQuestion, sentence.getHints())
+                # for statement in story:
+                #    print(statement.text, statement.getText())
     print("Number Correct: ", numCorrect)
     print("Number of Question: ", numQuestions)
     print("Accuracy: ", numCorrect / numQuestions)  # should theoretically be careful about dividing by zero
     print("Hypotheses: ", trainCorpus.getHypotheses())
-    return numCorrect / numQuestions
+    print("Parsing Time: ", parseEndTime - startTime)
+    print("Learning Time: ", learningTime - parseEndTime)
+    return numCorrect / numQuestions, parseEndTime - startTime, learningTime - parseEndTime
 
 
 def train(corpus, reasoner, learner, numExamples):
@@ -69,14 +80,15 @@ def train(corpus, reasoner, learner, numExamples):
                 count += 1
                 if not sentence.isCorrectAnswer(answerToQuestion):
                     learner.learn(sentence, story, answerToQuestion)
+    print(corpus.nonEventCalculusExamples, corpus.eventCalculusExamples)
 
 
 if __name__ == '__main__':
     # process data
-    # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
-    # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_basic-induction_train.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test"
+    # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_train.txt"
+    # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_train.txt"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
-    mainPipeline(trainingCorpus, testingCorpus)
+    mainPipeline(trainingCorpus, testingCorpus, useSupervision=False)

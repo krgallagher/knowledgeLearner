@@ -168,8 +168,10 @@ class Reasoner:
         file.close()
 
     def searchForAnswer(self, question: Question, answerSets):
-        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion():
+        print(question.text, question.isHowManyQuestion())
+        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion() or question.isHowManyQuestion():
             answers = []
+            print(answerSets)
             for answerSet in answerSets:
                 newAnswers = self.whereSearch(question, answerSet)
                 answers += newAnswers
@@ -181,14 +183,6 @@ class Reasoner:
                 return []
         elif question.isYesNoMaybeQuestion():
             return self.isPossibleAnswer(question, answerSets)
-        elif question.isHowManyQuestion():
-            answers = []
-            for answerSet in answerSets:
-                newAnswers = self.whereSearch(question, answerSet)
-                answers += newAnswers
-            if answers:
-                return [num2words(len(answers))]
-            return ["none"]
         return []
 
     # TODO rename this since this funciton is used for more than a "where" search
@@ -199,6 +193,7 @@ class Reasoner:
             representation = question.getEventCalculusRepresentation()[0][0]
         else:
             representation = question.getFluents()[0][0]
+        print(representation, answerSet)
         pattern = createRegularExpression(representation)
         compiledPattern = re.compile(pattern)
         for rule in answerSet:

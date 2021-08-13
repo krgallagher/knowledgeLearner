@@ -75,7 +75,8 @@ class BasicParser:
 
         # might want to add the W pronouns into this mix and maybe also need to rename this...
         nounsAndAdjectiveComplements = [token for token in statement.doc if
-                                        "NN" in token.tag_ or "JJ" in token.tag_ or "W" in token.tag_]
+                                        "NN" in token.tag_ or (
+                                                "JJ" in token.tag_ and "NN" not in token.head.tag_) or "W" in token.tag_]
 
         fluentBase = self.createFluentBase(usedTokens, statement)
 
@@ -83,7 +84,6 @@ class BasicParser:
         statement.setFluents([[fluent]])
         statement.setModeBiasFluents([[fluent]])
 
-        # TODO can probably refactor this and get rid of a couple of lines here
         if isinstance(statement, Question):
             self.createMainPortionOfFluentForQuestion(nounsAndAdjectiveComplements, statement, usedTokens)
         else:
@@ -158,7 +158,6 @@ class BasicParser:
             newFluents.append(orFluentList)
             newMBFluents.append(orMBFluentList)
 
-    # basically need to replace, "what", "where" and "who" with V1s
     def addVariable(self, question: Question):
         for i in range(0, len(question.fluents)):
             for j in range(0, len(question.fluents[i])):
@@ -178,8 +177,18 @@ class BasicParser:
                     question.fluents[i][j] = question.fluents[i][j].replace("what", "V1")
                     if "V1" not in question.variableTypes.keys():
                         question.variableTypes["V1"] = 'nn'
+
                     question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("what", varWrapping(
                         question.variableTypes["V1"]))
+                elif question.isHowManyQuestion():
+                    substitution = re.compile("how_many_[A-Za-z]*(,|$)")
+                    question.fluents[i][j] = re.sub(substitution, "V1\\1", question.fluents[i][j])
+                    if "V1" not in question.variableTypes.keys():
+                        question.variableTypes["V1"] = 'number'
+                    question.modeBiasFluents[i][j] = re.sub(substitution, "const(number\\1)",
+                                                            question.modeBiasFluents[i][j])
+                    for answer in question.answer:
+                        question.addConstantModeBias(createConstantTerm("number", answer))
 
     def createFluentBase(self, usedTokens, statement: Statement):
         nouns = [token for token in statement.doc if "NN" in token.tag_]
@@ -199,13 +208,11 @@ class BasicParser:
                 # might want to add a check to see whether already in the dictionary although doesn't really matter
                 self.createDeterminingConceptsEntry(typeDeterminer[0], fluentBase)
                 return fluentBase
-        # -------------------------------------------------
 
         verb_modifier = [token for token in statement.doc if token.tag_ == 'JJR' or token.dep_ == "acomp"]
 
         adposition = [token for token in statement.doc if
                       token.pos_ == "ADP" and (token.head == root or len(nouns) <= 2)]
-        print(adposition, statement.text)
 
         if verb_modifier and (len(nouns) >= 2 or isinstance(statement, Question)):
             fluentBase += '_' + verb_modifier[0].lemma_
@@ -219,19 +226,13 @@ class BasicParser:
         if adposition and adposition[-1] not in usedTokens:
             fluentBase += '_' + adposition[-1].text.lower()
             usedTokens.append(adposition[-1])
-        print(usedTokens)
+
         return fluentBase
 
     def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns, allNouns, usedTokens):
         tag = noun.tag_.lower()
-        # ignore plural
         if tag == 'nns':
             tag = 'nn'
-        if 'w' in tag:
-            if noun.text.lower() == "who":
-                tag = 'nnp'
-            else:
-                tag = 'nn'
 
         # perhaps can store some data in a dictionary so that I don't do as many lookups
         for concept in self.determiningConcepts:
@@ -254,19 +255,14 @@ class BasicParser:
                 else:
                     self.determiningConcepts[concept]["exclusions"].add(noun.text)
 
-        children = [child for child in noun.children]
-        descriptiveNoun = ""
-        for child in children:
-            if child.pos_ == "ADJ":
-                if descriptiveNoun:
-                    descriptiveNoun += "_"
-                descriptiveNoun += child.text.lower()
+        descriptiveNoun, tag = self.addAdjectiveChildren(noun, usedTokens, tag)
+
         if descriptiveNoun:
             descriptiveNoun += "_"
         descriptiveNoun += noun.lemma_.lower()
+        children = [child for child in noun.children]
         for child in children:
             relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
-            # TODO EDITED THIS LINE, NEED TO CHECK ALL OTHER TASKS STILL PARSE OKAY
             if child.pos_ == "ADP" and nouns and len(allNouns) > 2 and child not in usedTokens:
                 descriptiveNoun += "_" + child.text.lower() + "_" + relevantNouns[0].text.lower()
                 nouns.remove(relevantNouns[0])
@@ -278,12 +274,12 @@ class BasicParser:
         if self.isConstant(noun.text.lower()):
             wrapping = constWrapping(tag)
             statement.addConstantModeBias(createConstantTerm(tag, noun.text))
+        elif 'w' in tag:
+            wrapping = descriptiveNoun
         else:
             wrapping = varWrapping(tag)
-
         modeBiasFluent += wrapping
 
-        # add tag predicates
         relevantPredicate = tag + '(' + descriptiveNoun + ')'
         statement.addPredicate(relevantPredicate)
         return fluent, modeBiasFluent
@@ -324,16 +320,11 @@ class BasicParser:
         self.temporalConstants[noun] = self.conceptNet.hasTemporalAspect(noun)
         return self.temporalConstants[noun]
 
-        # return
-        # return noun.text.lower() in ["yesterday", "morning", "afternoon", "evening"]
-        # if self.conceptNet.hasTemporalAspect(noun):
-        #    return True
-
     def orderNouns(self, nouns, statement: Statement):
         sortedNouns = []
         nounSubject = [token for token in statement.doc if token.dep_ == "nsubj"]
         if nounSubject:
-            sortedNouns.append(nounSubject[0])
+            sortedNouns.append(nounSubject[-1])
             directObject = [token for token in statement.doc if token.dep_ == "dobj"]
             if directObject:
                 sortedNouns.append(directObject[0])
@@ -343,13 +334,31 @@ class BasicParser:
                 sortedNouns.append(indirectObject[0])
 
         constants = [noun for noun in nouns if self.isConstant(noun.text.lower()) and noun not in sortedNouns]
+
+        questionWords = [noun for noun in nouns if "W" in noun.tag_ and noun not in sortedNouns]
+
         # add everything else
         for noun in nouns:
-            if noun not in sortedNouns and noun not in constants:
+            if noun not in sortedNouns and noun not in constants and noun not in questionWords:
                 sortedNouns.append(noun)
         for noun in constants:
             sortedNouns.append(noun)
+        for noun in questionWords:
+            sortedNouns.append(noun)
         return sortedNouns
+
+    def addAdjectiveChildren(self, noun, usedTokens, tag, base=""):
+        children = [child for child in noun.children]
+        for child in children:
+            if (child.tag_ == "JJ" or child.tag_ == "WRB") and child not in usedTokens:
+                base, tag = self.addAdjectiveChildren(child, usedTokens, tag, base)
+                if base:
+                    base += "_"
+                base += child.text.lower()
+                usedTokens.append(child)
+                if child.tag_ == "WRB":
+                    tag = 'wrb'
+        return base, tag
 
 
 if __name__ == '__main__':
@@ -363,9 +372,10 @@ if __name__ == '__main__':
 
     for story1 in trainCorpus1:
         for sentence1 in story1:
-            print(sentence1.getText(), sentence1.getLineID(), sentence1.getFluents(),
-                  sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(), sentence1.getModeBiasFluents())
             if isinstance(sentence1, Question):
+                print(sentence1.getText(), sentence1.getLineID(), sentence1.getFluents(),
+                      sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(),
+                      sentence1.getModeBiasFluents())
                 print(sentence1.getModeBiasFluents())
     print(trainCorpus1.modeBias)
     print(parser.synonymDictionary)

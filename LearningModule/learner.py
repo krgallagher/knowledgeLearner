@@ -24,8 +24,8 @@ class Learner:
 
     # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer):
-        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion():
-            if answer == ["nothing"] or not answer or question.isCorrectAnswer(answer):
+        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion() or question.isHowManyQuestion():
+            if answer == ["nothing"] or answer == ['none'] or not answer or question.isCorrectAnswer(answer):
                 # might be able to get rid of the question.isCorrectAnswer, just think about the interactive system
                 self.createPositiveExample(question, story)
             else:

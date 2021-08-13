@@ -41,10 +41,16 @@ class DatasetParser(BasicParser):
                     self.parse(sentence)
 
         # play around with the synonym dictionary
-        self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
+        # self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
         # to be removed at a later point
-        if "drop" in self.synonymDictionary.keys():
-            self.synonymDictionary["leave"] = self.synonymDictionary["drop"]
+        # if "drop" in self.synonymDictionary.keys():
+        #    self.synonymDictionary["leave"] = self.synonymDictionary["drop"]
+        self.synonymDictionary = {'put_down': 'drop', 'go_to': 'go_to', 'journey_to': 'go_to', 'get': 'take',
+                                  'move_to': 'go_to', 'grab': 'take', "go": "go_to",
+                                  'take': 'take', 'travel_to': 'go_to', 'drop': 'drop', 'leave': 'drop',
+                                  'pick_up': 'take', 'discard': 'drop', "go_after": "go_to", "hand_to": "give_to",
+                                  "give_to": "give_to", "pass_to": "give_to"}
+
         self.updateFluents()
         self.setEventCalculusRepresentation()
         print(self.synonymDictionary)
@@ -77,15 +83,26 @@ class DatasetParser(BasicParser):
 
 
 if __name__ == '__main__':
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_test")
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 
     for story1 in trainCorpus1:
         for sentence1 in story1:
             print(sentence1.getText(), sentence1.getLineID(), sentence1.getFluents(),
-                  sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(), sentence1.getModeBiasFluents())
+                  sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(), sentence1.getModeBiasFluents(),
+                  sentence1.constantModeBias)
+            if isinstance(sentence1, Question):
+                print(sentence1.getModeBiasFluents(), sentence1.getAnswer())
+    print(trainCorpus1.modeBias)
+    print(parser.synonymDictionary)
+    for story1 in testCorpus1:
+        for sentence1 in story1:
+            print(sentence1.getText(), sentence1.getLineID(), sentence1.getFluents(),
+                  sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(),
+                  sentence1.getModeBiasFluents(),
+                  sentence1.constantModeBias)
             if isinstance(sentence1, Question):
                 print(sentence1.getModeBiasFluents(), sentence1.getAnswer())
     print(trainCorpus1.modeBias)
