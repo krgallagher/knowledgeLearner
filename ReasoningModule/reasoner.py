@@ -1,6 +1,5 @@
 import os
 import re
-
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 from TranslationalModule.ExpressivityChecker import createChoiceRule

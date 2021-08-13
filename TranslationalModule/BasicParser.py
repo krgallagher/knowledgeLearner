@@ -78,58 +78,50 @@ class BasicParser:
                                         "NN" in token.tag_ or (
                                                 "JJ" in token.tag_ and "NN" not in token.head.tag_) or "W" in token.tag_]
 
+        nounsAndAdjectiveComplements = self.orderNouns(nounsAndAdjectiveComplements, statement)
+
         fluentBase = self.createFluentBase(usedTokens, statement)
 
         fluent = fluentBase + "("
         statement.setFluents([[fluent]])
         statement.setModeBiasFluents([[fluent]])
 
-        if isinstance(statement, Question):
-            self.createMainPortionOfFluentForQuestion(nounsAndAdjectiveComplements, statement, usedTokens)
-        else:
-            if fluentBase.split('_')[0] != 'be':
-                self.conceptsToExplore.add(fluentBase)
-            self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
+        if not isinstance(statement, Question) and fluentBase.split('_')[0] != 'be':
+            self.conceptsToExplore.add(fluentBase)
+
+        self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
 
         for i in range(0, len(statement.fluents)):
             for j in range(0, len(statement.fluents[i])):
                 statement.fluents[i][j] += ")"
                 statement.modeBiasFluents[i][j] += ")"
 
-    def createMainPortionOfFluentForQuestion(self, nounsAndAdjectiveComplements, question: Question, usedTokens):
-        self.createMainPortionOfFluent(nounsAndAdjectiveComplements, question, usedTokens)
-        if not question.isYesNoMaybeQuestion():
-            self.addVariable(question)
-
-            # TODO for afterwards: get rid of nounsCopy and condense into the used tokens section
-
     def createMainPortionOfFluent(self, nouns, statement, usedTokens):
-        nounsCopy = nouns.copy()
-        nouns = self.orderNouns(nouns, statement)
         for noun in nouns:
-            self.considerNounForFluent(noun, nouns, nounsCopy, statement, usedTokens)
+            self.considerNounForFluent(noun, nouns, statement, usedTokens)
+        if isinstance(statement, Question) and not statement.isYesNoMaybeQuestion():
+            self.addVariable(statement)
 
-    def considerNounForFluent(self, noun, nouns, nounsCopy, statement, usedTokens):
+    def considerNounForFluent(self, noun, nouns, statement, usedTokens):
         whDeterminer = [token for token in noun.children if token.tag_ == "WDT"]
         if whDeterminer:
             usedTokens.append(noun)
-        if noun in nounsCopy and noun not in usedTokens:
+
+        if noun not in usedTokens:
             disjunctive = isDisjunctive(noun, statement)
             conjuncts = [noun] + list(noun.conjuncts)
             for conjunct in conjuncts:
-                nounsCopy.remove(conjunct)
+                usedTokens.append(conjunct)
             newFluents = []
             newMBFluents = []
             if disjunctive:
-                self.addDisjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement,
-                                             usedTokens)
+                self.addDisjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens)
             else:
-                self.addConjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement,
-                                             usedTokens)
+                self.addConjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens)
             statement.setFluents(newFluents)
             statement.setModeBiasFluents(newMBFluents)
 
-    def addConjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement, usedTokens):
+    def addConjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens):
         for i in range(0, len(statement.fluents)):
             for conjunct in conjuncts:
                 fluents1 = []
@@ -137,21 +129,21 @@ class BasicParser:
                 for j in range(0, len(statement.fluents[i])):
                     resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
                                                                               statement.fluents[i][j],
-                                                                              statement.modeBiasFluents[i][
-                                                                                  j], nounsCopy, nouns, usedTokens)
+                                                                              statement.modeBiasFluents[i][j], nouns,
+                                                                              usedTokens)
                     fluents1.append(resultingFluent)
                     mbfluents1.append(resultingMBFluent)
                 newFluents.append(fluents1)
                 newMBFluents.append(mbfluents1)
 
-    def addDisjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, nounsCopy, statement, usedTokens):
+    def addDisjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens):
         for i in range(0, len(statement.fluents)):
             orFluentList = []
             orMBFluentList = []
             for conjunct in conjuncts:
                 for j in range(0, len(statement.fluents[i])):
                     newFluent, newMBFluent = self.addNounToFluent(statement, conjunct, statement.fluents[i][j],
-                                                                  statement.modeBiasFluents[i][j], nounsCopy, nouns,
+                                                                  statement.modeBiasFluents[i][j], nouns,
                                                                   usedTokens)
                     orFluentList.append(newFluent)
                     orMBFluentList.append(newMBFluent)
@@ -229,7 +221,7 @@ class BasicParser:
 
         return fluentBase
 
-    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, nouns, allNouns, usedTokens):
+    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, allNouns, usedTokens):
         tag = noun.tag_.lower()
         if tag == 'nns':
             tag = 'nn'
@@ -263,9 +255,9 @@ class BasicParser:
         children = [child for child in noun.children]
         for child in children:
             relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
-            if child.pos_ == "ADP" and nouns and len(allNouns) > 2 and child not in usedTokens:
+            if child.pos_ == "ADP" and len(allNouns) > 2 and child not in usedTokens:
                 descriptiveNoun += "_" + child.text.lower() + "_" + relevantNouns[0].text.lower()
-                nouns.remove(relevantNouns[0])
+                usedTokens.append(relevantNouns[0])
 
         if fluent[-1] != '(':
             fluent += ','
@@ -364,8 +356,8 @@ class BasicParser:
 if __name__ == '__main__':
     # process data
     # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_train.txt")
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_test")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_test")
 
     # initialise parser
     parser = BasicParser()

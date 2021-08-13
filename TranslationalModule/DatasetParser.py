@@ -83,8 +83,8 @@ class DatasetParser(BasicParser):
 
 
 if __name__ == '__main__':
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_test")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test")
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 
