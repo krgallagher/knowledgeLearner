@@ -1,55 +1,14 @@
 import os
 import re
-from num2words import num2words
+
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange
 
-'''
-def findSpecificAnswer(answers, question, story: Story):
-    if len(answers) == 1:
-        return answers
-    name = question.getFluents()[0][0].split('(')[1].split(',')[0]
-    print("Name", name)
-    animalPredicate = "be(" + name + ",V1)"
-    print("Animal Predicate Finder:", animalPredicate)
-    for sentence in story:
-        pattern = createRegularExpression(animalPredicate)
-        compiledPattern = re.compile(pattern)
-        rule = sentence.getFluents()[0][0]
-        result = compiledPattern.fullmatch(rule)
-        if result:
-            fullMatch = result[0]
-    animal = fullMatch.split(',')[1][:-1]
-    print("Animal:", animal)
-    index = 0
-    for sentence in story:
-        if animal in sentence.text and name not in sentence.text.lower():
-            index = story.getIndex(sentence)
-    animalName = story.get(index).getFluents()[0][0].split('(')[1].split(',')[0]
-    print("Name of previous animal:", animalName)
-    colorPredicate = "be_color(" + animalName + ",V1)"
-    print("Color predicate: ", colorPredicate)
-    answer = None
-    for sentence in story:
-        pattern = createRegularExpression(colorPredicate)
-        compiledPattern = re.compile(pattern)
-        rule = sentence.getFluents()[0][0]
-        result = compiledPattern.fullmatch(rule)
-        if result:
-            fullMatch = result[0]
-            answer = getAnswer(fullMatch, colorPredicate)
-    if answer in answers:
-        return [answer]
-    else:
-        return answers
-    #check if the animal is in a sentences text, and get the index of the last one
-'''
 
-
+# TODO Could put this in utilities?
 def createRegularExpression(representation):
-    # split with left hand parentheses
     leftSplit = representation.split('(')
     rightSplit = leftSplit[len(leftSplit) - 1].split(')')
     arguments = rightSplit[0].split(',')
@@ -121,9 +80,6 @@ class Reasoner:
 
         answer = self.searchForAnswer(question, answerSets)
 
-        # delete the file
-        os.remove(self.filename)
-
         return answer
 
     def getAnswerSets(self):
@@ -168,32 +124,25 @@ class Reasoner:
         file.close()
 
     def searchForAnswer(self, question: Question, answerSets):
-        print(question.text, question.isHowManyQuestion())
-        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion() or question.isHowManyQuestion():
-            answers = []
-            print(answerSets)
-            for answerSet in answerSets:
-                newAnswers = self.whereSearch(question, answerSet)
-                answers += newAnswers
-            if answers:
-                return answers
-            if question.isWhatQuestion():
-                return ["nothing"]
-            else:
-                return []
-        elif question.isYesNoMaybeQuestion():
+        if question.isYesNoMaybeQuestion():
             return self.isPossibleAnswer(question, answerSets)
+        # if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion()
+        # or question.isHowManyQuestion():
+        answers = []
+        for answerSet in answerSets:
+            newAnswers = self.whereSearch(question, answerSet)
+            answers += newAnswers
+        if answers:
+            return answers
+        if question.isWhatQuestion():
+            return ["nothing"]
         return []
 
-    # TODO rename this since this funciton is used for more than a "where" search
+    # TODO rename this since this function is used for more than a "where" search
     def whereSearch(self, question: Question, answerSet):
         # create a regular expression
         answers = []
-        if self.corpus.isEventCalculusNeeded:
-            representation = question.getEventCalculusRepresentation()[0][0]
-        else:
-            representation = question.getFluents()[0][0]
-        print(representation, answerSet)
+        representation = self.getRepresentation(question)
         pattern = createRegularExpression(representation)
         compiledPattern = re.compile(pattern)
         for rule in answerSet:
@@ -206,10 +155,7 @@ class Reasoner:
     # TODO edit this to have both the event calculus and non-event calculus representation taken into account
     def isPossibleAnswer(self, question: Question, answerSets):
         # create regular expression pattern to be matched
-        if self.corpus.isEventCalculusNeeded:
-            representation = question.getEventCalculusRepresentation()[0][0]
-        else:
-            representation = question.getFluents()[0][0]
+        representation = self.getRepresentation(question)
         pattern = createRegularExpression(representation)
         compiledPattern = re.compile(pattern)
         numAnswerSetsIn = 0
@@ -225,3 +171,8 @@ class Reasoner:
             return ["maybe"]
         else:
             return ["no"]
+
+    def getRepresentation(self, question):
+        if self.corpus.isEventCalculusNeeded:
+            return question.getEventCalculusRepresentation()[0][0]
+        return question.getFluents()[0][0]
