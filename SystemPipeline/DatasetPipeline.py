@@ -8,21 +8,20 @@ from TranslationalModule.ChoiceRulesChecker import choiceRulesPresent
 from TranslationalModule.DatasetParser import DatasetParser
 from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
 
+MAX_EXAMPLES = 1000
 
-def mainPipeline(trainCorpus, testCorpus, numExamples=10000, useSupervision=False):
+
+def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervision=False):
     startTime = time.time()
 
-    if numExamples < 10000:  # alternatively could do 1000
+    if numExamples < MAX_EXAMPLES:
         trainCorpus = pruneCorpus(trainCorpus, numExamples)
 
-    # initialise parser
     DatasetParser(trainCorpus, testCorpus)
     parseEndTime = time.time()
 
-    # initialise reasoner
     reasoner = Reasoner(trainCorpus)
 
-    # initialise learner
     learner = Learner(trainCorpus, useSupervision=useSupervision)
 
     if isEventCalculusNeeded(trainCorpus):
@@ -57,8 +56,6 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=10000, useSupervision=Fals
                     print(story)
                 print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
                       sentence.getAnswer(), answerToQuestion, sentence.getHints())
-                # for statement in story:
-                #    print(statement.text, statement.getText())
     print("Number Correct: ", numCorrect)
     print("Number of Question: ", numQuestions)
     print("Accuracy: ", numCorrect / numQuestions)  # should theoretically be careful about dividing by zero
@@ -84,11 +81,8 @@ def train(corpus, reasoner, learner, numExamples):
 
 
 if __name__ == '__main__':
-    # process data
-    # trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_train.txt"
-    # testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa16_train.txt"
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus, useSupervision=False)

@@ -38,6 +38,10 @@ def hasDativeParent(token):
     return token.head.dep_ == "dative"
 
 
+def createTypingAtom(word, tag):
+    return tag + '(' + word + ')'
+
+
 class BasicParser:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
@@ -254,8 +258,8 @@ class BasicParser:
         descriptiveNoun += noun.lemma_.lower()
         children = [child for child in noun.children]
         for child in children:
-            relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
             if child.pos_ == "ADP" and len(allNouns) > 2 and child not in usedTokens:
+                relevantNouns = [aChild for aChild in child.children if "NN" in aChild.tag_]
                 descriptiveNoun += "_" + child.text.lower() + "_" + relevantNouns[0].text.lower()
                 usedTokens.append(relevantNouns[0])
 
@@ -272,8 +276,8 @@ class BasicParser:
             wrapping = varWrapping(tag)
         modeBiasFluent += wrapping
 
-        relevantPredicate = tag + '(' + descriptiveNoun + ')'
-        statement.addPredicate(relevantPredicate)
+        if 'w' not in tag:
+            statement.addPredicate(createTypingAtom(descriptiveNoun, tag))
         return fluent, modeBiasFluent
 
     def replaceFluentBase(self, fluent, modeBiasFluent, concept):

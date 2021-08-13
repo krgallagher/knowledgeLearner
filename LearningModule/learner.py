@@ -7,10 +7,15 @@ from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping, varWrapping, addConstraints
 
 
+def isSatisfiable(hypotheses):
+    unsatisfiable = set()
+    unsatisfiable.add("UNSATISFIABLE")
+    return unsatisfiable != hypotheses
+
+
 class Learner:
     def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
                  cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useSupervision=False):
-        # will probably eventually want to make the default be in the tmp bin, but this is okay for now I think
         self.filename = filename
         self.cachingFile = cachingFile
         self.corpus = corpus
@@ -22,7 +27,6 @@ class Learner:
         self.wasEventCalculusNeededPreviously = False
         self.currentExamplesIndex = 0
 
-    # only learn something if the answer is incorrect. (Can always revert this change back)
     def learn(self, question: Question, story: Story, answer):
         if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion() or question.isHowManyQuestion():
             if answer == ["nothing"] or answer == ['none'] or not answer or question.isCorrectAnswer(answer):
@@ -36,11 +40,9 @@ class Learner:
             else:
                 self.createNegativeExample(question, story)
 
-        # store the old mode bias
         self.oldModeBias = self.corpus.modeBias.copy()
         self.oldConstantBias = self.corpus.constantModeBias.copy()
 
-        # update the old mode bias.
         if self.wasEventCalculusNeededPreviously != self.corpus.isEventCalculusNeeded:
             self.corpus.modeBias = set()
             self.corpus.constantModeBias = set()
@@ -64,12 +66,8 @@ class Learner:
 
         hypotheses = self.solveILASPTask()
 
-        # refactor this
-        unsatisfiable = set()
-        unsatisfiable.add("UNSATISFIABLE")
-
         print("HYPOTHESES", hypotheses)
-        if hypotheses != unsatisfiable:
+        if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
         self.wasEventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded

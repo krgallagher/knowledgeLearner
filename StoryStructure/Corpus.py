@@ -4,18 +4,18 @@ import random
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 
+
 class Corpus:
     def __init__(self):
         self.constantModeBias = set()
+        self.modeBias = set()
         self.stories = []
         self.backgroundKnowledge = eventCalculusAxioms()
-        self.modeBias = set()
         self.hypotheses = set()
         self.isEventCalculusNeeded = False
         self.choiceRulesPresent = False
         self.nonEventCalculusExamples = []
         self.eventCalculusExamples = []
-        # store examples in both representations?
 
     def append(self, story):
         self.stories.append(story)
@@ -82,9 +82,7 @@ class CorpusIterator:
     ''' Iterator class '''
 
     def __init__(self, corpus):
-        # Corpus object reference
         self._corpus = corpus
-        # member variable to keep track of current index
         self._index = 0
 
     def __next__(self):
@@ -92,7 +90,7 @@ class CorpusIterator:
             result = self._corpus.stories[self._index]
             self._index += 1
             return result
-        # End of Iteration
+
         raise StopIteration
 
 
@@ -108,14 +106,3 @@ def pruneCorpus(corpus: Corpus, numExamples):
             currentStory.addSentence(sentence)
             if isinstance(sentence, Question):
                 numQuestions += 1
-
-
-
-if __name__ == "__main__":
-    corpus = Corpus()
-    corpus.append("cat")
-    corpus.append("dog")
-    corpus.append("fish")
-    for animal in corpus:
-        print(animal)
-    print(corpus.backgroundKnowledge)

@@ -34,7 +34,6 @@ class DatasetParser(BasicParser):
             for sentence in story:
                 if not isinstance(sentence, Question):
                     self.parse(sentence)
-            # parse the testing set questions
         for story in self.testCorpus:
             for sentence in story:
                 if not isinstance(sentence, Question):
@@ -54,6 +53,10 @@ class DatasetParser(BasicParser):
         self.updateFluents()
         self.setEventCalculusRepresentation()
         print(self.synonymDictionary)
+
+        # set the mode bias stuff for the corpus
+        # this includes both the mode bias and the constant mode bias
+        # should probably have the ec mode bias and the non ec mode bias
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         pronoun, possibilities = super().coreferenceFinder(statement, story)
@@ -83,8 +86,8 @@ class DatasetParser(BasicParser):
 
 
 if __name__ == '__main__':
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_test")
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 
