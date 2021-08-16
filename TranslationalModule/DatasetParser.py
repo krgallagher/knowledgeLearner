@@ -52,11 +52,7 @@ class DatasetParser(BasicParser):
 
         self.updateFluents()
         self.setEventCalculusRepresentation()
-        print(self.synonymDictionary)
-
-        # set the mode bias stuff for the corpus
-        # this includes both the mode bias and the constant mode bias
-        # should probably have the ec mode bias and the non ec mode bias
+        self.assembleModeBias()
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         pronoun, possibilities = super().coreferenceFinder(statement, story)
@@ -75,19 +71,30 @@ class DatasetParser(BasicParser):
     def updateFluents(self):
         for story in self.trainCorpus:
             for sentence in story:
-                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
-                sentence.setFluents(self.update(fluents))
-                sentence.setModeBiasFluents(self.update(modeBiasFluents))
+                self.updateSentence(sentence)
         for story in self.testCorpus:
             for sentence in story:
-                fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
-                sentence.setFluents(self.update(fluents))
-                sentence.setModeBiasFluents(self.update(modeBiasFluents))
+                self.updateSentence(sentence)
+
+    def assembleModeBias(self):
+        for story in self.trainCorpus:
+            for sentence in story:
+                nonECModeBias, ECModeBias = self.addStatementModeBias(sentence)
+                self.trainCorpus.updateECModeBias(ECModeBias)
+                self.trainCorpus.updateNonECModeBias(nonECModeBias)
+                self.trainCorpus.updateConstantModeBias(sentence.getConstantModeBias())
+
+        for story in self.testCorpus:
+            for sentence in story:
+                nonECModeBias, ECModeBias = self.addStatementModeBias(sentence)
+                self.trainCorpus.updateECModeBias(ECModeBias)
+                self.trainCorpus.updateNonECModeBias(nonECModeBias)
+                self.trainCorpus.updateConstantModeBias(sentence.getConstantModeBias())
 
 
 if __name__ == '__main__':
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task7_test")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test")
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 
@@ -98,7 +105,7 @@ if __name__ == '__main__':
                   sentence1.constantModeBias)
             if isinstance(sentence1, Question):
                 print(sentence1.getModeBiasFluents(), sentence1.getAnswer())
-    print(trainCorpus1.modeBias)
+    print(trainCorpus1.ECModeBias)
     print(parser.synonymDictionary)
     for story1 in testCorpus1:
         for sentence1 in story1:
@@ -108,5 +115,7 @@ if __name__ == '__main__':
                   sentence1.constantModeBias)
             if isinstance(sentence1, Question):
                 print(sentence1.getModeBiasFluents(), sentence1.getAnswer())
-    print(trainCorpus1.modeBias)
+    print(trainCorpus1.ECModeBias)
+    print(trainCorpus1.nonECModeBias)
+    print(trainCorpus1.constantModeBias)
     print(parser.synonymDictionary)

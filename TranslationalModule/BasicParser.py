@@ -2,10 +2,12 @@ import re
 import spacy
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure import Story
+from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from Utilities.ILASPSyntax import varWrapping, constWrapping, createConstantTerm
+from TranslationalModule.EventCalculus import initiatedAt, holdsAt, terminatedAt, happensAt
+from Utilities.ILASPSyntax import varWrapping, constWrapping, createConstantTerm, modeHWrapping, modeBWrapping
 
 
 def createPronounRegularExpression(pronoun):
@@ -40,6 +42,11 @@ def hasDativeParent(token):
 
 def createTypingAtom(word, tag):
     return tag + '(' + word + ')'
+
+
+def addConstantModeBias(self, sentence: Statement, corpus: Corpus):
+    for constantBias in sentence.constantModeBias:
+        corpus.addConstantModeBias(constantBias)
 
 
 class BasicParser:
@@ -222,7 +229,6 @@ class BasicParser:
         if adposition and adposition[-1] not in usedTokens:
             fluentBase += '_' + adposition[-1].text.lower()
             usedTokens.append(adposition[-1])
-
         return fluentBase
 
     def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, allNouns, usedTokens):
@@ -285,6 +291,13 @@ class BasicParser:
         replacement = self.determiningConcepts[concept]["fluentBase"] + '('
         return fluent.replace(oldFluentBase, replacement), modeBiasFluent.replace(oldFluentBase, replacement)
 
+    def updateSentence(self, sentence: Statement):
+        fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
+        sentence.setFluents(self.update(fluents))
+        sentence.setModeBiasFluents(self.update(modeBiasFluents))
+
+
+    #Does not work for the event calculus representation
     def update(self, fluents):
         newFluents = []
         for i in range(0, len(fluents)):
@@ -356,6 +369,50 @@ class BasicParser:
                     tag = 'wrb'
         return base, tag
 
+    @staticmethod
+    def generateBeAndQuestionBias(modeBiasFluent, statement: Statement):
+        nonECBias = set()
+        ECBias = set()
+        time = varWrapping("time")
+        if isinstance(statement, Question):
+            ECBias.add(modeHWrapping(initiatedAt(modeBiasFluent, time)))
+            ECBias.add(modeHWrapping(terminatedAt(modeBiasFluent, time)))
+            nonECBias.add(modeHWrapping(modeBiasFluent))
+        else:
+            ECBias.add(modeBWrapping(initiatedAt(modeBiasFluent, time)))
+            nonECBias.add(modeBWrapping(modeBiasFluent))
+        ECBias.add(modeBWrapping(holdsAt(modeBiasFluent, time)))
+        return nonECBias, ECBias
+
+    # can have this return 2 sets, one with the EC and one without
+    @staticmethod
+    def generateNonBeBias(modeBiasFluent, statement: Statement):
+        nonECBias = set()
+        ECBias = set()
+        time = varWrapping("time")
+        ECBias.add(modeBWrapping(happensAt(modeBiasFluent, time)))
+        if isinstance(statement, Question):
+            nonECBias.add(modeHWrapping(modeBiasFluent))
+        else:
+            nonECBias.add(modeBWrapping(modeBiasFluent))
+        return nonECBias, ECBias
+
+    def addStatementModeBias(self, statement):
+        modeBiasFluents = statement.getModeBiasFluents()
+        ECModeBias = set()
+        nonECModeBias = set()
+        for i in range(0, len(modeBiasFluents)):
+            for j in range(0, len(modeBiasFluents[i])):
+                modeBiasFluent = modeBiasFluents[i][j]
+                predicate = modeBiasFluent.split('(')[0].split('_')[0]
+                if predicate == "be" or isinstance(statement, Question):
+                    newNonECModeBias, newECModeBias = self.generateBeAndQuestionBias(modeBiasFluent, statement)
+                else:
+                    newNonECModeBias, newECModeBias = self.generateNonBeBias(modeBiasFluent, statement)
+                ECModeBias.update(newECModeBias)
+                nonECModeBias.update(newNonECModeBias)
+        return nonECModeBias, ECModeBias
+
 
 if __name__ == '__main__':
     # process data
@@ -373,5 +430,5 @@ if __name__ == '__main__':
                       sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(),
                       sentence1.getModeBiasFluents())
                 print(sentence1.getModeBiasFluents())
-    print(trainCorpus1.modeBias)
+    print(trainCorpus1.ECModeBias)
     print(parser.synonymDictionary)

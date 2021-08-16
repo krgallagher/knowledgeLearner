@@ -160,4 +160,4 @@ class ConceptNetIntegration:
 
 if __name__ == '__main__':
     semanticNetwork = ConceptNetIntegration()
-    print(semanticNetwork.hasTemporalAspect("evening"))
+    print(semanticNetwork.isSynonym("move", "journey"))

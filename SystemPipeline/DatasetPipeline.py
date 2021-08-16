@@ -37,6 +37,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
 
     # set hypotheses for testing corpus
     hypotheses = trainCorpus.getHypotheses()
+
     testCorpus.setHypotheses(hypotheses)
 
     # testing data loop
@@ -81,8 +82,8 @@ def train(corpus, reasoner, learner, numExamples):
 
 
 if __name__ == '__main__':
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus, useSupervision=False)

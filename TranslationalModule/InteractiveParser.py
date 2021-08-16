@@ -2,17 +2,19 @@ from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.BasicParser import BasicParser
+from TranslationalModule.EventCalculus import wrap
 
 
 def instanceOfQuestion(text):
-    if "?" in text:  # might want to make this more elaborate but probably fine for right now
+    if "?" in text:
         return True
     return False
 
 
 class InteractiveParser(BasicParser):
-    def __init__(self):
+    def __init__(self, corpus):
         super().__init__()
+        self.corpus = corpus
 
     def createStatement(self, text, story: Story):
         text = text.strip()
@@ -21,12 +23,50 @@ class InteractiveParser(BasicParser):
             sentence = Question(lineID, text)
         else:
             sentence = Statement(lineID, text)
-        # will set the doc in the coreferencing part of the pipeline
-
-        # sentence.doc = self.nlp(text)
         story.addSentence(sentence)
         return sentence
 
     def setDoc(self, text, sentence: Statement):
         sentence.doc = self.nlp(text)
 
+    # TODO THINK ABOUT BE VERBS A BIT MORE
+    def checkSynonyms(self, sentence):
+        fluentBase = sentence.getFluentBase()
+
+        if fluentBase in self.synonymDictionary.keys():
+            fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
+            sentence.setFluents(self.update(fluents))
+            sentence.setModeBiasFluents(self.update(modeBiasFluents))
+            return []
+        if fluentBase in self.synonymDictionary.values():
+            self.synonymDictionary[fluentBase] = fluentBase
+            return []
+        potentialSynonyms = []
+
+        for key in self.synonymDictionary.keys():
+            if self.conceptNet.isSynonym(fluentBase, key):
+                potentialSynonyms.append(key)
+
+        for concept in self.conceptsToExplore:
+            if concept != fluentBase and self.conceptNet.isSynonym(fluentBase, concept):
+                potentialSynonyms.append(concept)
+
+        return fluentBase, potentialSynonyms
+
+    def updateSynonymDictionary(self, fluentBase, newSynonym):
+        self.synonymDictionary[fluentBase] = newSynonym
+        self.synonymDictionary[newSynonym] = newSynonym
+        for story in self.corpus:
+            for sentence in story:
+                self.updateSentence(sentence)
+                wrap(sentence)
+
+    def assembleModeBias(self):
+        self.corpus.ECModeBias = set()
+        self.corpus.nonECModeBias = set()
+        for story in self.corpus:
+            for sentence in story:
+                nonECModeBias, ECModeBias = self.addStatementModeBias(sentence)
+                self.corpus.updateECModeBias(ECModeBias)
+                self.corpus.updateNonECModeBias(nonECModeBias)
+                self.corpus.updateConstantModeBias(sentence.getConstantModeBias())

@@ -87,7 +87,7 @@ def isUnsatisfiable(output):
 def runClingo(filename):
     command = "Clingo -W none -n 0 " + filename
     output = os.popen(command).read()
-    # print(output)
+
     return output
 
 
@@ -99,8 +99,7 @@ def isEventCalculusNeeded(corpus: Corpus):
                 if semanticNetwork.hasTemporalAspect(rule.split(',')[1].split(')')[0]):
                     return False
     for story in corpus:
-        # create a clingo file that evaluates the expressivitiy of the corpus
-        # print(story)
+
         filename = createExpressivityClingoFile(story, corpus)
 
         # file = open(filename, 'r')
@@ -109,6 +108,8 @@ def isEventCalculusNeeded(corpus: Corpus):
 
         # run the file with clingo
         answerSets = runClingo(filename)
+
+        # print(answerSets)
 
         # if it returns unsatisfiable then return True
         if isUnsatisfiable(answerSets):

@@ -31,7 +31,7 @@ class InteractiveSystem:
         self.language = "en"  # putting this here to make the code slightly more flexible
         self.corpus = Corpus()
         self.currentStory = Story()
-        self.parser = InteractiveParser()
+        self.parser = InteractiveParser(self.corpus)
         self.reasoner = Reasoner(self.corpus)
         self.learner = Learner(self.corpus)
 
@@ -39,7 +39,7 @@ class InteractiveSystem:
         self.corpus.append(self.currentStory)
 
         # set the event calculus needed
-       #self.corpus.isEventCalculusNeeded = True
+        # self.corpus.isEventCalculusNeeded = True
 
         # get new input
         currentInput = self.getInput(
@@ -123,17 +123,13 @@ class InteractiveSystem:
         # do an initial parsing of the sentence
         self.parser.parse(sentence)
 
-        # search for synonyms -- will likely need to create a new component for this since it is interactive
-
-        # update fluents
-
-        # set event calculus representation
         wrap(sentence)
+
+        self.doSynonymSearchAndUpdate(sentence)
 
         print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
               sentence.getFluents(), sentence.getPredicates(), sentence.getModeBiasFluents())
 
-        # if it is a question, then use the reasoner
         if isinstance(sentence, Question):
             answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)
 
@@ -150,7 +146,9 @@ class InteractiveSystem:
             if not self.corpus.isEventCalculusNeeded and isEventCalculusNeeded(self.corpus):
                 self.corpus.isEventCalculusNeeded = True
 
-            self.learner.learn(sentence, self.currentStory, answerToQuestion)
+            self.parser.assembleModeBias()
+
+            self.learner.learn(sentence, self.currentStory, answerToQuestion, createNewLearningFile=True)
 
     def doCoreferencingAndSetDoc(self, sentence):
         pronoun, possibleReferences = self.parser.coreferenceFinder(sentence, self.currentStory)
@@ -170,15 +168,19 @@ class InteractiveSystem:
         inputText = self.getInput(phrase).lower()
         self.parser.setDoc(getSubstitutedText(pronoun, inputText, sentence.text), sentence)
 
+    def doSynonymSearchAndUpdate(self, sentence):
+        fluentBase, potentialSynonyms = self.parser.checkSynonyms(sentence)
+
+        if not potentialSynonyms:
+            return
+        for i in range(0, len(potentialSynonyms)):
+            phrase = "By \"" + fluentBase + "\", do you mean \"" + potentialSynonyms[i] + "\"?\n"
+            inputText = self.getInput(phrase)
+            if "y" in inputText:
+                self.parser.updateSynonymDictionary(fluentBase, potentialSynonyms[i])
+
 
 if __name__ == "__main__":
     system = InteractiveSystem(False)
 # TODO: Implement a sort of timer.
 # in order to deal with audio and microphone, might be able to have different functions for printing etc.
-
-
-# --------------------------------------------------
-# Ideas
-
-# assume that the event calculus is needed? Not sure how to deal with this here.
-# maybe if no punctuation is given then print a "sorry I didn't quite get that message"

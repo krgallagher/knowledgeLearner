@@ -8,13 +8,19 @@ class Statement:
         self.constantModeBias = set()
         self.staticPredicates = set()  # might want to rename this to something else
         self.negatedVerb = False
-        self.doc = None  # maybe initialise this in the parser?
+        self.doc = None
 
     def __eq__(self, other):
         return self.text == other.text and self.lineId == other.lineId
 
+    def getFluentBase(self):
+        return self.fluents[0][0].split('(')[0]
+
     def addConstantModeBias(self, constantModeBias):
         self.constantModeBias.add(constantModeBias)
+
+    def getConstantModeBias(self):
+        return self.constantModeBias
 
     def getText(self):
         return self.text
@@ -48,3 +54,4 @@ class Statement:
 
     def __str__(self):
         return self.text
+

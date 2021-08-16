@@ -38,10 +38,35 @@ def createStatement(line):
 
 
 if __name__ == "__main__":
-    corpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task8_test")
-    for story1 in corpus1:
-        sentences = story1.getSentences()
-        for statement in sentences:
-            print(statement.getLineID(), statement.getText())
-            if isinstance(statement, Question):
-                print(statement.getAnswer(), statement.getHints())
+    minSentences = -1
+    maxSentences = -1
+    minQuestions = -1
+    maxQuestions = -1
+    for i in range(1, 21):
+        train = "../en/qa" + str(i) + "_train.txt"
+        corpus1 = bAbIReader(train)
+        print("Task: ", i)
+        for story1 in corpus1:
+            numSentences = 0
+            numQuestions = 0
+            sentences = story1.getSentences()
+            for statement in sentences:
+                numSentences += 1
+               #print(statement.getLineID(), statement.getText())
+                if isinstance(statement, Question):
+                    numQuestions += 1
+                    #print(statement.getAnswer(), statement.getHints())
+            if minSentences == -1 or numSentences < minSentences:
+                minSentences = numSentences
+            if minQuestions == -1 or numQuestions < minQuestions:
+                minQuestions = numQuestions
+            if maxSentences == -1 or numSentences > maxSentences:
+                maxSentences = numSentences
+            if maxQuestions == -1 or numQuestions > maxQuestions:
+                maxQuestions = numQuestions
+            print("Number of Sentences: ", numSentences)
+            print("Number of Questions: ", numQuestions)
+    print("MAX SENTENCES: ", maxSentences)
+    print("MIN SENTENCES: ", minSentences)
+    print("MAX QUESTIONS: ", maxQuestions)
+    print("MIN QUESTIONS: ", minQuestions)

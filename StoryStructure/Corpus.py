@@ -8,7 +8,8 @@ from StoryStructure.Story import Story
 class Corpus:
     def __init__(self):
         self.constantModeBias = set()
-        self.modeBias = set()
+        self.ECModeBias = set()
+        self.nonECModeBias = set()
         self.stories = []
         self.backgroundKnowledge = eventCalculusAxioms()
         self.hypotheses = set()
@@ -27,7 +28,7 @@ class Corpus:
         self.eventCalculusExamples.append(example)
 
     def reset(self):
-        self.modeBias = set()
+        self.ECModeBias = set()
         self.hypotheses = set()
         self.isEventCalculusNeeded = False
         self.choiceRulesPresent = False
@@ -39,6 +40,9 @@ class Corpus:
 
     def pop(self):
         return self.stories.pop()
+
+    def updateConstantModeBias(self, newConstantModeBis):
+        self.constantModeBias.update(newConstantModeBis)
 
     def setHypotheses(self, newHypotheses):
         self.hypotheses = newHypotheses
@@ -55,8 +59,11 @@ class Corpus:
     def getHypotheses(self):
         return self.hypotheses
 
-    def updateModeBias(self, modeBias):
-        self.modeBias.update(modeBias)
+    def updateECModeBias(self, modeBias):
+        self.ECModeBias.update(modeBias)
+
+    def updateNonECModeBias(self, modeBias):
+        self.nonECModeBias.update(modeBias)
 
     def addConstantModeBias(self, constantBias):
         self.constantModeBias.add(constantBias)

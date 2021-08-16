@@ -19,15 +19,11 @@ class Learner:
         self.filename = filename
         self.cachingFile = cachingFile
         self.corpus = corpus
-        self.oldModeBias = set()
-        self.oldConstantBias = set()
-        self.previousStoryIndexForIncorrectQuestion = 0  # default to the first story
-        self.previousExampleAddedIndex = 0  # the last index that has been added for a positive/negative example
         self.useSupervision = useSupervision
-        self.wasEventCalculusNeededPreviously = False
+        self.eventCalculusNeededPreviously = False
         self.currentExamplesIndex = 0
 
-    def learn(self, question: Question, story: Story, answer):
+    def learn(self, question: Question, story: Story, answer, createNewLearningFile=False):
         if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion() or question.isHowManyQuestion():
             if answer == ["nothing"] or answer == ['none'] or not answer or question.isCorrectAnswer(answer):
                 # might be able to get rid of the question.isCorrectAnswer, just think about the interactive system
@@ -40,25 +36,13 @@ class Learner:
             else:
                 self.createNegativeExample(question, story)
 
-        self.oldModeBias = self.corpus.modeBias.copy()
-        self.oldConstantBias = self.corpus.constantModeBias.copy()
-
-        if self.wasEventCalculusNeededPreviously != self.corpus.isEventCalculusNeeded:
-            self.corpus.modeBias = set()
-            self.corpus.constantModeBias = set()
-            self.addModeBias(story, question)
-        else:
-            self.updateModeBias(story, question)
-
-        if self.oldModeBias == self.corpus.modeBias and self.oldConstantBias == self.corpus.constantModeBias:
-            self.appendExamplesToLearningFile()
-        else:
+        if self.eventCalculusNeededPreviously != self.corpus.isEventCalculusNeeded or not os.path.exists(
+                self.filename) or createNewLearningFile:
             if os.path.exists(self.cachingFile):
                 os.remove(self.cachingFile)
             self.createLearningFile()
-
-        # update the index of the previous story to have a question wrong.
-        self.previousStoryIndexForIncorrectQuestion = self.corpus.getIndex(story)
+        else:
+            self.appendExamplesToLearningFile()
 
         file = open(self.filename, 'r')
         for line in file:
@@ -70,15 +54,13 @@ class Learner:
         if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
-        self.wasEventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
+        self.eventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
 
         print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
-    # TODO uncomment this later on and remove the pass
     def __del__(self):
-        # delete file from computer
-        # os.remove(self.filename)
-        pass
+        os.remove(self.filename)
+        os.remove(self.cachingFile)
 
     def createPositiveExample(self, question: Question, story: Story):
         if "maybe" in question.getAnswer():
@@ -139,7 +121,6 @@ class Learner:
     def createContext(self, question: Question, story: Story):
         predicates = set()
         nonECContext, ECContext = '{', '{'
-        context = '{'
         if self.useSupervision:
             for hint in question.getHints():
                 statement = story.get(int(hint) - 1)
@@ -154,7 +135,6 @@ class Learner:
                     break
         nonECContext, ECContext = self.addPredicates(predicates, nonECContext), self.addPredicates(predicates,
                                                                                                    ECContext)
-
         if nonECContext[-1] != '{':
             nonECContext += '.\n'
             ECContext += '.\n'
@@ -191,25 +171,26 @@ class Learner:
             for rule in self.corpus.backgroundKnowledge:
                 file.write(rule)
                 file.write('\n')
-
-        # add in the mode bias
-        for bias in self.corpus.modeBias:
-            biasToAdd = bias
-            # if not self.corpus.isEventCalculusNeeded:
-            #    biasToAdd = addConstraints(bias)
-            file.write(biasToAdd)
-            file.write('\n')
+            # add in the mode bias
+            for bias in self.corpus.ECModeBias:
+                file.write(bias)
+                file.write('\n')
+        else:
+            for bias in self.corpus.nonECModeBias:
+                file.write(bias)
+                file.write('\n')
 
         for constantBias in self.corpus.constantModeBias:
             file.write(constantBias)
             file.write('\n')
 
-        # might want to make this so it starts with 4 variables and then gradually increases.
         if self.corpus.isEventCalculusNeeded:
             file.write("#maxv(4)")
         else:
             file.write("#maxv(3)")
         file.write('.\n')
+
+        #file.write("#max_penalty(1000).\n")
 
         if self.corpus.isEventCalculusNeeded:
             for example in self.corpus.eventCalculusExamples:
@@ -233,7 +214,6 @@ class Learner:
         file.close()
 
     def solveILASPTask(self):
-        # command = "FastLAS --nopl" + filename
         command = "ILASP -q -nc --version=4 --cache-path=" + self.cachingFile + " " + self.filename
         output = os.popen(command).read()
         return self.processILASP(output)
@@ -241,78 +221,6 @@ class Learner:
     def processILASP(self, output):
         lines = output.split('\n')
         return set([line for line in lines if line])
-
-    def updateModeBias(self, story: Story, question: Statement):
-        # add the mode bias for all the stories so far
-        for storyIndex in range(self.previousStoryIndexForIncorrectQuestion, self.corpus.getIndex(story)):
-            for sentence in self.corpus.stories[storyIndex]:
-                self.addStatementModeBias(sentence)
-                self.addConstantModeBias(sentence)
-
-        # add the mode bias for current story
-        for index in range(0, story.getIndex(question) + 1):
-            self.addStatementModeBias(story.get(index))
-            self.addConstantModeBias(story.get(index))
-
-    # new function that might need to change a bit
-    def addModeBias(self, story: Story, question: Statement):
-        for storyIndex in range(0, self.corpus.getIndex(story)):
-            for sentence in self.corpus.stories[storyIndex]:
-                self.addStatementModeBias(sentence)
-                self.addConstantModeBias(sentence)
-
-        for index in range(0, story.getIndex(question) + 1):
-            self.addStatementModeBias(story.get(index))
-            self.addConstantModeBias(story.get(index))
-
-    def addStatementModeBias(self, statement):
-        modeBiasFluents = statement.getModeBiasFluents()
-        for i in range(0, len(modeBiasFluents)):
-            for j in range(0, len(modeBiasFluents[i])):
-                modeBiasFluent = modeBiasFluents[i][j]
-                predicate = modeBiasFluent.split('(')[0].split('_')[0]
-                if predicate == "be" or isinstance(statement, Question):
-                    modeBias = self.generateBeAndQuestionBias(modeBiasFluent, statement)
-                else:
-                    modeBias = self.generateNonBeBias(modeBiasFluent, statement)
-                self.corpus.updateModeBias(modeBias)
-
-    def generateBeAndQuestionBias(self, modeBiasFluent, statement: Statement):
-        bias = set()
-        if self.corpus.isEventCalculusNeeded:
-            time = varWrapping("time")
-            initiated = initiatedAt(modeBiasFluent, time)
-            holds = holdsAt(modeBiasFluent, time)
-            terminated = terminatedAt(modeBiasFluent, time)
-            if isinstance(statement, Question):
-                bias.add(modeHWrapping(initiated))
-                bias.add(modeHWrapping(terminated))
-            else:
-                bias.add(modeBWrapping(initiated))
-            bias.add(modeBWrapping(holds))
-        else:
-            if isinstance(statement, Question):
-                bias.add(modeHWrapping(modeBiasFluent))
-            else:
-                bias.add(modeBWrapping(modeBiasFluent))
-        return bias
-
-    def generateNonBeBias(self, modeBiasFluent, statement: Statement):
-        bias = set()
-        if self.corpus.isEventCalculusNeeded:
-            time = varWrapping("time")
-            happens = happensAt(modeBiasFluent, time)
-            bias.add(modeBWrapping(happens))
-        else:
-            if isinstance(statement, Question):
-                bias.add(modeHWrapping(modeBiasFluent))
-            else:
-                bias.add(modeBWrapping(modeBiasFluent))
-        return bias
-
-    def addConstantModeBias(self, sentence):
-        for constantBias in sentence.constantModeBias:
-            self.corpus.addConstantModeBias(constantBias)
 
     def addExamples(self, NonECExample, ECExample):
         self.corpus.addNonECExample(NonECExample)
