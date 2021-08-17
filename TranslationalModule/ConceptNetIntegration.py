@@ -1,5 +1,3 @@
-from json import JSONDecodeError
-
 import requests
 
 
@@ -20,7 +18,6 @@ class ConceptNetIntegration:
     def synonymFinder(self, concepts):
         conceptsCopy = concepts.copy()
         currentDictionary = {}
-
         for concept in concepts:
             values = currentDictionary.values()
             keys = currentDictionary.keys()
@@ -44,11 +41,6 @@ class ConceptNetIntegration:
                         conceptsCopy.discard(concept)
                         break
 
-        currentDictionary["leave"] = "drop"
-        conceptsCopy.discard("leave")
-        for concept in conceptsCopy:
-            self.isMannerOf(concept, currentDictionary)
-        print(conceptsCopy)
         return currentDictionary
 
     def isSynonym(self, word1, word2):
@@ -76,44 +68,12 @@ class ConceptNetIntegration:
     # TODO refactor to
     def hasTemporalAspect(self, word):
         query = self.baseAddress + self.isArelation + self.start + word
-        try:
-            obj = requests.get(query).json()
-            for edge in obj['edges']:
-                end = edge["end"]
-                if "day" in end["label"]:
-                    return True
-        except JSONDecodeError:
-            pass
-        return False
-
-    def isRelated(self, word1, word2):
-        node = self.node + word1
-        other = self.other + word2
-        query = self.baseAddress + self.relatedTo + node + other
-        obj = requests.get(query).json()
-        if obj['edges']:
-            return True
-
-    def isMannerOf(self, word, currentDictionary):
-        node = self.node + word
-        query = self.baseAddress + self.mannerOf + node
         obj = requests.get(query).json()
         for edge in obj['edges']:
-            start = edge["start"]
             end = edge["end"]
-            if start["label"].replace(" ", "_") != word and start["language"] == "en":
-                for concept in currentDictionary.keys():
-                    if self.isSynonym(start["label"].replace(" ", "_"),
-                                      concept) and concept != "get" and concept != "carry":
-                        currentDictionary[word] = currentDictionary[concept]
-                        print("Success!", start["label"], concept, word)
-                        return
-            elif end["label"].replace(" ", "_") != word and end["language"] == "en":
-                for concept in currentDictionary.keys():
-                    if self.isSynonym(end["label"].replace(" ", "_"), concept):
-                        currentDictionary[word] = currentDictionary[concept]
-                        print("Success!", start["label"], concept, word)
-                        return
+            if "day" in end["label"]:
+                return True
+        return False
 
     def isA(self, word, concept, moreSearches=True):
         start = self.start + word.replace(" ", "_")

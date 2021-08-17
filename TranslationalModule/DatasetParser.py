@@ -40,17 +40,14 @@ class DatasetParser(BasicParser):
                 if not isinstance(sentence, Question):
                     self.parse(sentence)
 
-        # play around with the synonym dictionary
-        # self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
-        # to be removed at a later point
-        # if "drop" in self.synonymDictionary.keys():
-        #    self.synonymDictionary["leave"] = self.synonymDictionary["drop"]
+        self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
+        '''
         self.synonymDictionary = {'put_down': 'drop', 'go_to': 'go_to', 'journey_to': 'go_to', 'get': 'take',
                                   'move_to': 'go_to', 'grab': 'take', "go": "go_to",
                                   'take': 'take', 'travel_to': 'go_to', 'drop': 'drop', 'leave': 'drop',
                                   'pick_up': 'take', 'discard': 'drop', "go_after": "go_to", "hand_to": "give_to",
                                   "give_to": "give_to", "pass_to": "give_to", "fit_inside": "fit_in"}
-
+        '''
         self.updateFluents()
         self.setEventCalculusRepresentation()
         self.assembleModeBias()
@@ -105,8 +102,8 @@ if __name__ == '__main__':
     #test = "../en/qa15_test.txt"
     #trainCorpus1 = bAbIReader(train)
     #testCorpus1 = bAbIReader(test)
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task2_train")
 
 
     parser = DatasetParser(trainCorpus1, testCorpus1)

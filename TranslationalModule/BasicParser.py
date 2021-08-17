@@ -84,7 +84,7 @@ class BasicParser:
         if negation:
             statement.negatedVerb = True
 
-        # might want to add the W pronouns into this mix and maybe also need to rename this...
+        # TODO RENAME THIS
         nounsAndAdjectiveComplements = [token for token in statement.doc if
                                         "NN" in token.tag_ or (
                                                 "JJ" in token.tag_ and "NN" not in token.head.tag_) or "W" in token.tag_]
@@ -97,7 +97,7 @@ class BasicParser:
         statement.setFluents([[fluent]])
         statement.setModeBiasFluents([[fluent]])
 
-        if not isinstance(statement, Question) and fluentBase.split('_')[0] != 'be':
+        if fluentBase.split('_')[0] != 'be':
             self.conceptsToExplore.add(fluentBase)
 
         self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
@@ -238,14 +238,12 @@ class BasicParser:
         if tag == 'nn' and noun.text in self.properNouns:
             tag = 'nnp'
 
-        # perhaps can store some data in a dictionary so that I don't do as many lookups
         for concept in self.determiningConcepts:
             if tag == "nnp":
                 break
             elif noun.text in self.determiningConcepts[concept]["inclusions"]:
                 tag = concept
                 fluent, modeBiasFluent = self.replaceFluentBase(fluent, modeBiasFluent, concept)
-                # need to replace the fluent base here
                 break
             elif noun.text in self.determiningConcepts[concept]["exclusions"]:
                 pass
@@ -254,7 +252,6 @@ class BasicParser:
                     tag = concept
                     fluent, modeBiasFluent = self.replaceFluentBase(fluent, modeBiasFluent, concept)
                     self.determiningConcepts[concept]["inclusions"].add(noun.text)
-                    # break probably doesn't break out of this loop super effectively
                     break
                 else:
                     self.determiningConcepts[concept]["exclusions"].add(noun.text)
@@ -351,7 +348,6 @@ class BasicParser:
 
         questionWords = [noun for noun in nouns if "W" in noun.tag_ and noun not in sortedNouns]
 
-        # add everything else
         for noun in nouns:
             if noun not in sortedNouns and noun not in constants and noun not in questionWords:
                 sortedNouns.append(noun)
