@@ -1,3 +1,5 @@
+import sys
+
 import speech_recognition
 from LearningModule.learner import Learner
 from ReasoningModule.reasoner import Reasoner
@@ -35,13 +37,8 @@ class InteractiveSystem:
         self.reasoner = Reasoner(self.corpus)
         self.learner = Learner(self.corpus)
 
-        # append the first story
         self.corpus.append(self.currentStory)
 
-        # set the event calculus needed
-        # self.corpus.isEventCalculusNeeded = True
-
-        # get new input
         currentInput = self.getInput(
             "Tell me a story, one sentence at a time, or type \'Help\' for more information!\n")
         print(currentInput)
@@ -153,7 +150,7 @@ class InteractiveSystem:
     def doCoreferencingAndSetDoc(self, sentence):
         pronoun, possibleReferences = self.parser.coreferenceFinder(sentence, self.currentStory)
         if not pronoun:
-            self.parser.setDoc(sentence.text, sentence)
+            self.parser.setDocAndExtractProperNouns(sentence.text, sentence)
             return
         if possibleReferences:
             for i in range(0, len(possibleReferences)):
@@ -162,15 +159,14 @@ class InteractiveSystem:
                 if "y" in inputText:
                     statementText = getSubstitutedText(pronoun, possibleReferences[i], sentence)
                     print(statementText)
-                    self.parser.setDoc(statementText, sentence)
+                    self.parser.setDocAndExtractProperNouns(statementText, sentence)
                     return
         phrase = "Who does \"" + pronoun + "\" refer to?\n"
         inputText = self.getInput(phrase).lower()
-        self.parser.setDoc(getSubstitutedText(pronoun, inputText, sentence.text), sentence)
+        self.parser.setDocAndExtractProperNouns(getSubstitutedText(pronoun, inputText, sentence.text), sentence)
 
     def doSynonymSearchAndUpdate(self, sentence):
         fluentBase, potentialSynonyms = self.parser.checkSynonyms(sentence)
-
         if not potentialSynonyms:
             return
         for i in range(0, len(potentialSynonyms)):
@@ -180,7 +176,22 @@ class InteractiveSystem:
                 self.parser.updateSynonymDictionary(fluentBase, potentialSynonyms[i])
 
 
+def printSystemHelpMenu():
+    print("Usage: InteractivePipeline.py [options]\n")
+    print("General Options: ")
+    print("\t --dialogueMethod=[spoken|written]")
+
+
 if __name__ == "__main__":
-    system = InteractiveSystem(False)
+    interactive = False
+    if len(sys.argv) != 2:
+        printSystemHelpMenu()
+    elif sys.argv[1] == "--dialogueMethod=spoken":
+        system = InteractiveSystem(audio=True)
+    elif sys.argv[1] == "--dialogueMethod=written":
+        system = InteractiveSystem(audio=False)
+    else:
+        printSystemHelpMenu()
+
 # TODO: Implement a sort of timer.
 # in order to deal with audio and microphone, might be able to have different functions for printing etc.

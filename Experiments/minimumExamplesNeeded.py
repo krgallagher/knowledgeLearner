@@ -1,24 +1,30 @@
 from DatasetReader.bAbIReader import bAbIReader
 from SystemPipeline.DatasetPipeline import mainPipeline
+import numpy as np
 
 if __name__ == '__main__':
-    trainingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa15_train.txt"
-    testingSet = "/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa15_test.txt"
+    trainingSet = "../en/qa" + "15" + "_train.txt"
+    testingSet = "../en/qa" + "15" + "_test.txt"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     numShuffles = 5
     multiplier = 5
+    numExamples = [5, 10, 25, 100]
+    accuracies = np.empty([numShuffles, 5], dtype=float)
     for i in range(0, numShuffles):
-        trainingCorpus.trainCorpus1.shuffle()
-        print("Shuffle", i + 1)
-        for j in range(1, 6):
+        trainingCorpus.shuffle()
+        for j in range(0, len(numExamples)):
             trainingCorpus.reset()
             testingCorpus.reset()
-            accuracy, parsingTime, learningTime = mainPipeline(trainingCorpus, testingCorpus, 5 * j)
-            print("Number of Examples: ", 5 * j)
+            accuracy, parsingTime, learningTime = mainPipeline(trainingCorpus, testingCorpus, numExamples[j])
+            accuracies[i][j] = accuracy
+            print("Shuffle ", i + 1, )
+            print("Number of Examples: ", numExamples[j])
             print("Accuracy: ", accuracy)
-
-# with/without concept net, learning time
-# leave vocabulary unlearned with less examples
-# parser still add to the test set.
-# parse the test set once.
+    averageAccuracies = np.average(accuracies, axis=0)
+    standardDeviations = np.std(accuracies, axis=0)
+    for i in range(0, len(numExamples)):
+        print("Number of Examples: ", numExamples[i])
+        print("Average accuracy: ", averageAccuracies[i])
+        print("Standard deviation: ", standardDeviations[i])
+        print("----------------------------------------------------")

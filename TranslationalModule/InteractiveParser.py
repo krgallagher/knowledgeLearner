@@ -26,10 +26,10 @@ class InteractiveParser(BasicParser):
         story.addSentence(sentence)
         return sentence
 
-    def setDoc(self, text, sentence: Statement):
+    def setDocAndExtractProperNouns(self, text, sentence: Statement):
         sentence.doc = self.nlp(text)
+        self.properNouns.update(self.getProperNouns(sentence))
 
-    # TODO THINK ABOUT BE VERBS A BIT MORE
     def checkSynonyms(self, sentence):
         fluentBase = sentence.getFluentBase()
 

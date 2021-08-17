@@ -27,25 +27,19 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
     if isEventCalculusNeeded(trainCorpus):
         trainCorpus.isEventCalculusNeeded = True
 
-    # potentially can add this information into the parser.
     if choiceRulesPresent(trainCorpus):
         trainCorpus.choiceRulesPresent = True
 
-    # train the data
     train(trainCorpus, reasoner, learner, numExamples)
     learningTime = time.time()
 
-    # set hypotheses for testing corpus
     hypotheses = trainCorpus.getHypotheses()
 
     testCorpus.setHypotheses(hypotheses)
 
-    # testing data loop
     numQuestions = 0
     numCorrect = 0
 
-    print("TEST")
-    # NEED TO REVISE THIS
     for story in testCorpus:
         for sentence in story:
             if isinstance(sentence, Question):
@@ -53,13 +47,13 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
                 answerToQuestion = reasoner.computeAnswer(sentence, story)
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
-                else:
-                    print(story)
-                print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
-                      sentence.getAnswer(), answerToQuestion, sentence.getHints())
+                # else:
+                #    print(story)
+                # print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
+                #     sentence.getAnswer(), answerToQuestion, sentence.getHints())
     print("Number Correct: ", numCorrect)
     print("Number of Question: ", numQuestions)
-    print("Accuracy: ", numCorrect / numQuestions)  # should theoretically be careful about dividing by zero
+    print("Accuracy: ", numCorrect / numQuestions)
     print("Hypotheses: ", trainCorpus.getHypotheses())
     print("Parsing Time: ", parseEndTime - startTime)
     print("Learning Time: ", learningTime - parseEndTime)
@@ -74,16 +68,14 @@ def train(corpus, reasoner, learner, numExamples):
                 if count >= numExamples:
                     return
                 answerToQuestion = reasoner.computeAnswer(sentence, story)
-                print(answerToQuestion, sentence.getAnswer(), sentence.getText(), sentence.getLineID())
                 count += 1
                 if not sentence.isCorrectAnswer(answerToQuestion):
                     learner.learn(sentence, story, answerToQuestion)
-    print(corpus.nonEventCalculusExamples, corpus.eventCalculusExamples)
 
 
 if __name__ == '__main__':
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task15_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus, useSupervision=False)

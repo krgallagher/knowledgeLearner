@@ -12,13 +12,14 @@ class DatasetParser(BasicParser):
         self.trainCorpus = trainCorpus
         self.testCorpus = testCorpus
 
-        # Set the doc for the training and testing corpus
         for story in self.trainCorpus:
             for sentence in story:
-                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
+                self.setDocAndExtractProperNouns(sentence, story)
         for story in self.testCorpus:
             for sentence in story:
-                sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
+                self.setDocAndExtractProperNouns(sentence, story)
+
+        print(self.properNouns)
 
         # parse the training set questions
         for story in self.trainCorpus:
@@ -48,11 +49,15 @@ class DatasetParser(BasicParser):
                                   'move_to': 'go_to', 'grab': 'take', "go": "go_to",
                                   'take': 'take', 'travel_to': 'go_to', 'drop': 'drop', 'leave': 'drop',
                                   'pick_up': 'take', 'discard': 'drop', "go_after": "go_to", "hand_to": "give_to",
-                                  "give_to": "give_to", "pass_to": "give_to"}
+                                  "give_to": "give_to", "pass_to": "give_to", "fit_inside": "fit_in"}
 
         self.updateFluents()
         self.setEventCalculusRepresentation()
         self.assembleModeBias()
+
+    def setDocAndExtractProperNouns(self, sentence, story):
+        sentence.doc = self.nlp(self.coreferenceFinder(sentence, story))
+        self.properNouns.update(self.getProperNouns(sentence))
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         pronoun, possibilities = super().coreferenceFinder(statement, story)
@@ -92,9 +97,17 @@ class DatasetParser(BasicParser):
                 self.trainCorpus.updateConstantModeBias(sentence.getConstantModeBias())
 
 
+
+
+
 if __name__ == '__main__':
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test")
+    #train = "../en/qa15_train.txt"
+    #test = "../en/qa15_test.txt"
+    #trainCorpus1 = bAbIReader(train)
+    #testCorpus1 = bAbIReader(test)
+    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train")
+
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 

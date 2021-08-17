@@ -13,6 +13,10 @@ def modeBWrapping(predicate):
     return "#modeb(" + predicate + ")."
 
 
+def createBias(predicate):
+    return "#bias(\":-" + predicate + ".\")."
+
+
 def varWrapping(tag):
     return "var(" + tag + ")"
 

@@ -68,12 +68,7 @@ class Reasoner:
         pass
 
     def computeAnswer(self, question: Question, story):
-        # create Clingo file
         self.createClingoFile(question, story)
-
-        # file = open(self.filename, 'r')
-        # for line in file:
-        #    print(line)
 
         answerSets = self.getAnswerSets()
 
@@ -89,18 +84,15 @@ class Reasoner:
     def createClingoFile(self, question: Question, story: Story):
         file = open(self.filename, 'w')
 
-        # add in the background knowledge
         if self.corpus.isEventCalculusNeeded:
             for rule in self.corpus.backgroundKnowledge:
                 file.write(rule)
                 file.write('\n')
 
-        # add in the hypotheses
         for hypothesis in self.corpus.hypotheses:
             file.write(hypothesis)
             file.write('\n')
 
-        # add in the statements from the story
         for statement in story:
             if not isinstance(statement, Question):
                 if self.corpus.isEventCalculusNeeded:
@@ -112,7 +104,6 @@ class Reasoner:
                     file.write(choiceRule)
                     file.write('.\n')
 
-            # write the predicates even if the statement is a question
             for predicate in statement.getPredicates():
                 file.write(predicate)
                 file.write('.\n')
@@ -125,8 +116,6 @@ class Reasoner:
     def searchForAnswer(self, question: Question, answerSets):
         if question.isYesNoMaybeQuestion():
             return self.isPossibleAnswer(question, answerSets)
-        # if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion()
-        # or question.isHowManyQuestion():
         answers = []
         for answerSet in answerSets:
             newAnswers = self.whereSearch(question, answerSet)
@@ -139,7 +128,6 @@ class Reasoner:
 
     # TODO rename this since this function is used for more than a "where" search
     def whereSearch(self, question: Question, answerSet):
-        # create a regular expression
         answers = []
         representation = self.getRepresentation(question)
         pattern = createRegularExpression(representation)

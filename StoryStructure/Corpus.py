@@ -4,7 +4,6 @@ import random
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 
-
 class Corpus:
     def __init__(self):
         self.constantModeBias = set()

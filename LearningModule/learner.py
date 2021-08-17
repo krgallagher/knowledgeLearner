@@ -1,16 +1,49 @@
 import os
+import re
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
-from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
 from TranslationalModule.ExpressivityChecker import createChoiceRule
-from Utilities.ILASPSyntax import createTimeRange, modeHWrapping, modeBWrapping, varWrapping, addConstraints
+from Utilities.ILASPSyntax import createTimeRange, createBias
 
 
 def isSatisfiable(hypotheses):
     unsatisfiable = set()
     unsatisfiable.add("UNSATISFIABLE")
     return unsatisfiable != hypotheses
+
+
+def getRepresentationFromModeBias(rule):
+    substitution = re.compile("#mode.\((.*)\)\.")
+    return re.sub(substitution, "\\1", rule)
+
+
+def numberOfConstantArguments(representation):
+    return representation.count('const')
+
+
+def numberOfNonConstantArguments(representation):
+    return representation.count('var')
+
+
+def createConstraint(representation):
+    timeSubstitution = re.compile("var\(time\)")
+    representation = re.sub(timeSubstitution, "_", representation)
+    substitution = re.compile("var\([^\)]*\)")
+    return re.sub(substitution, "V1", representation)
+
+
+def hasConstantType(constant, representation):
+    constantType = constant.split('(')[1].split(',')[0]
+    constantArgument = "const(" + constantType + ")"
+    return constantArgument in representation
+
+
+def substituteConstant(constant, representation):
+    constantName = constant.split(',')[1][:-1]
+    constantType = constant.split('(')[1].split(',')[0]
+    constantArgument = "const(" + constantType + ")"
+    return representation.replace(constantArgument, constantName)
 
 
 class Learner:
@@ -44,19 +77,19 @@ class Learner:
         else:
             self.appendExamplesToLearningFile()
 
-        file = open(self.filename, 'r')
-        for line in file:
-            print(line)
+        # file = open(self.filename, 'r')
+        # for line in file:
+        #    print(line)
 
         hypotheses = self.solveILASPTask()
 
-        print("HYPOTHESES", hypotheses)
+        # print("HYPOTHESES", hypotheses)
         if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
         self.eventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
 
-        print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
+        # print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
     def __del__(self):
         os.remove(self.filename)
@@ -175,10 +208,17 @@ class Learner:
             for bias in self.corpus.ECModeBias:
                 file.write(bias)
                 file.write('\n')
+            generalConstraints = self.generateGeneralConstraints(self.corpus.ECModeBias, self.corpus.constantModeBias)
         else:
             for bias in self.corpus.nonECModeBias:
                 file.write(bias)
                 file.write('\n')
+            generalConstraints = self.generateGeneralConstraints(self.corpus.nonECModeBias,
+                                                                 self.corpus.constantModeBias)
+
+        for constraint in generalConstraints:
+            file.write(constraint)
+            file.write('\n')
 
         for constantBias in self.corpus.constantModeBias:
             file.write(constantBias)
@@ -190,7 +230,7 @@ class Learner:
             file.write("#maxv(3)")
         file.write('.\n')
 
-        #file.write("#max_penalty(1000).\n")
+        # file.write("#max_penalty(1000).\n")
 
         if self.corpus.isEventCalculusNeeded:
             for example in self.corpus.eventCalculusExamples:
@@ -214,7 +254,7 @@ class Learner:
         file.close()
 
     def solveILASPTask(self):
-        command = "ILASP -q -nc --version=4 --cache-path=" + self.cachingFile + " " + self.filename
+        command = "ILASP -q -nc -ml=2 --version=2i --cache-path=" + self.cachingFile + " " + self.filename
         output = os.popen(command).read()
         return self.processILASP(output)
 
@@ -225,3 +265,18 @@ class Learner:
     def addExamples(self, NonECExample, ECExample):
         self.corpus.addNonECExample(NonECExample)
         self.corpus.addECExample(ECExample)
+
+    def generateGeneralConstraints(self, modeBias, constantModeBias):
+        constraints = set()
+        for rule in modeBias:
+            representation = getRepresentationFromModeBias(rule)
+            if numberOfConstantArguments(representation) == 0 and numberOfNonConstantArguments(representation) >= 2:
+                constraint = createConstraint(representation)
+                constraints.add(createBias(constraint))
+            elif numberOfNonConstantArguments(representation) >= 2 and numberOfConstantArguments(representation) == 1:
+                for constant in constantModeBias:
+                    if hasConstantType(constant, representation):
+                        substitutedRepresentation = substituteConstant(constant, representation)
+                        constraint = createConstraint(substitutedRepresentation)
+                        constraints.add(createBias(constraint))
+        return constraints

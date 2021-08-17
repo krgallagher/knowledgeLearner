@@ -1,6 +1,5 @@
 import re
 import spacy
-from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure import Story
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
@@ -51,12 +50,13 @@ def addConstantModeBias(self, sentence: Statement, corpus: Corpus):
 
 class BasicParser:
     def __init__(self):
-        self.nlp = spacy.load("en_core_web_lg")  # should use large for best parsing
+        self.nlp = spacy.load("en_core_web_lg")
         self.synonymDictionary = {}
         self.conceptNet = ConceptNetIntegration()
         self.conceptsToExplore = set()
         self.determiningConcepts = {}
         self.temporalConstants = {}
+        self.properNouns = set()
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         index = story.getIndex(statement)
@@ -235,6 +235,8 @@ class BasicParser:
         tag = noun.tag_.lower()
         if tag == 'nns':
             tag = 'nn'
+        if tag == 'nn' and noun.text in self.properNouns:
+            tag = 'nnp'
 
         # perhaps can store some data in a dictionary so that I don't do as many lookups
         for concept in self.determiningConcepts:
@@ -296,8 +298,7 @@ class BasicParser:
         sentence.setFluents(self.update(fluents))
         sentence.setModeBiasFluents(self.update(modeBiasFluents))
 
-
-    #Does not work for the event calculus representation
+    # Does not work for the event calculus representation
     def update(self, fluents):
         newFluents = []
         for i in range(0, len(fluents)):
@@ -328,6 +329,10 @@ class BasicParser:
             return self.temporalConstants[noun]
         self.temporalConstants[noun] = self.conceptNet.hasTemporalAspect(noun)
         return self.temporalConstants[noun]
+
+    def getProperNouns(self, sentence):
+        properNouns = [token.text.lower() for token in sentence.doc if token.tag_ == "NNP"]
+        return set(properNouns)
 
     def orderNouns(self, nouns, statement: Statement):
         sortedNouns = []
@@ -384,7 +389,6 @@ class BasicParser:
         ECBias.add(modeBWrapping(holdsAt(modeBiasFluent, time)))
         return nonECBias, ECBias
 
-    # can have this return 2 sets, one with the EC and one without
     @staticmethod
     def generateNonBeBias(modeBiasFluent, statement: Statement):
         nonECBias = set()
@@ -412,23 +416,3 @@ class BasicParser:
                 ECModeBias.update(newECModeBias)
                 nonECModeBias.update(newNonECModeBias)
         return nonECModeBias, ECModeBias
-
-
-if __name__ == '__main__':
-    # process data
-    # reader = bAbIReader("/Users/katiegallagher/Desktop/tasks_1-20_v1-2/en/qa1_train.txt")
-    trainCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_train")
-    testCorpus1 = bAbIReader("/Users/katiegallagher/Desktop/smallerVersionOfTask/task1_test")
-
-    # initialise parser
-    parser = BasicParser()
-
-    for story1 in trainCorpus1:
-        for sentence1 in story1:
-            if isinstance(sentence1, Question):
-                print(sentence1.getText(), sentence1.getLineID(), sentence1.getFluents(),
-                      sentence1.getEventCalculusRepresentation(), sentence1.getPredicates(),
-                      sentence1.getModeBiasFluents())
-                print(sentence1.getModeBiasFluents())
-    print(trainCorpus1.ECModeBias)
-    print(parser.synonymDictionary)
