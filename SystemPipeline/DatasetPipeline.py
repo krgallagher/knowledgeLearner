@@ -17,7 +17,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
     if numExamples < MAX_EXAMPLES:
         trainCorpus = pruneCorpus(trainCorpus, numExamples)
 
-    DatasetParser(trainCorpus, testCorpus)
+    DatasetParser(trainCorpus, testCorpus, useSupervision=useSupervision)
     parseEndTime = time.time()
 
     reasoner = Reasoner(trainCorpus)
@@ -30,7 +30,7 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
     if choiceRulesPresent(trainCorpus):
         trainCorpus.choiceRulesPresent = True
 
-    train(trainCorpus, reasoner, learner, numExamples)
+    train(trainCorpus, reasoner, learner)
     learningTime = time.time()
 
     hypotheses = trainCorpus.getHypotheses()
@@ -49,8 +49,8 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
                     numCorrect += 1
                 # else:
                 #    print(story)
-                # print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
-                #     sentence.getAnswer(), answerToQuestion, sentence.getHints())
+                print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
+                      sentence.getAnswer(), answerToQuestion, sentence.getHints())
     print("Number Correct: ", numCorrect)
     print("Number of Question: ", numQuestions)
     print("Accuracy: ", numCorrect / numQuestions)
@@ -60,22 +60,19 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
     return numCorrect / numQuestions, parseEndTime - startTime, learningTime - parseEndTime
 
 
-def train(corpus, reasoner, learner, numExamples):
-    count = 0
+def train(corpus, reasoner, learner):
     for story in corpus:
         for sentence in story:
             if isinstance(sentence, Question):
-                if count >= numExamples:
-                    return
                 answerToQuestion = reasoner.computeAnswer(sentence, story)
-                count += 1
+                print(sentence.text, sentence.answer, answerToQuestion)
                 if not sentence.isCorrectAnswer(answerToQuestion):
                     learner.learn(sentence, story, answerToQuestion)
 
 
 if __name__ == '__main__':
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task5_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus, useSupervision=False)

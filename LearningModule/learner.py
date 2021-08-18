@@ -57,17 +57,17 @@ class Learner:
         self.currentExamplesIndex = 0
 
     def learn(self, question: Question, story: Story, answer, createNewLearningFile=False):
-        if question.isWhereQuestion() or question.isWhatQuestion() or question.isWhoQuestion() or question.isHowManyQuestion():
-            if answer == ["nothing"] or answer == ['none'] or not answer or question.isCorrectAnswer(answer):
-                # might be able to get rid of the question.isCorrectAnswer, just think about the interactive system
-                self.createPositiveExample(question, story)
-            else:
-                self.createNegativeExample(question, story, answer)
-        else:
+        if question.isYesNoMaybeQuestion():
             if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
                 self.createPositiveExample(question, story)
             else:
                 self.createNegativeExample(question, story)
+        else:
+            # TODO determine if I need these
+            if answer == ["nothing"] or answer == ['none'] or not answer:
+                self.createPositiveExample(question, story)
+            else:
+                self.createNegativeExample(question, story, answer)
 
         if self.eventCalculusNeededPreviously != self.corpus.isEventCalculusNeeded or not os.path.exists(
                 self.filename) or createNewLearningFile:
@@ -77,19 +77,19 @@ class Learner:
         else:
             self.appendExamplesToLearningFile()
 
-        # file = open(self.filename, 'r')
-        # for line in file:
-        #    print(line)
+        file = open(self.filename, 'r')
+        for line in file:
+            print(line)
 
         hypotheses = self.solveILASPTask()
 
-        # print("HYPOTHESES", hypotheses)
+        print("HYPOTHESES", hypotheses)
         if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
         self.eventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
 
-        # print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
+        print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
     def __del__(self):
         os.remove(self.filename)
@@ -137,13 +137,11 @@ class Learner:
             if positiveNonECPortion == '{}' and question.answer != ["nothing"]:
                 positiveNonECPortion, positiveECPortion = question.createPartialInterpretation(question.getAnswer())
 
-        # append all the extra event calculus and other predicates for the context aspect
         nonECContext, ECContext = self.createContext(question, story)
         negativeNonECExample = '#pos(' + positiveNonECPortion + ',' + negativeNonECPortion + ',' + nonECContext + ').'
         negativeECExample = '#pos(' + positiveECPortion + ',' + negativeECPortion + ',' + ECContext + ').'
         self.addExamples(negativeNonECExample, negativeECExample)
 
-    # TO DO might want to redo the above so that it works better
     def createCautiousNegativeExample(self, question: Question, story: Story, answer=None):
         negativeNonECPortion, negativeECPortion = question.createPartialInterpretation(answer)
         nonECContext, ECContext = self.createContext(question, story)
@@ -204,7 +202,6 @@ class Learner:
             for rule in self.corpus.backgroundKnowledge:
                 file.write(rule)
                 file.write('\n')
-            # add in the mode bias
             for bias in self.corpus.ECModeBias:
                 file.write(bias)
                 file.write('\n')
@@ -216,9 +213,9 @@ class Learner:
             generalConstraints = self.generateGeneralConstraints(self.corpus.nonECModeBias,
                                                                  self.corpus.constantModeBias)
 
-        for constraint in generalConstraints:
-            file.write(constraint)
-            file.write('\n')
+        # for constraint in generalConstraints:
+        #    file.write(constraint)
+        #    file.write('\n')
 
         for constantBias in self.corpus.constantModeBias:
             file.write(constantBias)
@@ -230,7 +227,7 @@ class Learner:
             file.write("#maxv(3)")
         file.write('.\n')
 
-        # file.write("#max_penalty(1000).\n")
+        file.write("#max_penalty(50).\n")
 
         if self.corpus.isEventCalculusNeeded:
             for example in self.corpus.eventCalculusExamples:
@@ -273,10 +270,10 @@ class Learner:
             if numberOfConstantArguments(representation) == 0 and numberOfNonConstantArguments(representation) >= 2:
                 constraint = createConstraint(representation)
                 constraints.add(createBias(constraint))
-            elif numberOfNonConstantArguments(representation) >= 2 and numberOfConstantArguments(representation) == 1:
-                for constant in constantModeBias:
-                    if hasConstantType(constant, representation):
-                        substitutedRepresentation = substituteConstant(constant, representation)
-                        constraint = createConstraint(substitutedRepresentation)
-                        constraints.add(createBias(constraint))
+            # elif numberOfNonConstantArguments(representation) >= 2 and numberOfConstantArguments(representation) == 1:
+            #    for constant in constantModeBias:
+            #        if hasConstantType(constant, representation):
+            #            substitutedRepresentation = substituteConstant(constant, representation)
+            #            constraint = createConstraint(substitutedRepresentation)
+            #            constraints.add(createBias(constraint))
         return constraints

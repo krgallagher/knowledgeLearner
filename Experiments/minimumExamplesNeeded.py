@@ -3,8 +3,8 @@ from SystemPipeline.DatasetPipeline import mainPipeline
 import numpy as np
 
 if __name__ == '__main__':
-    trainingSet = "../en/qa" + "15" + "_train.txt"
-    testingSet = "../en/qa" + "15" + "_test.txt"
+    trainingSet = "../en/qa" + "1" + "_train.txt"
+    testingSet = "../en/qa" + "1" + "_test.txt"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     numShuffles = 5

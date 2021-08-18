@@ -63,9 +63,7 @@ class Reasoner:
         self.corpus = corpus
 
     def __del__(self):
-        # delete file from computer
-        #        os.remove(self.filename)
-        pass
+        os.remove(self.filename)
 
     def computeAnswer(self, question: Question, story):
         self.createClingoFile(question, story)
@@ -141,7 +139,6 @@ class Reasoner:
 
     # TODO edit this to have both the event calculus and non-event calculus representation taken into account
     def isPossibleAnswer(self, question: Question, answerSets):
-        # create regular expression pattern to be matched
         representation = self.getRepresentation(question)
         pattern = createRegularExpression(representation)
         compiledPattern = re.compile(pattern)

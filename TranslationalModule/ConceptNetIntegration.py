@@ -40,8 +40,20 @@ class ConceptNetIntegration:
                         currentDictionary[concept] = concept2
                         conceptsCopy.discard(concept)
                         break
-
+        for concept in conceptsCopy:
+            self.isMannerOf(concept, currentDictionary)
         return currentDictionary
+
+    def isMannerOf(self, word, currentDictionary):
+        node = self.start + word
+        query = self.baseAddress + self.mannerOf + node
+        obj = requests.get(query).json()
+        for edge in obj['edges']:
+            end = edge["end"]
+            for concept in currentDictionary.keys():
+                if end["label"].replace(" ", "_") == concept:
+                    currentDictionary[word] = currentDictionary[concept]
+                    return
 
     def isSynonym(self, word1, word2):
         root1 = word1.split('_')[0]

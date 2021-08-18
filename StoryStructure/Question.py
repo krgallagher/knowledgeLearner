@@ -4,7 +4,6 @@ from StoryStructure.Statement import Statement
 class Question(Statement):
     def __init__(self, text, lineId, answer=None, hints=None):
         Statement.__init__(self, text, lineId)
-        # possibly spruce this up a bit
         if answer:
             self.answer = [ans.lower() for ans in answer]
         else:
@@ -56,9 +55,6 @@ class Question(Statement):
         nonECInterpretation += '}'
         return nonECInterpretation, ECInterpretation
 
-        # ------------------------------------------------------------------------#
-
-
     def answerFiller(self, answer, eventCalculusNeeded):
         if eventCalculusNeeded:
             representation = self.getEventCalculusRepresentation()[0][0]
@@ -70,7 +66,6 @@ class Question(Statement):
     def isYesNoMaybeQuestion(self):
         if self.answer:
             return "yes" in self.answer or "no" in self.answer or "maybe" in self.answer
-        # need to get the token here.
         firstWord = self.doc[0].lemma_.lower()
         # TODO check for modal or auxiliary verbs (right now we are only checking for auxiliary verbs)
         return firstWord == "be" or firstWord == "do" or firstWord == "have"
@@ -86,3 +81,6 @@ class Question(Statement):
 
     def isWhoQuestion(self):
         return "who" in self.text.lower()
+
+    def isWhyQuestion(self):
+        return "why" in self.text.lower()

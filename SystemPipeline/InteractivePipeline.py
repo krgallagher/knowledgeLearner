@@ -109,12 +109,9 @@ class InteractiveSystem:
             print(currentText)
 
     def processInput(self, currentInput):
-
-        # process the sentence
         sentence = self.parser.createStatement(currentInput, self.currentStory)
         print(sentence.getText(), sentence.getLineID())
 
-        # do coreferencing here and have it be interactive.
         self.doCoreferencingAndSetDoc(sentence)
 
         # do an initial parsing of the sentence

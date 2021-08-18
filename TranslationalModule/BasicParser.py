@@ -98,7 +98,11 @@ class BasicParser:
         statement.setModeBiasFluents([[fluent]])
 
         if fluentBase.split('_')[0] != 'be':
-            self.conceptsToExplore.add(fluentBase)
+            if isinstance(statement, Question):
+                if len(fluentBase.split('_')) > 1:
+                    self.conceptsToExplore.add(fluentBase)
+            else:
+                self.conceptsToExplore.add(fluentBase)
 
         self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
 
@@ -174,8 +178,15 @@ class BasicParser:
                     question.fluents[i][j] = question.fluents[i][j].replace("where", "V1")
                     if "V1" not in question.variableTypes.keys():
                         question.variableTypes["V1"] = 'nn'
-                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("where", varWrapping(
-                        question.variableTypes["V1"]))
+                        if "will" in question.text.lower():
+                            question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("where", constWrapping(
+                                question.variableTypes["V1"]))
+                            for answer in question.answer:
+                                question.addConstantModeBias(createConstantTerm("nn", answer))
+                        else:
+                            question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("where", varWrapping(
+                                question.variableTypes["V1"]))
+
                 elif question.isWhatQuestion():
                     question.fluents[i][j] = question.fluents[i][j].replace("what", "V1")
                     if "V1" not in question.variableTypes.keys():
@@ -192,6 +203,14 @@ class BasicParser:
                                                             question.modeBiasFluents[i][j])
                     for answer in question.answer:
                         question.addConstantModeBias(createConstantTerm("number", answer))
+                elif question.isWhyQuestion():
+                    question.fluents[i][j] = question.fluents[i][j].replace("why", "V1")
+                    if "V1" not in question.variableTypes.keys():
+                        question.variableTypes["V1"] = 'jj'
+                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("why", constWrapping(
+                        question.variableTypes["V1"]))
+                    for answer in question.answer:
+                        question.addConstantModeBias(createConstantTerm("jj", answer))
 
     def createFluentBase(self, usedTokens, statement: Statement):
         nouns = [token for token in statement.doc if "NN" in token.tag_]
@@ -208,7 +227,6 @@ class BasicParser:
             if typeDeterminer:
                 fluentBase += "_" + typeDeterminer[0]
                 statement.variableTypes["V1"] = typeDeterminer[0]
-                # might want to add a check to see whether already in the dictionary although doesn't really matter
                 self.createDeterminingConceptsEntry(typeDeterminer[0], fluentBase)
                 return fluentBase
 
@@ -233,10 +251,12 @@ class BasicParser:
 
     def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, allNouns, usedTokens):
         tag = noun.tag_.lower()
-        if tag == 'nns':
-            tag = 'nn'
-        if tag == 'nn' and noun.text in self.properNouns:
-            tag = 'nnp'
+        if "nn" in tag:
+            tag = "nn"
+        # if tag == 'nns':
+        #   tag = 'nn'
+        # if tag == 'nn' and noun.text in self.properNouns:
+        #    tag = 'nnp'
 
         for concept in self.determiningConcepts:
             if tag == "nnp":
@@ -272,7 +292,7 @@ class BasicParser:
             fluent += ','
             modeBiasFluent += ','
         fluent += descriptiveNoun
-        if self.isConstant(noun.text.lower()):
+        if self.isConstant(noun):
             wrapping = constWrapping(tag)
             statement.addConstantModeBias(createConstantTerm(tag, noun.text))
         elif 'w' in tag:
@@ -321,11 +341,15 @@ class BasicParser:
         self.determiningConcepts[entry]["inclusions"] = set()
         self.determiningConcepts[entry]["exclusions"] = set()
 
+    # could check if will is in the sentence and then append the direct object?
     def isConstant(self, noun):
-        if noun in self.temporalConstants.keys():
-            return self.temporalConstants[noun]
-        self.temporalConstants[noun] = self.conceptNet.hasTemporalAspect(noun)
-        return self.temporalConstants[noun]
+        nounText = noun.text.lower()
+        if nounText in self.temporalConstants.keys():
+            return self.temporalConstants[nounText]
+        elif noun.tag_.lower() == "jj":
+            return True
+        self.temporalConstants[nounText] = self.conceptNet.hasTemporalAspect(nounText)
+        return self.temporalConstants[nounText]
 
     def getProperNouns(self, sentence):
         properNouns = [token.text.lower() for token in sentence.doc if token.tag_ == "NNP"]
@@ -344,7 +368,7 @@ class BasicParser:
             if indirectObject:
                 sortedNouns.append(indirectObject[0])
 
-        constants = [noun for noun in nouns if self.isConstant(noun.text.lower()) and noun not in sortedNouns]
+        constants = [noun for noun in nouns if self.isConstant(noun) and noun not in sortedNouns]
 
         questionWords = [noun for noun in nouns if "W" in noun.tag_ and noun not in sortedNouns]
 
