@@ -4,6 +4,7 @@ import random
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 
+
 class Corpus:
     def __init__(self):
         self.constantModeBias = set()
@@ -48,12 +49,6 @@ class Corpus:
 
     def addHypotheses(self, newHypotheses):
         self.hypotheses.update(newHypotheses)
-
-    def addBackgroundKnowledge(self, additionalBackgroundKnowledge):
-        self.backgroundKnowledge.update(additionalBackgroundKnowledge)
-
-    def removeMostRecentHypotheses(self):
-        self.hypotheses.pop()
 
     def getHypotheses(self):
         return self.hypotheses

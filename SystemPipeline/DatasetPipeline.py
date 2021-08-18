@@ -47,8 +47,6 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
                 answerToQuestion = reasoner.computeAnswer(sentence, story)
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
-                # else:
-                #    print(story)
                 print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
                       sentence.getAnswer(), answerToQuestion, sentence.getHints())
     print("Number Correct: ", numCorrect)
@@ -71,8 +69,8 @@ def train(corpus, reasoner, learner):
 
 
 if __name__ == '__main__':
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task14_test"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
     mainPipeline(trainingCorpus, testingCorpus, useSupervision=False)

@@ -6,7 +6,6 @@ class Statement:
         self.eventCalculusRepresentation = list(list())
         self.modeBiasFluents = list(list())
         self.constantModeBias = set()
-        self.staticPredicates = set()  # might want to rename this to something else
         self.negatedVerb = False
         self.doc = None
 
@@ -46,12 +45,5 @@ class Statement:
     def getModeBiasFluents(self):
         return self.modeBiasFluents
 
-    def addPredicate(self, predicate):
-        self.staticPredicates.add(predicate)
-
-    def getPredicates(self):
-        return self.staticPredicates
-
     def __str__(self):
         return self.text
-

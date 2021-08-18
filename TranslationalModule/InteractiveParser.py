@@ -26,17 +26,16 @@ class InteractiveParser(BasicParser):
         story.addSentence(sentence)
         return sentence
 
-    def setDocAndExtractProperNouns(self, text, sentence: Statement):
+    def setDoc(self, text, sentence: Statement):
         sentence.doc = self.nlp(text)
-        self.properNouns.update(self.getProperNouns(sentence))
 
     def checkSynonyms(self, sentence):
         fluentBase = sentence.getFluentBase()
 
         if fluentBase in self.synonymDictionary.keys():
             fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
-            sentence.setFluents(self.update(fluents))
-            sentence.setModeBiasFluents(self.update(modeBiasFluents))
+            sentence.setFluents(self.updateFluentAndMBFluent(fluents))
+            sentence.setModeBiasFluents(self.updateFluentAndMBFluent(modeBiasFluents))
             return []
         if fluentBase in self.synonymDictionary.values():
             self.synonymDictionary[fluentBase] = fluentBase

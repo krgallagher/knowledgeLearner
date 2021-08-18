@@ -21,7 +21,6 @@ class Story:
         return self.sentences[index]
 
     def __iter__(self):
-        ''' Returns the Iterator object '''
         return StoryIterator(self)
 
     def __str__(self):
@@ -31,14 +30,11 @@ class Story:
         return sentenceRepresentation
 
 
-# iterator class
 class StoryIterator:
     ''' Iterator class '''
 
     def __init__(self, story):
-        # story object reference
         self._story = story
-        # member variable to keep track of current index
         self._index = 0
 
     def __next__(self):
@@ -46,5 +42,4 @@ class StoryIterator:
             result = self._story.sentences[self._index]
             self._index += 1
             return result
-        # End of Iteration
         raise StopIteration

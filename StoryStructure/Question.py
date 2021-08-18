@@ -20,11 +20,8 @@ class Question(Statement):
     def getHints(self):
         return self.hints
 
-    # TODO fix this up a bit
     def isCorrectAnswer(self, answer):
-        if len(answer) >= 2 and self.isWhatQuestion():
-            return set(answer) == set(self.answer)
-        return answer == self.answer
+        return set(answer) == set(self.answer)
 
     def getQuestionWithAnswers(self, eventCalculusNeeded=True):
         questionWithAnswer = []
@@ -38,7 +35,6 @@ class Question(Statement):
             ECInterpretation = '{' + self.eventCalculusRepresentation[0][0] + '}'
             nonECInterpretation = '{' + self.getFluents().copy()[0][0] + '}'
             return nonECInterpretation, ECInterpretation
-        # possibly could refactor this even more depending on where the answer filler is used... investigate this more later!
         ECInterpretation = '{'
         for answer in answers:
             if answers.index(answer) != 0:
@@ -67,7 +63,6 @@ class Question(Statement):
         if self.answer:
             return "yes" in self.answer or "no" in self.answer or "maybe" in self.answer
         firstWord = self.doc[0].lemma_.lower()
-        # TODO check for modal or auxiliary verbs (right now we are only checking for auxiliary verbs)
         return firstWord == "be" or firstWord == "do" or firstWord == "have"
 
     def isHowManyQuestion(self):

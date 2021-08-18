@@ -56,7 +56,6 @@ class BasicParser:
         self.conceptsToExplore = set()
         self.determiningConcepts = {}
         self.temporalConstants = {}
-        self.properNouns = set()
 
     def coreferenceFinder(self, statement: Statement, story: Story):
         index = story.getIndex(statement)
@@ -84,12 +83,10 @@ class BasicParser:
         if negation:
             statement.negatedVerb = True
 
-        # TODO RENAME THIS
-        nounsAndAdjectiveComplements = [token for token in statement.doc if
-                                        "NN" in token.tag_ or (
-                                                "JJ" in token.tag_ and "NN" not in token.head.tag_) or "W" in token.tag_]
+        possibleArguments = [token for token in statement.doc if "NN" in token.tag_ or (
+                "JJ" in token.tag_ and "NN" not in token.head.tag_) or "W" in token.tag_]
 
-        nounsAndAdjectiveComplements = self.orderNouns(nounsAndAdjectiveComplements, statement)
+        possibleArguments = self.orderNouns(possibleArguments, statement)
 
         fluentBase = self.createFluentBase(usedTokens, statement)
 
@@ -104,96 +101,91 @@ class BasicParser:
             else:
                 self.conceptsToExplore.add(fluentBase)
 
-        self.createMainPortionOfFluent(nounsAndAdjectiveComplements, statement, usedTokens)
+        self.createMainPortionOfFluent(possibleArguments, statement, usedTokens)
 
         for i in range(0, len(statement.fluents)):
             for j in range(0, len(statement.fluents[i])):
                 statement.fluents[i][j] += ")"
                 statement.modeBiasFluents[i][j] += ")"
 
-    def createMainPortionOfFluent(self, nouns, statement, usedTokens):
-        for noun in nouns:
-            self.considerNounForFluent(noun, nouns, statement, usedTokens)
+    def createMainPortionOfFluent(self, possibleArgs, statement, usedTokens):
+        for possArg in possibleArgs:
+            self.considerNounForFluent(possArg, possibleArgs, statement, usedTokens)
         if isinstance(statement, Question) and not statement.isYesNoMaybeQuestion():
             self.addVariable(statement)
 
-    def considerNounForFluent(self, noun, nouns, statement, usedTokens):
-        whDeterminer = [token for token in noun.children if token.tag_ == "WDT"]
+    def considerNounForFluent(self, possArg, possibleArgs, statement, usedTokens):
+        whDeterminer = [token for token in possArg.children if token.tag_ == "WDT"]
         if whDeterminer:
-            usedTokens.append(noun)
+            usedTokens.append(possArg)
 
-        if noun not in usedTokens:
-            disjunctive = isDisjunctive(noun, statement)
-            conjuncts = [noun] + list(noun.conjuncts)
+        if possArg not in usedTokens:
+            disjunctive = isDisjunctive(possArg, statement)
+            conjuncts = [possArg] + list(possArg.conjuncts)
             for conjunct in conjuncts:
                 usedTokens.append(conjunct)
             newFluents = []
             newMBFluents = []
             if disjunctive:
-                self.addDisjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens)
+                self.addDisjunctionToFluents(conjuncts, newFluents, newMBFluents, possibleArgs, statement, usedTokens)
             else:
-                self.addConjunctionToFluents(conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens)
+                self.addConjunctionToFluents(conjuncts, newFluents, newMBFluents, possibleArgs, statement, usedTokens)
             statement.setFluents(newFluents)
             statement.setModeBiasFluents(newMBFluents)
 
-    def addConjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens):
+    def addConjunctionToFluents(self, conjuncts, newFluents, newMBFluents, possArgs, statement, usedTokens):
         for i in range(0, len(statement.fluents)):
             for conjunct in conjuncts:
                 fluents1 = []
-                mbfluents1 = []
+                mbFluents1 = []
                 for j in range(0, len(statement.fluents[i])):
                     resultingFluent, resultingMBFluent = self.addNounToFluent(statement, conjunct,
                                                                               statement.fluents[i][j],
-                                                                              statement.modeBiasFluents[i][j], nouns,
+                                                                              statement.modeBiasFluents[i][j], possArgs,
                                                                               usedTokens)
                     fluents1.append(resultingFluent)
-                    mbfluents1.append(resultingMBFluent)
+                    mbFluents1.append(resultingMBFluent)
                 newFluents.append(fluents1)
-                newMBFluents.append(mbfluents1)
+                newMBFluents.append(mbFluents1)
 
-    def addDisjunctionToFluents(self, conjuncts, newFluents, newMBFluents, nouns, statement, usedTokens):
+    def addDisjunctionToFluents(self, conjuncts, newFluents, newMBFluents, possArgs, statement, usedTokens):
         for i in range(0, len(statement.fluents)):
             orFluentList = []
             orMBFluentList = []
             for conjunct in conjuncts:
                 for j in range(0, len(statement.fluents[i])):
                     newFluent, newMBFluent = self.addNounToFluent(statement, conjunct, statement.fluents[i][j],
-                                                                  statement.modeBiasFluents[i][j], nouns,
+                                                                  statement.modeBiasFluents[i][j], possArgs,
                                                                   usedTokens)
                     orFluentList.append(newFluent)
                     orMBFluentList.append(newMBFluent)
             newFluents.append(orFluentList)
             newMBFluents.append(orMBFluentList)
 
+    def whoWhereWhatWhyAddArgument(self, question: Question, qName, varType, i, j):
+        question.fluents[i][j] = question.fluents[i][j].replace(qName, "V1")
+        if "V1" not in question.variableTypes.keys():
+            question.variableTypes["V1"] = varType
+        if "will" in question.text.lower():
+            question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace(qName, constWrapping(
+                question.variableTypes["V1"]))
+            for answer in question.answer:
+                question.addConstantModeBias(createConstantTerm(varType, answer))
+        else:
+            question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace(qName, varWrapping(
+                question.variableTypes["V1"]))
+
     def addVariable(self, question: Question):
         for i in range(0, len(question.fluents)):
             for j in range(0, len(question.fluents[i])):
                 if question.isWhoQuestion():
-                    question.fluents[i][j] = question.fluents[i][j].replace("who", "V1")
-                    if "V1" not in question.variableTypes.keys():
-                        question.variableTypes["V1"] = 'nnp'
-                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("who", varWrapping(
-                        question.variableTypes["V1"]))
+                    self.whoWhereWhatWhyAddArgument(question, "who", "nn", i, j)
                 elif question.isWhereQuestion():
-                    question.fluents[i][j] = question.fluents[i][j].replace("where", "V1")
-                    if "V1" not in question.variableTypes.keys():
-                        question.variableTypes["V1"] = 'nn'
-                        if "will" in question.text.lower():
-                            question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("where", constWrapping(
-                                question.variableTypes["V1"]))
-                            for answer in question.answer:
-                                question.addConstantModeBias(createConstantTerm("nn", answer))
-                        else:
-                            question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("where", varWrapping(
-                                question.variableTypes["V1"]))
-
+                    self.whoWhereWhatWhyAddArgument(question, "where", "nn", i, j)
                 elif question.isWhatQuestion():
-                    question.fluents[i][j] = question.fluents[i][j].replace("what", "V1")
-                    if "V1" not in question.variableTypes.keys():
-                        question.variableTypes["V1"] = 'nn'
-
-                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("what", varWrapping(
-                        question.variableTypes["V1"]))
+                    self.whoWhereWhatWhyAddArgument(question, "what", "nn", i, j)
+                elif question.isWhyQuestion():
+                    self.whoWhereWhatWhyAddArgument(question, "why", "jj", i, j)
                 elif question.isHowManyQuestion():
                     substitution = re.compile("how_many_[A-Za-z]*(,|$)")
                     question.fluents[i][j] = re.sub(substitution, "V1\\1", question.fluents[i][j])
@@ -203,14 +195,6 @@ class BasicParser:
                                                             question.modeBiasFluents[i][j])
                     for answer in question.answer:
                         question.addConstantModeBias(createConstantTerm("number", answer))
-                elif question.isWhyQuestion():
-                    question.fluents[i][j] = question.fluents[i][j].replace("why", "V1")
-                    if "V1" not in question.variableTypes.keys():
-                        question.variableTypes["V1"] = 'jj'
-                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("why", constWrapping(
-                        question.variableTypes["V1"]))
-                    for answer in question.answer:
-                        question.addConstantModeBias(createConstantTerm("jj", answer))
 
     def createFluentBase(self, usedTokens, statement: Statement):
         nouns = [token for token in statement.doc if "NN" in token.tag_]
@@ -251,12 +235,8 @@ class BasicParser:
 
     def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, allNouns, usedTokens):
         tag = noun.tag_.lower()
-        if "nn" in tag:
-            tag = "nn"
-        # if tag == 'nns':
-        #   tag = 'nn'
-        # if tag == 'nn' and noun.text in self.properNouns:
-        #    tag = 'nnp'
+        if tag == 'nns':
+            tag = 'nn'
 
         for concept in self.determiningConcepts:
             if tag == "nnp":
@@ -301,8 +281,6 @@ class BasicParser:
             wrapping = varWrapping(tag)
         modeBiasFluent += wrapping
 
-        if 'w' not in tag:
-            statement.addPredicate(createTypingAtom(descriptiveNoun, tag))
         return fluent, modeBiasFluent
 
     def replaceFluentBase(self, fluent, modeBiasFluent, concept):
@@ -312,11 +290,10 @@ class BasicParser:
 
     def updateSentence(self, sentence: Statement):
         fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
-        sentence.setFluents(self.update(fluents))
-        sentence.setModeBiasFluents(self.update(modeBiasFluents))
+        sentence.setFluents(self.updateFluentAndMBFluent(fluents))
+        sentence.setModeBiasFluents(self.updateFluentAndMBFluent(modeBiasFluents))
 
-    # Does not work for the event calculus representation
-    def update(self, fluents):
+    def updateFluentAndMBFluent(self, fluents):
         newFluents = []
         for i in range(0, len(fluents)):
             currentFluents = []
@@ -341,12 +318,14 @@ class BasicParser:
         self.determiningConcepts[entry]["inclusions"] = set()
         self.determiningConcepts[entry]["exclusions"] = set()
 
-    # could check if will is in the sentence and then append the direct object?
     def isConstant(self, noun):
         nounText = noun.text.lower()
         if nounText in self.temporalConstants.keys():
             return self.temporalConstants[nounText]
-        elif noun.tag_.lower() == "jj":
+        for concept in self.determiningConcepts:
+            if noun.text in self.determiningConcepts[concept]["inclusions"]:
+                return False
+        if noun.tag_.lower() == "jj":
             return True
         self.temporalConstants[nounText] = self.conceptNet.hasTemporalAspect(nounText)
         return self.temporalConstants[nounText]
@@ -421,7 +400,7 @@ class BasicParser:
             nonECBias.add(modeBWrapping(modeBiasFluent))
         return nonECBias, ECBias
 
-    def addStatementModeBias(self, statement):
+    def addStatementModeBias(self, statement: Statement):
         modeBiasFluents = statement.getModeBiasFluents()
         ECModeBias = set()
         nonECModeBias = set()

@@ -93,7 +93,7 @@ class Learner:
 
     def __del__(self):
         os.remove(self.filename)
-        os.remove(self.cachingFile)
+        # os.remove(self.cachingFile)
 
     def createPositiveExample(self, question: Question, story: Story):
         if "maybe" in question.getAnswer():
@@ -150,22 +150,17 @@ class Learner:
         self.addExamples(negativeNonECExample, negativeECExample)
 
     def createContext(self, question: Question, story: Story):
-        predicates = set()
         nonECContext, ECContext = '{', '{'
         if self.useSupervision:
             for hint in question.getHints():
                 statement = story.get(int(hint) - 1)
                 nonECContext, ECContext = self.addRepresentation(statement, nonECContext, ECContext)
-                predicates.update(statement.getPredicates())
         else:
             for statement in story:
                 if not isinstance(statement, Question):
                     nonECContext, ECContext = self.addRepresentation(statement, nonECContext, ECContext)
-                predicates.update(statement.getPredicates())
                 if statement == question:
                     break
-        nonECContext, ECContext = self.addPredicates(predicates, nonECContext), self.addPredicates(predicates,
-                                                                                                   ECContext)
         if nonECContext[-1] != '{':
             nonECContext += '.\n'
             ECContext += '.\n'
@@ -188,16 +183,9 @@ class Learner:
             ECContext += ECRule
         return nonECContext, ECContext
 
-    def addPredicates(self, predicates, context):
-        for predicate in predicates:
-            if context[-1] != '{':
-                context += '.\n'
-            context += predicate
-        return context
 
     def createLearningFile(self):
         file = open(self.filename, 'w')
-        # add in the background knowledge only if using the event calculus
         if self.corpus.isEventCalculusNeeded:
             for rule in self.corpus.backgroundKnowledge:
                 file.write(rule)
@@ -205,21 +193,18 @@ class Learner:
             for bias in self.corpus.ECModeBias:
                 file.write(bias)
                 file.write('\n')
-            generalConstraints = self.generateGeneralConstraints(self.corpus.ECModeBias, self.corpus.constantModeBias)
         else:
             for bias in self.corpus.nonECModeBias:
                 file.write(bias)
                 file.write('\n')
-            generalConstraints = self.generateGeneralConstraints(self.corpus.nonECModeBias,
-                                                                 self.corpus.constantModeBias)
-
-        # for constraint in generalConstraints:
-        #    file.write(constraint)
-        #    file.write('\n')
 
         for constantBias in self.corpus.constantModeBias:
             file.write(constantBias)
             file.write('\n')
+
+        # file.write("#modeh(initiatedAt(carry(var(nn),var(nn)),var(time))).\n")
+        # file.write("#modeh(terminatedAt(carry(var(nn),var(nn)),var(time))).\n")
+        # file.write("#modeb(holdsAt(carry(var(nn),var(nn)),var(time))).\n")
 
         if self.corpus.isEventCalculusNeeded:
             file.write("#maxv(4)")
@@ -251,7 +236,7 @@ class Learner:
         file.close()
 
     def solveILASPTask(self):
-        command = "ILASP -q -nc -ml=2 --version=2i --cache-path=" + self.cachingFile + " " + self.filename
+        command = "ILASP -q -nc -ml=3 --version=2i --cache-path=" + self.cachingFile + " " + self.filename
         output = os.popen(command).read()
         return self.processILASP(output)
 
@@ -262,18 +247,3 @@ class Learner:
     def addExamples(self, NonECExample, ECExample):
         self.corpus.addNonECExample(NonECExample)
         self.corpus.addECExample(ECExample)
-
-    def generateGeneralConstraints(self, modeBias, constantModeBias):
-        constraints = set()
-        for rule in modeBias:
-            representation = getRepresentationFromModeBias(rule)
-            if numberOfConstantArguments(representation) == 0 and numberOfNonConstantArguments(representation) >= 2:
-                constraint = createConstraint(representation)
-                constraints.add(createBias(constraint))
-            # elif numberOfNonConstantArguments(representation) >= 2 and numberOfConstantArguments(representation) == 1:
-            #    for constant in constantModeBias:
-            #        if hasConstantType(constant, representation):
-            #            substitutedRepresentation = substituteConstant(constant, representation)
-            #            constraint = createConstraint(substitutedRepresentation)
-            #            constraints.add(createBias(constraint))
-        return constraints

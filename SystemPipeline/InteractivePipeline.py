@@ -29,8 +29,8 @@ def convertListToString(answerToQuestion):
 
 class InteractiveSystem:
     def __init__(self, audio=False):
-        self.audio = audio  # might want to rename this variable
-        self.language = "en"  # putting this here to make the code slightly more flexible
+        self.audio = audio
+        self.language = "en"
         self.corpus = Corpus()
         self.currentStory = Story()
         self.parser = InteractiveParser(self.corpus)
@@ -114,7 +114,6 @@ class InteractiveSystem:
 
         self.doCoreferencingAndSetDoc(sentence)
 
-        # do an initial parsing of the sentence
         self.parser.parse(sentence)
 
         wrap(sentence)
@@ -147,7 +146,7 @@ class InteractiveSystem:
     def doCoreferencingAndSetDoc(self, sentence):
         pronoun, possibleReferences = self.parser.coreferenceFinder(sentence, self.currentStory)
         if not pronoun:
-            self.parser.setDocAndExtractProperNouns(sentence.text, sentence)
+            self.parser.setDoc(sentence.text, sentence)
             return
         if possibleReferences:
             for i in range(0, len(possibleReferences)):
@@ -156,11 +155,11 @@ class InteractiveSystem:
                 if "y" in inputText:
                     statementText = getSubstitutedText(pronoun, possibleReferences[i], sentence)
                     print(statementText)
-                    self.parser.setDocAndExtractProperNouns(statementText, sentence)
+                    self.parser.setDoc(statementText, sentence)
                     return
         phrase = "Who does \"" + pronoun + "\" refer to?\n"
         inputText = self.getInput(phrase).lower()
-        self.parser.setDocAndExtractProperNouns(getSubstitutedText(pronoun, inputText, sentence.text), sentence)
+        self.parser.setDoc(getSubstitutedText(pronoun, inputText, sentence.text), sentence)
 
     def doSynonymSearchAndUpdate(self, sentence):
         fluentBase, potentialSynonyms = self.parser.checkSynonyms(sentence)
@@ -189,6 +188,3 @@ if __name__ == "__main__":
         system = InteractiveSystem(audio=False)
     else:
         printSystemHelpMenu()
-
-# TODO: Implement a sort of timer.
-# in order to deal with audio and microphone, might be able to have different functions for printing etc.

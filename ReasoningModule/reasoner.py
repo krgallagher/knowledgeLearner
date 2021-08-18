@@ -102,9 +102,6 @@ class Reasoner:
                     file.write(choiceRule)
                     file.write('.\n')
 
-            for predicate in statement.getPredicates():
-                file.write(predicate)
-                file.write('.\n')
             if statement == question:
                 break
         file.write(createTimeRange(question.getLineID()))
