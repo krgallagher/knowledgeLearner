@@ -60,12 +60,4 @@ class InteractiveParser(BasicParser):
                 self.updateSentence(sentence)
                 wrap(sentence)
 
-    def assembleModeBias(self):
-        self.corpus.ECModeBias = set()
-        self.corpus.nonECModeBias = set()
-        for story in self.corpus:
-            for sentence in story:
-                nonECModeBias, ECModeBias = self.addStatementModeBias(sentence)
-                self.corpus.updateECModeBias(ECModeBias)
-                self.corpus.updateNonECModeBias(nonECModeBias)
-                self.corpus.updateConstantModeBias(sentence.getConstantModeBias())
+

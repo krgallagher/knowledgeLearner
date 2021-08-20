@@ -6,7 +6,6 @@ from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange
 
 
-# TODO Could put this in utilities?
 def createRegularExpression(representation):
     leftSplit = representation.split('(')
     rightSplit = leftSplit[len(leftSplit) - 1].split(')')
@@ -27,7 +26,6 @@ def createRegularExpression(representation):
     return regularExpression
 
 
-# TODO make this more malleable.
 def getAnswer(fullMatch, representation):
     leftSplitRep = representation.split('(')
     rightSplitRep = leftSplitRep[len(leftSplitRep) - 1].split(')')
@@ -39,7 +37,6 @@ def getAnswer(fullMatch, representation):
         if argumentsRep[index] != argumentsMatch[index]:
             answer = argumentsMatch[index]
             return answer
-    return None
 
 
 def processClingoOutput(output):
@@ -63,7 +60,8 @@ class Reasoner:
         self.corpus = corpus
 
     def __del__(self):
-        os.remove(self.filename)
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
 
     def computeAnswer(self, question: Question, story):
         self.createClingoFile(question, story)
@@ -110,10 +108,10 @@ class Reasoner:
 
     def searchForAnswer(self, question: Question, answerSets):
         if question.isYesNoMaybeQuestion():
-            return self.isPossibleAnswer(question, answerSets)
+            return self.representationSearch(question, answerSets)
         answers = []
         for answerSet in answerSets:
-            newAnswers = self.whereSearch(question, answerSet)
+            newAnswers = self.unificationSearch(question, answerSet)
             answers += newAnswers
         if answers:
             return answers
@@ -121,8 +119,7 @@ class Reasoner:
             return ["nothing"]
         return []
 
-    # TODO rename this since this function is used for more than a "where" search
-    def whereSearch(self, question: Question, answerSet):
+    def unificationSearch(self, question: Question, answerSet):
         answers = []
         representation = self.getRepresentation(question)
         pattern = createRegularExpression(representation)
@@ -134,26 +131,23 @@ class Reasoner:
                 answers.append(getAnswer(fullMatch, representation))
         return answers
 
-    # TODO edit this to have both the event calculus and non-event calculus representation taken into account
-    def isPossibleAnswer(self, question: Question, answerSets):
+
+    def representationSearch(self, question: Question, answerSets):
         representation = self.getRepresentation(question)
-        pattern = createRegularExpression(representation)
-        compiledPattern = re.compile(pattern)
         numAnswerSetsIn = 0
         for answerSet in answerSets:
             for rule in answerSet:
-                result = compiledPattern.fullmatch(rule)
-                if result:
+                if representation in rule:
                     numAnswerSetsIn += 1
                     break
-        if numAnswerSetsIn == len(answerSets):
+        if numAnswerSetsIn == len(answerSets) and len(answerSets) >= 1:
             return ["yes"]
         elif numAnswerSetsIn >= 1:
             return ["maybe"]
         else:
             return ["no"]
 
-    def getRepresentation(self, question):
+    def getRepresentation(self, question: Question):
         if self.corpus.isEventCalculusNeeded:
             return question.getEventCalculusRepresentation()[0][0]
         return question.getFluents()[0][0]

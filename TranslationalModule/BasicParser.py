@@ -5,8 +5,7 @@ from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from TranslationalModule.EventCalculus import initiatedAt, holdsAt, terminatedAt, happensAt
-from Utilities.ILASPSyntax import varWrapping, constWrapping, createConstantTerm, modeHWrapping, modeBWrapping
+from Utilities.ILASPSyntax import varWrapping, constWrapping, createConstantTerm
 
 
 def createPronounRegularExpression(pronoun):
@@ -162,7 +161,7 @@ class BasicParser:
             newFluents.append(orFluentList)
             newMBFluents.append(orMBFluentList)
 
-    def whoWhereWhatWhyAddArgument(self, question: Question, qName, varType, i, j):
+    def whoWhereWhatAddArgument(self, question: Question, qName, varType, i, j):
         question.fluents[i][j] = question.fluents[i][j].replace(qName, "V1")
         if "V1" not in question.variableTypes.keys():
             question.variableTypes["V1"] = varType
@@ -179,13 +178,19 @@ class BasicParser:
         for i in range(0, len(question.fluents)):
             for j in range(0, len(question.fluents[i])):
                 if question.isWhoQuestion():
-                    self.whoWhereWhatWhyAddArgument(question, "who", "nn", i, j)
+                    self.whoWhereWhatAddArgument(question, "who", "nnp", i, j)
                 elif question.isWhereQuestion():
-                    self.whoWhereWhatWhyAddArgument(question, "where", "nn", i, j)
+                    self.whoWhereWhatAddArgument(question, "where", "nn", i, j)
                 elif question.isWhatQuestion():
-                    self.whoWhereWhatWhyAddArgument(question, "what", "nn", i, j)
+                    self.whoWhereWhatAddArgument(question, "what", "nn", i, j)
                 elif question.isWhyQuestion():
-                    self.whoWhereWhatWhyAddArgument(question, "why", "jj", i, j)
+                    question.fluents[i][j] = question.fluents[i][j].replace("why", "V1")
+                    if "V1" not in question.variableTypes.keys():
+                        question.variableTypes["V1"] = 'jj'
+                    question.modeBiasFluents[i][j] = question.modeBiasFluents[i][j].replace("why", constWrapping(
+                        question.variableTypes["V1"]))
+                    for answer in question.answer:
+                        question.addConstantModeBias(createConstantTerm("jj", answer))
                 elif question.isHowManyQuestion():
                     substitution = re.compile("how_many_[A-Za-z]*(,|$)")
                     question.fluents[i][j] = re.sub(substitution, "V1\\1", question.fluents[i][j])
@@ -373,45 +378,4 @@ class BasicParser:
                     tag = 'wrb'
         return base, tag
 
-    @staticmethod
-    def generateBeAndQuestionBias(modeBiasFluent, statement: Statement):
-        nonECBias = set()
-        ECBias = set()
-        time = varWrapping("time")
-        if isinstance(statement, Question):
-            ECBias.add(modeHWrapping(initiatedAt(modeBiasFluent, time)))
-            ECBias.add(modeHWrapping(terminatedAt(modeBiasFluent, time)))
-            nonECBias.add(modeHWrapping(modeBiasFluent))
-        else:
-            ECBias.add(modeBWrapping(initiatedAt(modeBiasFluent, time)))
-            nonECBias.add(modeBWrapping(modeBiasFluent))
-        ECBias.add(modeBWrapping(holdsAt(modeBiasFluent, time)))
-        return nonECBias, ECBias
 
-    @staticmethod
-    def generateNonBeBias(modeBiasFluent, statement: Statement):
-        nonECBias = set()
-        ECBias = set()
-        time = varWrapping("time")
-        ECBias.add(modeBWrapping(happensAt(modeBiasFluent, time)))
-        if isinstance(statement, Question):
-            nonECBias.add(modeHWrapping(modeBiasFluent))
-        else:
-            nonECBias.add(modeBWrapping(modeBiasFluent))
-        return nonECBias, ECBias
-
-    def addStatementModeBias(self, statement: Statement):
-        modeBiasFluents = statement.getModeBiasFluents()
-        ECModeBias = set()
-        nonECModeBias = set()
-        for i in range(0, len(modeBiasFluents)):
-            for j in range(0, len(modeBiasFluents[i])):
-                modeBiasFluent = modeBiasFluents[i][j]
-                predicate = modeBiasFluent.split('(')[0].split('_')[0]
-                if predicate == "be" or isinstance(statement, Question):
-                    newNonECModeBias, newECModeBias = self.generateBeAndQuestionBias(modeBiasFluent, statement)
-                else:
-                    newNonECModeBias, newECModeBias = self.generateNonBeBias(modeBiasFluent, statement)
-                ECModeBias.update(newECModeBias)
-                nonECModeBias.update(newNonECModeBias)
-        return nonECModeBias, ECModeBias

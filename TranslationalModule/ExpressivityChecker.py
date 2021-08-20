@@ -1,10 +1,14 @@
 import os
+
+from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure import Statement
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
+from TranslationalModule.DatasetParser import DatasetParser
 from Utilities.ILASPSyntax import createTimeRange
+
 
 def createExpressivityConstraint(sentence: Statement, questionWithAnswers):
     constraint = ":- "
@@ -19,7 +23,7 @@ def createExpressivityConstraint(sentence: Statement, questionWithAnswers):
     return constraint
 
 
-def createYesNoRule(question: Question):
+def createYesNoMaybeRule(question: Question):
     if "yes" in question.getAnswer():
         return question.getEventCalculusRepresentation()[0][0]
     else:
@@ -38,39 +42,37 @@ def createChoiceRule(fluents):
     return rule
 
 
-def createExpressivityClingoFile(story: Story, corpus: Corpus):
-    filename = '/tmp/ClingoFile.lp'
-    temp = open(filename, 'w')
+def createExpressivityClingoFile(story: Story, corpus: Corpus, filename='/tmp/ClingoFile.lp' ):
+    file = open(filename, 'w')
 
-    # add in the background knowledge
     for rule in corpus.backgroundKnowledge:
-        temp.write(rule)
-        temp.write('\n')
+        file.write(rule)
+        file.write('\n')
     for sentence in story:
         representation = sentence.getEventCalculusRepresentation()
         if isinstance(sentence, Question):
             if sentence.answer:
                 if sentence.isYesNoMaybeQuestion():
-                    rule = createYesNoRule(sentence)
-                    temp.write(rule)
-                    temp.write('.\n')
+                    rule = createYesNoMaybeRule(sentence)
+                    file.write(rule)
+                    file.write('.\n')
                 else:
                     questionWithAnswers = sentence.getQuestionWithAnswers()
                     for predicate in questionWithAnswers:
-                        temp.write(predicate)
-                        temp.write('.\n')
+                        file.write(predicate)
+                        file.write('.\n')
                     expressivityConstraint = createExpressivityConstraint(sentence, questionWithAnswers)
-                    temp.write(expressivityConstraint)
-                    temp.write('.\n')
+                    file.write(expressivityConstraint)
+                    file.write('.\n')
 
         else:
             for i in range(0, len(representation)):
                 choiceRule = createChoiceRule(representation[i])
-                temp.write(choiceRule)
-                temp.write('.\n')
+                file.write(choiceRule)
+                file.write('.\n')
 
-    temp.write(createTimeRange(len(story)))
-    temp.write('.\n')
+    file.write(createTimeRange(len(story)))
+    file.write('.\n')
     return filename
 
 
@@ -81,7 +83,6 @@ def isUnsatisfiable(output):
 def runClingo(filename):
     command = "Clingo -W none -n 0 " + filename
     output = os.popen(command).read()
-
     return output
 
 
@@ -103,3 +104,12 @@ def isEventCalculusNeeded(corpus: Corpus):
 
         os.remove(filename)
     return False
+
+
+if __name__ == "__main__":
+    trainingSet = "../en/qa" + "16" + "_train.txt"
+    testingSet = "../en/qa" + "16" + "_test.txt"
+    train = bAbIReader(trainingSet)
+    test = bAbIReader(testingSet)
+    DatasetParser(train, test)
+    print(isEventCalculusNeeded(train))

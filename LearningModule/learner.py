@@ -1,10 +1,10 @@
 import os
-import re
+from LearningModule.heuristicGenerator import HeuristicGenerator
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 from StoryStructure.Story import Story
 from TranslationalModule.ExpressivityChecker import createChoiceRule
-from Utilities.ILASPSyntax import createTimeRange, createBias
+from Utilities.ILASPSyntax import createTimeRange, maxVariables
 
 
 def isSatisfiable(hypotheses):
@@ -13,48 +13,16 @@ def isSatisfiable(hypotheses):
     return unsatisfiable != hypotheses
 
 
-def getRepresentationFromModeBias(rule):
-    substitution = re.compile("#mode.\((.*)\)\.")
-    return re.sub(substitution, "\\1", rule)
-
-
-def numberOfConstantArguments(representation):
-    return representation.count('const')
-
-
-def numberOfNonConstantArguments(representation):
-    return representation.count('var')
-
-
-def createConstraint(representation):
-    timeSubstitution = re.compile("var\(time\)")
-    representation = re.sub(timeSubstitution, "_", representation)
-    substitution = re.compile("var\([^\)]*\)")
-    return re.sub(substitution, "V1", representation)
-
-
-def hasConstantType(constant, representation):
-    constantType = constant.split('(')[1].split(',')[0]
-    constantArgument = "const(" + constantType + ")"
-    return constantArgument in representation
-
-
-def substituteConstant(constant, representation):
-    constantName = constant.split(',')[1][:-1]
-    constantType = constant.split('(')[1].split(',')[0]
-    constantArgument = "const(" + constantType + ")"
-    return representation.replace(constantArgument, constantName)
-
-
 class Learner:
-    def __init__(self, corpus, filename="/Users/katiegallagher/Desktop/IndividualProject/learningFile.las",
-                 cachingFile="/Users/katiegallagher/Desktop/IndividualProject/cachingFile.las", useSupervision=False):
-        self.filename = filename
+    def __init__(self, corpus, learningFile='/tmp/learningFile.las', cachingFile="/tmp/cachingFile.las",
+                 useSupervision=False):
+        self.filename = learningFile
         self.cachingFile = cachingFile
         self.corpus = corpus
         self.useSupervision = useSupervision
         self.eventCalculusNeededPreviously = False
         self.currentExamplesIndex = 0
+        self.heuristics = HeuristicGenerator(self.corpus)
 
     def learn(self, question: Question, story: Story, answer, createNewLearningFile=False):
         if question.isYesNoMaybeQuestion():
@@ -63,7 +31,6 @@ class Learner:
             else:
                 self.createNegativeExample(question, story)
         else:
-            # TODO determine if I need these
             if answer == ["nothing"] or answer == ['none'] or not answer:
                 self.createPositiveExample(question, story)
             else:
@@ -77,23 +44,25 @@ class Learner:
         else:
             self.appendExamplesToLearningFile()
 
-        file = open(self.filename, 'r')
-        for line in file:
-            print(line)
+        #file = open(self.filename, 'r')
+        #for line in file:
+        #    print(line)
 
         hypotheses = self.solveILASPTask()
 
-        print("HYPOTHESES", hypotheses)
+        #print("HYPOTHESES", hypotheses)
         if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
         self.eventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
 
-        print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
+        #print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
     def __del__(self):
-        os.remove(self.filename)
-        # os.remove(self.cachingFile)
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
+        if os.path.exists(self.cachingFile):
+            os.remove(self.cachingFile)
 
     def createPositiveExample(self, question: Question, story: Story):
         if "maybe" in question.getAnswer():
@@ -163,9 +132,8 @@ class Learner:
                     break
         if nonECContext[-1] != '{':
             nonECContext += '.\n'
-            ECContext += '.\n'
-            ECContext += createTimeRange(question.getLineID())
-            ECContext += '.\n'
+            ECContext += '.\n' + createTimeRange(question.getLineID()) + '.\n'
+
         nonECContext += '}\n'
         ECContext += '}\n'
         return nonECContext, ECContext
@@ -182,7 +150,6 @@ class Learner:
             nonECContext += nonECRule
             ECContext += ECRule
         return nonECContext, ECContext
-
 
     def createLearningFile(self):
         file = open(self.filename, 'w')
@@ -202,15 +169,7 @@ class Learner:
             file.write(constantBias)
             file.write('\n')
 
-        # file.write("#modeh(initiatedAt(carry(var(nn),var(nn)),var(time))).\n")
-        # file.write("#modeh(terminatedAt(carry(var(nn),var(nn)),var(time))).\n")
-        # file.write("#modeb(holdsAt(carry(var(nn),var(nn)),var(time))).\n")
-
-        if self.corpus.isEventCalculusNeeded:
-            file.write("#maxv(4)")
-        else:
-            file.write("#maxv(3)")
-        file.write('.\n')
+        file.write(maxVariables(self.heuristics.maximumNumberOfVariables()))
 
         file.write("#max_penalty(50).\n")
 
@@ -236,7 +195,9 @@ class Learner:
         file.close()
 
     def solveILASPTask(self):
-        command = "ILASP -q -nc -ml=3 --version=2i --cache-path=" + self.cachingFile + " " + self.filename
+        maxLiterals = self.heuristics.maxNumberOfLiterals()
+        command = "ILASP -q -nc -ml=" + str(maxLiterals) \
+                  + " --version=2i --cache-path=" + self.cachingFile + " " + self.filename
         output = os.popen(command).read()
         return self.processILASP(output)
 

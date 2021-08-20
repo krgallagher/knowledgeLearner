@@ -79,3 +79,4 @@ class Question(Statement):
 
     def isWhyQuestion(self):
         return "why" in self.text.lower()
+

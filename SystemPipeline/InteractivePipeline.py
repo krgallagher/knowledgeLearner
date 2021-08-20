@@ -2,6 +2,7 @@ import sys
 
 import speech_recognition
 from LearningModule.learner import Learner
+from LearningModule.modeBiasGenerator import ModeBiasGenerator
 from ReasoningModule.reasoner import Reasoner
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
@@ -36,6 +37,7 @@ class InteractiveSystem:
         self.parser = InteractiveParser(self.corpus)
         self.reasoner = Reasoner(self.corpus)
         self.learner = Learner(self.corpus)
+        self.modeBiasGenerator = ModeBiasGenerator()
 
         self.corpus.append(self.currentStory)
 
@@ -69,7 +71,6 @@ class InteractiveSystem:
             else:
                 self.processInput(currentInput)
 
-            # get new input
             currentInput = self.getInput("Please continue your story.\n")
 
     def printHelpMenu(self):
@@ -139,7 +140,9 @@ class InteractiveSystem:
             if not self.corpus.isEventCalculusNeeded and isEventCalculusNeeded(self.corpus):
                 self.corpus.isEventCalculusNeeded = True
 
-            self.parser.assembleModeBias()
+            self.corpus.ECModeBias = set()
+            self.corpus.nonECModeBias = set()
+            self.modeBiasGenerator.assembleModeBias()
 
             self.learner.learn(sentence, self.currentStory, answerToQuestion, createNewLearningFile=True)
 
