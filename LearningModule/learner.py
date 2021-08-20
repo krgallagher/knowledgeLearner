@@ -25,16 +25,13 @@ class Learner:
         self.heuristics = HeuristicGenerator(self.corpus)
 
     def learn(self, question: Question, story: Story, answer, createNewLearningFile=False):
-        if question.isYesNoMaybeQuestion():
-            if "yes" in question.getAnswer() or "maybe" in question.getAnswer():
-                self.createPositiveExample(question, story)
-            else:
-                self.createNegativeExample(question, story)
-        else:
-            if answer == ["nothing"] or answer == ['none'] or not answer:
-                self.createPositiveExample(question, story)
+        if self.corpus.choiceRulesPresent:
+            if "maybe" in question.getAnswer():
+                self.createPositiveExample(question, story, answer)
             else:
                 self.createNegativeExample(question, story, answer)
+        else:
+            self.createPositiveExample(question, story, answer)
 
         if self.eventCalculusNeededPreviously != self.corpus.isEventCalculusNeeded or not os.path.exists(
                 self.filename) or createNewLearningFile:
@@ -44,19 +41,19 @@ class Learner:
         else:
             self.appendExamplesToLearningFile()
 
-        #file = open(self.filename, 'r')
-        #for line in file:
-        #    print(line)
+        file = open(self.filename, 'r')
+        for line in file:
+            print(line)
 
         hypotheses = self.solveILASPTask()
 
-        #print("HYPOTHESES", hypotheses)
+        print("HYPOTHESES", hypotheses)
         if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
         self.eventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
 
-        #print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
+        print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
     def __del__(self):
         if os.path.exists(self.filename):
@@ -64,54 +61,54 @@ class Learner:
         if os.path.exists(self.cachingFile):
             os.remove(self.cachingFile)
 
-    def createPositiveExample(self, question: Question, story: Story):
-        if "maybe" in question.getAnswer():
-            self.createBravePositiveExample(question, story)
-        elif self.corpus.choiceRulesPresent:
-            self.createCautiousPositiveExample(question, story)
+    def createPositiveExample(self, question: Question, story: Story, answer):
+        if "maybe" in question.getAnswer() or "yes" in question.getAnswer():
+            self.createPositiveInclusion(question, story)
+        elif "no" in question.getAnswer():
+            self.createPositiveExclusion(question, story, answer)
+        elif answer == ["nothing"] or answer == []:
+            self.createPositiveInclusion(question, story)
         else:
-            self.createBravePositiveExample(question, story)
+            self.createPositiveExclusion(question, story, answer)
 
-    def createNegativeExample(self, question: Question, story: Story, answer=None):
-        if self.corpus.choiceRulesPresent:
-            self.createCautiousNegativeExample(question, story, answer)
+    def createNegativeExample(self, question: Question, story: Story, answer):
+        if "yes" in question.getAnswer():
+            self.createNegativeExclusion(question, story)
+        elif "no" in question.getAnswer():
+            self.createNegativeInclusion(question, story, answer)
+        elif answer == ["nothing"]:
+            self.createNegativeExclusion(question, story)
         else:
-            self.createBraveNegativeExample(question, story, answer)
+            self.createNegativeInclusion(question, story, answer)
 
-    def createBravePositiveExample(self, question: Question, story: Story):
+    def createPositiveInclusion(self, question: Question, story: Story):
         positiveNonECPortion, positiveECPortion = question.createPartialInterpretation(question.getAnswer())
         nonECContext, ECContext = self.createContext(question, story)
         positiveNonECExample = '#pos(' + positiveNonECPortion + ',{},' + nonECContext + ').'
         positiveECExample = '#pos(' + positiveECPortion + ',{},' + ECContext + ').'
         self.addExamples(positiveNonECExample, positiveECExample)
 
-    def createCautiousPositiveExample(self, question: Question, story: Story):
+    def createNegativeExclusion(self, question: Question, story: Story):
         positiveNonECPortion, positiveECPortion = question.createPartialInterpretation(question.getAnswer())
         nonECContext, ECContext = self.createContext(question, story)
         positiveNonECExample = '#neg(' + '{},' + positiveNonECPortion + "," + nonECContext + ').'
         positiveECExample = '#neg(' + '{},' + positiveECPortion + "," + ECContext + ').'
         self.addExamples(positiveNonECExample, positiveECExample)
 
-    def createBraveNegativeExample(self, question: Question, story: Story, answers=None):
+    def createPositiveExclusion(self, question: Question, story: Story, answers):
         positiveNonECPortion, positiveECPortion = '{}', '{}'
-        if not answers:
-            negativeNonECPortion, negativeECPortion = question.createPartialInterpretation()
-        else:
-            negativeNonECPortion, negativeECPortion = '{}', '{}'
-            for answer in answers:
-                if question.isCorrectAnswer([answer]):
-                    positiveNonECPortion, positiveECPortion = question.createPartialInterpretation([answer])
-                else:
-                    negativeNonECPortion, negativeECPortion = question.createPartialInterpretation([answer])
-            if positiveNonECPortion == '{}' and question.answer != ["nothing"]:
-                positiveNonECPortion, positiveECPortion = question.createPartialInterpretation(question.getAnswer())
-
+        negativeNonECPortion, negativeECPortion = '{}', '{}'
+        for answer in answers:
+            if question.isCorrectAnswer([answer]):
+                positiveNonECPortion, positiveECPortion = question.createPartialInterpretation([answer])
+            else:
+                negativeNonECPortion, negativeECPortion = question.createPartialInterpretation([answer])
         nonECContext, ECContext = self.createContext(question, story)
         negativeNonECExample = '#pos(' + positiveNonECPortion + ',' + negativeNonECPortion + ',' + nonECContext + ').'
         negativeECExample = '#pos(' + positiveECPortion + ',' + negativeECPortion + ',' + ECContext + ').'
         self.addExamples(negativeNonECExample, negativeECExample)
 
-    def createCautiousNegativeExample(self, question: Question, story: Story, answer=None):
+    def createNegativeInclusion(self, question: Question, story: Story, answer):
         negativeNonECPortion, negativeECPortion = question.createPartialInterpretation(answer)
         nonECContext, ECContext = self.createContext(question, story)
         negativeNonECExample = '#neg(' + negativeNonECPortion + ',{},' + nonECContext + ').'
