@@ -5,7 +5,7 @@ import numpy as np
 if __name__ == '__main__':
     numberOfExamples = 100
     numShuffles = 5
-    i = 1
+    i = 15
     train = "../en/qa" + str(i) + "_train.txt"
     test = "../en/qa" + str(i) + "_test.txt"
     trainingCorpus = bAbIReader(train)
@@ -22,7 +22,7 @@ if __name__ == '__main__':
         accuracy, parsingTime, learningTime = mainPipeline(trainingCorpus, testingCorpus, numberOfExamples, False)
         accuracies[i][0] = accuracy
         parsingTimes[i][0] = parsingTime
-        learningTimes[i][0] = learningTimes
+        learningTimes[i][0] = learningTime
         print("\nWithout Supervision:\n", "Accuracy: ", accuracy, "\nLearning Time: ", learningTime)
 
         trainingCorpus.reset()
@@ -30,7 +30,7 @@ if __name__ == '__main__':
         accuracy, parsingTime, learningTime = mainPipeline(trainingCorpus, testingCorpus, numberOfExamples, True)
         accuracies[i][1] = accuracy
         parsingTimes[i][1] = parsingTime
-        learningTimes[i][1] = learningTimes
+        learningTimes[i][1] = learningTime
         print("\nWith Supervision:\n", "Accuracy: ", accuracy, "\nLearning Time: ", learningTime)
 
     averageAccuracies = np.average(accuracies, axis=0)
