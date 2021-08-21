@@ -41,19 +41,19 @@ class Learner:
         else:
             self.appendExamplesToLearningFile()
 
-        file = open(self.filename, 'r')
-        for line in file:
-            print(line)
+        #file = open(self.filename, 'r')
+        #for line in file:
+        #    print(line)
 
         hypotheses = self.solveILASPTask()
 
-        print("HYPOTHESES", hypotheses)
+        #print("HYPOTHESES", hypotheses)
         if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
         self.eventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
 
-        print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
+        #print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
     def __del__(self):
         if os.path.exists(self.filename):
@@ -71,6 +71,7 @@ class Learner:
         else:
             self.createPositiveExclusion(question, story, answer)
 
+    #can shorten this to an or and an else statement
     def createNegativeExample(self, question: Question, story: Story, answer):
         if "yes" in question.getAnswer():
             self.createNegativeExclusion(question, story)
