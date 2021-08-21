@@ -6,10 +6,10 @@
 6 Wolves are afraid of cats.
 7 Emily is a mouse.
 8 Jessica is a wolf.
-9 What is gertrude afraid of?	wolf	2 1
-10 What is gertrude afraid of?	wolf	2 1
-11 What is jessica afraid of?	cat	8 6
-12 What is gertrude afraid of?	wolf	2 1
+9 What is Gertrude afraid of?	wolf	2 1
+10 What is Gertrude afraid of?	wolf	2 1
+11 What is Jessica afraid of?	cat	8 6
+12 What is Gertrude afraid of?	wolf	2 1
 1 Sheep are afraid of mice.
 2 Emily is a sheep.
 3 Mice are afraid of sheep.
@@ -18,10 +18,10 @@
 6 Jessica is a mouse.
 7 Gertrude is a sheep.
 8 Wolves are afraid of sheep.
-9 What is jessica afraid of?	sheep	6 3
-10 What is emily afraid of?	mouse	2 1
-11 What is winona afraid of?	mouse	5 1
-12 What is emily afraid of?	mouse	2 1
+9 What is Jessica afraid of?	sheep	6 3
+10 What is Emily afraid of?	mouse	2 1
+11 What is Winona afraid of?	mouse	5 1
+12 What is Emily afraid of?	mouse	2 1
 1 Cats are afraid of sheep.
 2 Sheep are afraid of mice.
 3 Emily is a sheep.
@@ -30,10 +30,10 @@
 6 Mice are afraid of wolves.
 7 Winona is a mouse.
 8 Jessica is a wolf.
-9 What is emily afraid of?	mouse	3 2
-10 What is gertrude afraid of?	mouse	4 2
-11 What is gertrude afraid of?	mouse	4 2
-12 What is winona afraid of?	wolf	7 6
+9 What is Emily afraid of?	mouse	3 2
+10 What is Gertrude afraid of?	mouse	4 2
+11 What is Gertrude afraid of?	mouse	4 2
+12 What is Winona afraid of?	wolf	7 6
 1 Mice are afraid of cats.
 2 Gertrude is a mouse.
 3 Emily is a mouse.
@@ -42,10 +42,10 @@
 6 Jessica is a mouse.
 7 Cats are afraid of sheep.
 8 Sheep are afraid of cats.
-9 What is jessica afraid of?	cat	6 1
-10 What is winona afraid of?	sheep	5 4
-11 What is winona afraid of?	sheep	5 4
-12 What is emily afraid of?	cat	3 1
+9 What is Jessica afraid of?	cat	6 1
+10 What is Winona afraid of?	sheep	5 4
+11 What is Winona afraid of?	sheep	5 4
+12 What is Emily afraid of?	cat	3 1
 1 Mice are afraid of cats.
 2 Wolves are afraid of sheep.
 3 Emily is a wolf.
@@ -54,10 +54,10 @@
 6 Sheep are afraid of cats.
 7 Winona is a wolf.
 8 Jessica is a mouse.
-9 What is emily afraid of?	sheep	3 2
-10 What is emily afraid of?	sheep	3 2
-11 What is gertrude afraid of?	sheep	5 2
-12 What is gertrude afraid of?	sheep	5 2
+9 What is Emily afraid of?	sheep	3 2
+10 What is Emily afraid of?	sheep	3 2
+11 What is Gertrude afraid of?	sheep	5 2
+12 What is Gertrude afraid of?	sheep	5 2
 1 Sheep are afraid of wolves.
 2 Mice are afraid of wolves.
 3 Wolves are afraid of cats.
@@ -66,10 +66,10 @@
 6 Gertrude is a wolf.
 7 Cats are afraid of mice.
 8 Winona is a cat.
-9 What is winona afraid of?	mouse	8 7
-10 What is winona afraid of?	mouse	8 7
-11 What is emily afraid of?	cat	4 3
-12 What is jessica afraid of?	cat	5 3
+9 What is Winona afraid of?	mouse	8 7
+10 What is Winona afraid of?	mouse	8 7
+11 What is Emily afraid of?	cat	4 3
+12 What is Jessica afraid of?	cat	5 3
 1 Cats are afraid of wolves.
 2 Mice are afraid of cats.
 3 Sheep are afraid of cats.
@@ -78,10 +78,10 @@
 6 Winona is a cat.
 7 Emily is a sheep.
 8 Wolves are afraid of sheep.
-9 What is gertrude afraid of?	cat	5 3
-10 What is gertrude afraid of?	cat	5 3
-11 What is emily afraid of?	cat	7 3
-12 What is emily afraid of?	cat	7 3
+9 What is Gertrude afraid of?	cat	5 3
+10 What is Gertrude afraid of?	cat	5 3
+11 What is Emily afraid of?	cat	7 3
+12 What is Emily afraid of?	cat	7 3
 1 Wolves are afraid of cats.
 2 Mice are afraid of sheep.
 3 Emily is a mouse.
@@ -90,10 +90,10 @@
 6 Sheep are afraid of mice.
 7 Winona is a mouse.
 8 Jessica is a cat.
-9 What is jessica afraid of?	wolf	8 4
-10 What is winona afraid of?	sheep	7 2
-11 What is gertrude afraid of?	wolf	5 4
-12 What is winona afraid of?	sheep	7 2
+9 What is Jessica afraid of?	wolf	8 4
+10 What is Winona afraid of?	sheep	7 2
+11 What is Gertrude afraid of?	wolf	5 4
+12 What is Winona afraid of?	sheep	7 2
 1 Mice are afraid of sheep.
 2 Sheep are afraid of mice.
 3 Winona is a mouse.
@@ -102,10 +102,10 @@
 6 Emily is a wolf.
 7 Gertrude is a mouse.
 8 Cats are afraid of mice.
-9 What is gertrude afraid of?	sheep	7 1
-10 What is winona afraid of?	sheep	3 1
-11 What is winona afraid of?	sheep	3 1
-12 What is gertrude afraid of?	sheep	7 1
+9 What is Gertrude afraid of?	sheep	7 1
+10 What is Winona afraid of?	sheep	3 1
+11 What is Winona afraid of?	sheep	3 1
+12 What is Gertrude afraid of?	sheep	7 1
 1 Mice are afraid of cats.
 2 Emily is a mouse.
 3 Wolves are afraid of mice.
@@ -114,10 +114,10 @@
 6 Sheep are afraid of wolves.
 7 Jessica is a mouse.
 8 Gertrude is a sheep.
-9 What is jessica afraid of?	cat	7 1
-10 What is emily afraid of?	cat	2 1
-11 What is jessica afraid of?	cat	7 1
-12 What is winona afraid of?	sheep	5 4
+9 What is Jessica afraid of?	cat	7 1
+10 What is Emily afraid of?	cat	2 1
+11 What is Jessica afraid of?	cat	7 1
+12 What is Winona afraid of?	sheep	5 4
 1 Mice are afraid of wolves.
 2 Sheep are afraid of wolves.
 3 Wolves are afraid of cats.
@@ -126,10 +126,10 @@
 6 Emily is a wolf.
 7 Cats are afraid of sheep.
 8 Jessica is a sheep.
-9 What is winona afraid of?	wolf	5 1
-10 What is winona afraid of?	wolf	5 1
-11 What is emily afraid of?	cat	6 3
-12 What is emily afraid of?	cat	6 3
+9 What is Winona afraid of?	wolf	5 1
+10 What is Winona afraid of?	wolf	5 1
+11 What is Emily afraid of?	cat	6 3
+12 What is Emily afraid of?	cat	6 3
 1 Sheep are afraid of wolves.
 2 Cats are afraid of wolves.
 3 Gertrude is a sheep.
@@ -138,10 +138,10 @@
 6 Winona is a cat.
 7 Mice are afraid of wolves.
 8 Jessica is a wolf.
-9 What is jessica afraid of?	mouse	8 4
-10 What is gertrude afraid of?	wolf	3 1
-11 What is winona afraid of?	wolf	6 2
-12 What is jessica afraid of?	mouse	8 4
+9 What is Jessica afraid of?	mouse	8 4
+10 What is Gertrude afraid of?	wolf	3 1
+11 What is Winona afraid of?	wolf	6 2
+12 What is Jessica afraid of?	mouse	8 4
 1 Mice are afraid of wolves.
 2 Sheep are afraid of wolves.
 3 Jessica is a mouse.
@@ -150,10 +150,10 @@
 6 Cats are afraid of mice.
 7 Emily is a cat.
 8 Wolves are afraid of sheep.
-9 What is emily afraid of?	mouse	7 6
-10 What is gertrude afraid of?	wolf	5 1
-11 What is gertrude afraid of?	wolf	5 1
-12 What is emily afraid of?	mouse	7 6
+9 What is Emily afraid of?	mouse	7 6
+10 What is Gertrude afraid of?	wolf	5 1
+11 What is Gertrude afraid of?	wolf	5 1
+12 What is Emily afraid of?	mouse	7 6
 1 Sheep are afraid of cats.
 2 Mice are afraid of sheep.
 3 Wolves are afraid of mice.
@@ -162,10 +162,10 @@
 6 Jessica is a sheep.
 7 Cats are afraid of mice.
 8 Gertrude is a wolf.
-9 What is gertrude afraid of?	mouse	8 3
-10 What is emily afraid of?	cat	5 1
-11 What is winona afraid of?	cat	4 1
-12 What is gertrude afraid of?	mouse	8 3
+9 What is Gertrude afraid of?	mouse	8 3
+10 What is Emily afraid of?	cat	5 1
+11 What is Winona afraid of?	cat	4 1
+12 What is Gertrude afraid of?	mouse	8 3
 1 Mice are afraid of cats.
 2 Emily is a mouse.
 3 Winona is a mouse.
@@ -174,10 +174,10 @@
 6 Wolves are afraid of cats.
 7 Cats are afraid of sheep.
 8 Jessica is a wolf.
-9 What is winona afraid of?	cat	3 1
-10 What is gertrude afraid of?	mouse	5 4
-11 What is emily afraid of?	cat	2 1
-12 What is emily afraid of?	cat	2 1
+9 What is Winona afraid of?	cat	3 1
+10 What is Gertrude afraid of?	mouse	5 4
+11 What is Emily afraid of?	cat	2 1
+12 What is Emily afraid of?	cat	2 1
 1 Sheep are afraid of mice.
 2 Winona is a sheep.
 3 Mice are afraid of sheep.
@@ -186,10 +186,10 @@
 6 Jessica is a sheep.
 7 Gertrude is a mouse.
 8 Cats are afraid of sheep.
-9 What is gertrude afraid of?	sheep	7 3
-10 What is emily afraid of?	mouse	4 1
-11 What is emily afraid of?	mouse	4 1
-12 What is jessica afraid of?	mouse	6 1
+9 What is Gertrude afraid of?	sheep	7 3
+10 What is Emily afraid of?	mouse	4 1
+11 What is Emily afraid of?	mouse	4 1
+12 What is Jessica afraid of?	mouse	6 1
 1 Wolves are afraid of sheep.
 2 Cats are afraid of sheep.
 3 Sheep are afraid of mice.
@@ -198,10 +198,10 @@
 6 Emily is a sheep.
 7 Mice are afraid of sheep.
 8 Jessica is a wolf.
-9 What is emily afraid of?	mouse	6 3
-10 What is emily afraid of?	mouse	6 3
-11 What is winona afraid of?	mouse	5 3
-12 What is winona afraid of?	mouse	5 3
+9 What is Emily afraid of?	mouse	6 3
+10 What is Emily afraid of?	mouse	6 3
+11 What is Winona afraid of?	mouse	5 3
+12 What is Winona afraid of?	mouse	5 3
 1 Wolves are afraid of mice.
 2 Cats are afraid of wolves.
 3 Winona is a wolf.
@@ -210,10 +210,10 @@
 6 Mice are afraid of wolves.
 7 Jessica is a mouse.
 8 Gertrude is a cat.
-9 What is jessica afraid of?	wolf	7 6
-10 What is gertrude afraid of?	wolf	8 2
-11 What is emily afraid of?	mouse	4 1
-12 What is jessica afraid of?	wolf	7 6
+9 What is Jessica afraid of?	wolf	7 6
+10 What is Gertrude afraid of?	wolf	8 2
+11 What is Emily afraid of?	mouse	4 1
+12 What is Jessica afraid of?	wolf	7 6
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of cats.
 3 Mice are afraid of wolves.
@@ -222,10 +222,10 @@
 6 Jessica is a wolf.
 7 Gertrude is a cat.
 8 Winona is a wolf.
-9 What is winona afraid of?	sheep	8 1
-10 What is emily afraid of?	sheep	4 1
-11 What is emily afraid of?	sheep	4 1
-12 What is winona afraid of?	sheep	8 1
+9 What is Winona afraid of?	sheep	8 1
+10 What is Emily afraid of?	sheep	4 1
+11 What is Emily afraid of?	sheep	4 1
+12 What is Winona afraid of?	sheep	8 1
 1 Wolves are afraid of sheep.
 2 Mice are afraid of wolves.
 3 Cats are afraid of mice.
@@ -234,10 +234,10 @@
 6 Sheep are afraid of cats.
 7 Jessica is a cat.
 8 Gertrude is a sheep.
-9 What is gertrude afraid of?	cat	8 6
-10 What is gertrude afraid of?	cat	8 6
-11 What is winona afraid of?	sheep	5 1
-12 What is emily afraid of?	mouse	4 3
+9 What is Gertrude afraid of?	cat	8 6
+10 What is Gertrude afraid of?	cat	8 6
+11 What is Winona afraid of?	sheep	5 1
+12 What is Emily afraid of?	mouse	4 3
 1 Wolves are afraid of sheep.
 2 Winona is a wolf.
 3 Cats are afraid of wolves.
@@ -246,10 +246,10 @@
 6 Sheep are afraid of mice.
 7 Jessica is a mouse.
 8 Gertrude is a sheep.
-9 What is emily afraid of?	sheep	5 1
-10 What is winona afraid of?	sheep	2 1
-11 What is winona afraid of?	sheep	2 1
-12 What is jessica afraid of?	wolf	7 4
+9 What is Emily afraid of?	sheep	5 1
+10 What is Winona afraid of?	sheep	2 1
+11 What is Winona afraid of?	sheep	2 1
+12 What is Jessica afraid of?	wolf	7 4
 1 Cats are afraid of mice.
 2 Mice are afraid of sheep.
 3 Wolves are afraid of sheep.
@@ -258,10 +258,10 @@
 6 Gertrude is a sheep.
 7 Emily is a wolf.
 8 Winona is a wolf.
-9 What is emily afraid of?	sheep	7 3
-10 What is winona afraid of?	sheep	8 3
-11 What is winona afraid of?	sheep	8 3
-12 What is winona afraid of?	sheep	8 3
+9 What is Emily afraid of?	sheep	7 3
+10 What is Winona afraid of?	sheep	8 3
+11 What is Winona afraid of?	sheep	8 3
+12 What is Winona afraid of?	sheep	8 3
 1 Cats are afraid of mice.
 2 Mice are afraid of sheep.
 3 Sheep are afraid of wolves.
@@ -270,10 +270,10 @@
 6 Jessica is a sheep.
 7 Gertrude is a cat.
 8 Winona is a wolf.
-9 What is winona afraid of?	mouse	8 5
-10 What is jessica afraid of?	wolf	6 3
-11 What is jessica afraid of?	wolf	6 3
-12 What is gertrude afraid of?	mouse	7 1
+9 What is Winona afraid of?	mouse	8 5
+10 What is Jessica afraid of?	wolf	6 3
+11 What is Jessica afraid of?	wolf	6 3
+12 What is Gertrude afraid of?	mouse	7 1
 1 Wolves are afraid of mice.
 2 Mice are afraid of sheep.
 3 Sheep are afraid of wolves.
@@ -282,10 +282,10 @@
 6 Jessica is a mouse.
 7 Gertrude is a wolf.
 8 Cats are afraid of mice.
-9 What is winona afraid of?	sheep	5 2
-10 What is gertrude afraid of?	mouse	7 1
-11 What is emily afraid of?	mouse	4 1
-12 What is jessica afraid of?	sheep	6 2
+9 What is Winona afraid of?	sheep	5 2
+10 What is Gertrude afraid of?	mouse	7 1
+11 What is Emily afraid of?	mouse	4 1
+12 What is Jessica afraid of?	sheep	6 2
 1 Cats are afraid of wolves.
 2 Sheep are afraid of wolves.
 3 Mice are afraid of cats.
@@ -294,10 +294,10 @@
 6 Gertrude is a mouse.
 7 Wolves are afraid of mice.
 8 Jessica is a cat.
-9 What is jessica afraid of?	wolf	8 1
-10 What is jessica afraid of?	wolf	8 1
-11 What is emily afraid of?	wolf	4 2
-12 What is jessica afraid of?	wolf	8 1
+9 What is Jessica afraid of?	wolf	8 1
+10 What is Jessica afraid of?	wolf	8 1
+11 What is Emily afraid of?	wolf	4 2
+12 What is Jessica afraid of?	wolf	8 1
 1 Mice are afraid of cats.
 2 Sheep are afraid of mice.
 3 Jessica is a sheep.
@@ -306,10 +306,10 @@
 6 Cats are afraid of wolves.
 7 Wolves are afraid of cats.
 8 Winona is a sheep.
-9 What is jessica afraid of?	mouse	3 2
-10 What is winona afraid of?	mouse	8 2
-11 What is jessica afraid of?	mouse	3 2
-12 What is winona afraid of?	mouse	8 2
+9 What is Jessica afraid of?	mouse	3 2
+10 What is Winona afraid of?	mouse	8 2
+11 What is Jessica afraid of?	mouse	3 2
+12 What is Winona afraid of?	mouse	8 2
 1 Mice are afraid of wolves.
 2 Wolves are afraid of cats.
 3 Winona is a mouse.
@@ -318,10 +318,10 @@
 6 Jessica is a cat.
 7 Sheep are afraid of wolves.
 8 Gertrude is a mouse.
-9 What is gertrude afraid of?	wolf	8 1
-10 What is winona afraid of?	wolf	3 1
-11 What is gertrude afraid of?	wolf	8 1
-12 What is emily afraid of?	wolf	5 4
+9 What is Gertrude afraid of?	wolf	8 1
+10 What is Winona afraid of?	wolf	3 1
+11 What is Gertrude afraid of?	wolf	8 1
+12 What is Emily afraid of?	wolf	5 4
 1 Cats are afraid of sheep.
 2 Sheep are afraid of wolves.
 3 Emily is a sheep.
@@ -330,10 +330,10 @@
 6 Wolves are afraid of mice.
 7 Winona is a cat.
 8 Mice are afraid of cats.
-9 What is gertrude afraid of?	wolf	5 2
-10 What is emily afraid of?	wolf	3 2
-11 What is emily afraid of?	wolf	3 2
-12 What is winona afraid of?	sheep	7 1
+9 What is Gertrude afraid of?	wolf	5 2
+10 What is Emily afraid of?	wolf	3 2
+11 What is Emily afraid of?	wolf	3 2
+12 What is Winona afraid of?	sheep	7 1
 1 Mice are afraid of sheep.
 2 Cats are afraid of sheep.
 3 Winona is a cat.
@@ -342,10 +342,10 @@
 6 Gertrude is a cat.
 7 Emily is a sheep.
 8 Wolves are afraid of mice.
-9 What is gertrude afraid of?	sheep	6 2
-10 What is emily afraid of?	mouse	7 4
-11 What is winona afraid of?	sheep	3 2
-12 What is winona afraid of?	sheep	3 2
+9 What is Gertrude afraid of?	sheep	6 2
+10 What is Emily afraid of?	mouse	7 4
+11 What is Winona afraid of?	sheep	3 2
+12 What is Winona afraid of?	sheep	3 2
 1 Wolves are afraid of cats.
 2 Sheep are afraid of wolves.
 3 Cats are afraid of sheep.
@@ -354,10 +354,10 @@
 6 Gertrude is a cat.
 7 Mice are afraid of wolves.
 8 Winona is a wolf.
-9 What is winona afraid of?	cat	8 1
-10 What is gertrude afraid of?	sheep	6 3
-11 What is gertrude afraid of?	sheep	6 3
-12 What is emily afraid of?	cat	4 1
+9 What is Winona afraid of?	cat	8 1
+10 What is Gertrude afraid of?	sheep	6 3
+11 What is Gertrude afraid of?	sheep	6 3
+12 What is Emily afraid of?	cat	4 1
 1 Wolves are afraid of cats.
 2 Cats are afraid of wolves.
 3 Sheep are afraid of mice.
@@ -366,10 +366,10 @@
 6 Gertrude is a cat.
 7 Emily is a cat.
 8 Mice are afraid of sheep.
-9 What is jessica afraid of?	mouse	4 3
-10 What is emily afraid of?	wolf	7 2
-11 What is emily afraid of?	wolf	7 2
-12 What is winona afraid of?	cat	5 1
+9 What is Jessica afraid of?	mouse	4 3
+10 What is Emily afraid of?	wolf	7 2
+11 What is Emily afraid of?	wolf	7 2
+12 What is Winona afraid of?	cat	5 1
 1 Mice are afraid of sheep.
 2 Gertrude is a mouse.
 3 Emily is a mouse.
@@ -378,10 +378,10 @@
 6 Cats are afraid of mice.
 7 Winona is a wolf.
 8 Jessica is a cat.
-9 What is jessica afraid of?	mouse	8 6
-10 What is winona afraid of?	mouse	7 5
-11 What is emily afraid of?	sheep	3 1
-12 What is gertrude afraid of?	sheep	2 1
+9 What is Jessica afraid of?	mouse	8 6
+10 What is Winona afraid of?	mouse	7 5
+11 What is Emily afraid of?	sheep	3 1
+12 What is Gertrude afraid of?	sheep	2 1
 1 Sheep are afraid of cats.
 2 Cats are afraid of sheep.
 3 Wolves are afraid of mice.
@@ -390,10 +390,10 @@
 6 Jessica is a sheep.
 7 Gertrude is a sheep.
 8 Emily is a cat.
-9 What is gertrude afraid of?	cat	7 1
-10 What is jessica afraid of?	cat	6 1
-11 What is emily afraid of?	sheep	8 2
-12 What is winona afraid of?	cat	4 1
+9 What is Gertrude afraid of?	cat	7 1
+10 What is Jessica afraid of?	cat	6 1
+11 What is Emily afraid of?	sheep	8 2
+12 What is Winona afraid of?	cat	4 1
 1 Wolves are afraid of sheep.
 2 Mice are afraid of sheep.
 3 Cats are afraid of mice.
@@ -402,10 +402,10 @@
 6 Sheep are afraid of mice.
 7 Winona is a wolf.
 8 Emily is a cat.
-9 What is winona afraid of?	sheep	7 1
-10 What is gertrude afraid of?	sheep	4 1
-11 What is jessica afraid of?	sheep	5 2
-12 What is emily afraid of?	mouse	8 3
+9 What is Winona afraid of?	sheep	7 1
+10 What is Gertrude afraid of?	sheep	4 1
+11 What is Jessica afraid of?	sheep	5 2
+12 What is Emily afraid of?	mouse	8 3
 1 Wolves are afraid of mice.
 2 Cats are afraid of sheep.
 3 Sheep are afraid of cats.
@@ -414,10 +414,10 @@
 6 Winona is a sheep.
 7 Emily is a sheep.
 8 Gertrude is a mouse.
-9 What is winona afraid of?	cat	6 3
-10 What is winona afraid of?	cat	6 3
-11 What is jessica afraid of?	cat	4 3
-12 What is jessica afraid of?	cat	4 3
+9 What is Winona afraid of?	cat	6 3
+10 What is Winona afraid of?	cat	6 3
+11 What is Jessica afraid of?	cat	4 3
+12 What is Jessica afraid of?	cat	4 3
 1 Wolves are afraid of sheep.
 2 Winona is a wolf.
 3 Cats are afraid of sheep.
@@ -426,10 +426,10 @@
 6 Emily is a sheep.
 7 Mice are afraid of wolves.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	cat	6 5
-10 What is jessica afraid of?	sheep	4 1
-11 What is gertrude afraid of?	wolf	8 7
-12 What is gertrude afraid of?	wolf	8 7
+9 What is Emily afraid of?	cat	6 5
+10 What is Jessica afraid of?	sheep	4 1
+11 What is Gertrude afraid of?	wolf	8 7
+12 What is Gertrude afraid of?	wolf	8 7
 1 Sheep are afraid of mice.
 2 Winona is a sheep.
 3 Cats are afraid of mice.
@@ -438,10 +438,10 @@
 6 Jessica is a cat.
 7 Wolves are afraid of cats.
 8 Mice are afraid of cats.
-9 What is emily afraid of?	mouse	5 1
-10 What is jessica afraid of?	mouse	6 3
-11 What is jessica afraid of?	mouse	6 3
-12 What is jessica afraid of?	mouse	6 3
+9 What is Emily afraid of?	mouse	5 1
+10 What is Jessica afraid of?	mouse	6 3
+11 What is Jessica afraid of?	mouse	6 3
+12 What is Jessica afraid of?	mouse	6 3
 1 Wolves are afraid of sheep.
 2 Jessica is a wolf.
 3 Mice are afraid of sheep.
@@ -450,10 +450,10 @@
 6 Gertrude is a wolf.
 7 Winona is a wolf.
 8 Cats are afraid of wolves.
-9 What is gertrude afraid of?	sheep	6 1
-10 What is emily afraid of?	sheep	5 1
-11 What is jessica afraid of?	sheep	2 1
-12 What is emily afraid of?	sheep	5 1
+9 What is Gertrude afraid of?	sheep	6 1
+10 What is Emily afraid of?	sheep	5 1
+11 What is Jessica afraid of?	sheep	2 1
+12 What is Emily afraid of?	sheep	5 1
 1 Mice are afraid of wolves.
 2 Sheep are afraid of wolves.
 3 Emily is a mouse.
@@ -462,10 +462,10 @@
 6 Gertrude is a wolf.
 7 Cats are afraid of wolves.
 8 Jessica is a wolf.
-9 What is emily afraid of?	wolf	3 1
-10 What is gertrude afraid of?	sheep	6 5
-11 What is winona afraid of?	wolf	4 2
-12 What is jessica afraid of?	sheep	8 5
+9 What is Emily afraid of?	wolf	3 1
+10 What is Gertrude afraid of?	sheep	6 5
+11 What is Winona afraid of?	wolf	4 2
+12 What is Jessica afraid of?	sheep	8 5
 1 Cats are afraid of wolves.
 2 Mice are afraid of cats.
 3 Sheep are afraid of cats.
@@ -474,10 +474,10 @@
 6 Winona is a sheep.
 7 Jessica is a mouse.
 8 Emily is a cat.
-9 What is gertrude afraid of?	cat	4 2
-10 What is gertrude afraid of?	cat	4 2
-11 What is winona afraid of?	cat	6 3
-12 What is gertrude afraid of?	cat	4 2
+9 What is Gertrude afraid of?	cat	4 2
+10 What is Gertrude afraid of?	cat	4 2
+11 What is Winona afraid of?	cat	6 3
+12 What is Gertrude afraid of?	cat	4 2
 1 Mice are afraid of sheep.
 2 Wolves are afraid of mice.
 3 Jessica is a mouse.
@@ -486,10 +486,10 @@
 6 Emily is a cat.
 7 Winona is a cat.
 8 Gertrude is a sheep.
-9 What is winona afraid of?	wolf	7 5
-10 What is emily afraid of?	wolf	6 5
-11 What is emily afraid of?	wolf	6 5
-12 What is jessica afraid of?	sheep	3 1
+9 What is Winona afraid of?	wolf	7 5
+10 What is Emily afraid of?	wolf	6 5
+11 What is Emily afraid of?	wolf	6 5
+12 What is Jessica afraid of?	sheep	3 1
 1 Mice are afraid of sheep.
 2 Jessica is a mouse.
 3 Sheep are afraid of mice.
@@ -498,10 +498,10 @@
 6 Gertrude is a sheep.
 7 Emily is a mouse.
 8 Cats are afraid of wolves.
-9 What is emily afraid of?	sheep	7 1
-10 What is gertrude afraid of?	mouse	6 3
-11 What is gertrude afraid of?	mouse	6 3
-12 What is emily afraid of?	sheep	7 1
+9 What is Emily afraid of?	sheep	7 1
+10 What is Gertrude afraid of?	mouse	6 3
+11 What is Gertrude afraid of?	mouse	6 3
+12 What is Emily afraid of?	sheep	7 1
 1 Wolves are afraid of mice.
 2 Sheep are afraid of wolves.
 3 Winona is a wolf.
@@ -510,10 +510,10 @@
 6 Gertrude is a cat.
 7 Jessica is a mouse.
 8 Emily is a sheep.
-9 What is winona afraid of?	mouse	3 1
-10 What is winona afraid of?	mouse	3 1
-11 What is winona afraid of?	mouse	3 1
-12 What is jessica afraid of?	sheep	7 5
+9 What is Winona afraid of?	mouse	3 1
+10 What is Winona afraid of?	mouse	3 1
+11 What is Winona afraid of?	mouse	3 1
+12 What is Jessica afraid of?	sheep	7 5
 1 Cats are afraid of mice.
 2 Wolves are afraid of sheep.
 3 Sheep are afraid of cats.
@@ -522,10 +522,10 @@
 6 Gertrude is a wolf.
 7 Jessica is a cat.
 8 Emily is a wolf.
-9 What is jessica afraid of?	mouse	7 1
-10 What is jessica afraid of?	mouse	7 1
-11 What is winona afraid of?	cat	4 3
-12 What is gertrude afraid of?	sheep	6 2
+9 What is Jessica afraid of?	mouse	7 1
+10 What is Jessica afraid of?	mouse	7 1
+11 What is Winona afraid of?	cat	4 3
+12 What is Gertrude afraid of?	sheep	6 2
 1 Mice are afraid of wolves.
 2 Sheep are afraid of cats.
 3 Cats are afraid of sheep.
@@ -534,10 +534,10 @@
 6 Jessica is a sheep.
 7 Winona is a sheep.
 8 Emily is a mouse.
-9 What is winona afraid of?	cat	7 2
-10 What is gertrude afraid of?	sheep	5 3
-11 What is gertrude afraid of?	sheep	5 3
-12 What is jessica afraid of?	cat	6 2
+9 What is Winona afraid of?	cat	7 2
+10 What is Gertrude afraid of?	sheep	5 3
+11 What is Gertrude afraid of?	sheep	5 3
+12 What is Jessica afraid of?	cat	6 2
 1 Cats are afraid of wolves.
 2 Emily is a cat.
 3 Wolves are afraid of mice.
@@ -546,10 +546,10 @@
 6 Gertrude is a sheep.
 7 Winona is a sheep.
 8 Jessica is a mouse.
-9 What is gertrude afraid of?	wolf	6 4
-10 What is gertrude afraid of?	wolf	6 4
-11 What is emily afraid of?	wolf	2 1
-12 What is winona afraid of?	wolf	7 4
+9 What is Gertrude afraid of?	wolf	6 4
+10 What is Gertrude afraid of?	wolf	6 4
+11 What is Emily afraid of?	wolf	2 1
+12 What is Winona afraid of?	wolf	7 4
 1 Mice are afraid of wolves.
 2 Gertrude is a mouse.
 3 Sheep are afraid of wolves.
@@ -558,10 +558,10 @@
 6 Wolves are afraid of cats.
 7 Cats are afraid of sheep.
 8 Emily is a mouse.
-9 What is gertrude afraid of?	wolf	2 1
-10 What is winona afraid of?	wolf	4 1
-11 What is emily afraid of?	wolf	8 1
-12 What is emily afraid of?	wolf	8 1
+9 What is Gertrude afraid of?	wolf	2 1
+10 What is Winona afraid of?	wolf	4 1
+11 What is Emily afraid of?	wolf	8 1
+12 What is Emily afraid of?	wolf	8 1
 1 Sheep are afraid of mice.
 2 Emily is a sheep.
 3 Cats are afraid of mice.
@@ -570,10 +570,10 @@
 6 Winona is a mouse.
 7 Gertrude is a cat.
 8 Jessica is a wolf.
-9 What is jessica afraid of?	cat	8 4
-10 What is jessica afraid of?	cat	8 4
-11 What is emily afraid of?	mouse	2 1
-12 What is emily afraid of?	mouse	2 1
+9 What is Jessica afraid of?	cat	8 4
+10 What is Jessica afraid of?	cat	8 4
+11 What is Emily afraid of?	mouse	2 1
+12 What is Emily afraid of?	mouse	2 1
 1 Cats are afraid of wolves.
 2 Wolves are afraid of cats.
 3 Winona is a cat.
@@ -582,10 +582,10 @@
 6 Emily is a sheep.
 7 Mice are afraid of wolves.
 8 Jessica is a cat.
-9 What is winona afraid of?	wolf	3 1
-10 What is emily afraid of?	wolf	6 5
-11 What is winona afraid of?	wolf	3 1
-12 What is gertrude afraid of?	cat	4 2
+9 What is Winona afraid of?	wolf	3 1
+10 What is Emily afraid of?	wolf	6 5
+11 What is Winona afraid of?	wolf	3 1
+12 What is Gertrude afraid of?	cat	4 2
 1 Sheep are afraid of mice.
 2 Cats are afraid of sheep.
 3 Winona is a cat.
@@ -594,10 +594,10 @@
 6 Mice are afraid of wolves.
 7 Wolves are afraid of mice.
 8 Emily is a mouse.
-9 What is gertrude afraid of?	mouse	5 1
-10 What is jessica afraid of?	sheep	4 2
-11 What is winona afraid of?	sheep	3 2
-12 What is emily afraid of?	wolf	8 6
+9 What is Gertrude afraid of?	mouse	5 1
+10 What is Jessica afraid of?	sheep	4 2
+11 What is Winona afraid of?	sheep	3 2
+12 What is Emily afraid of?	wolf	8 6
 1 Cats are afraid of mice.
 2 Gertrude is a cat.
 3 Sheep are afraid of wolves.
@@ -606,10 +606,10 @@
 6 Wolves are afraid of sheep.
 7 Emily is a cat.
 8 Winona is a sheep.
-9 What is winona afraid of?	wolf	8 3
-10 What is emily afraid of?	mouse	7 1
-11 What is winona afraid of?	wolf	8 3
-12 What is jessica afraid of?	mouse	4 1
+9 What is Winona afraid of?	wolf	8 3
+10 What is Emily afraid of?	mouse	7 1
+11 What is Winona afraid of?	wolf	8 3
+12 What is Jessica afraid of?	mouse	4 1
 1 Cats are afraid of wolves.
 2 Jessica is a cat.
 3 Winona is a cat.
@@ -618,10 +618,10 @@
 6 Gertrude is a cat.
 7 Mice are afraid of sheep.
 8 Wolves are afraid of sheep.
-9 What is emily afraid of?	cat	5 4
-10 What is emily afraid of?	cat	5 4
-11 What is jessica afraid of?	wolf	2 1
-12 What is emily afraid of?	cat	5 4
+9 What is Emily afraid of?	cat	5 4
+10 What is Emily afraid of?	cat	5 4
+11 What is Jessica afraid of?	wolf	2 1
+12 What is Emily afraid of?	cat	5 4
 1 Cats are afraid of mice.
 2 Sheep are afraid of cats.
 3 Mice are afraid of sheep.
@@ -630,10 +630,10 @@
 6 Gertrude is a cat.
 7 Emily is a sheep.
 8 Wolves are afraid of cats.
-9 What is winona afraid of?	cat	5 2
-10 What is gertrude afraid of?	mouse	6 1
-11 What is emily afraid of?	cat	7 2
-12 What is emily afraid of?	cat	7 2
+9 What is Winona afraid of?	cat	5 2
+10 What is Gertrude afraid of?	mouse	6 1
+11 What is Emily afraid of?	cat	7 2
+12 What is Emily afraid of?	cat	7 2
 1 Cats are afraid of mice.
 2 Sheep are afraid of cats.
 3 Wolves are afraid of sheep.
@@ -642,10 +642,10 @@
 6 Emily is a wolf.
 7 Mice are afraid of sheep.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	sheep	6 3
-10 What is gertrude afraid of?	sheep	8 7
-11 What is winona afraid of?	sheep	5 3
-12 What is winona afraid of?	sheep	5 3
+9 What is Emily afraid of?	sheep	6 3
+10 What is Gertrude afraid of?	sheep	8 7
+11 What is Winona afraid of?	sheep	5 3
+12 What is Winona afraid of?	sheep	5 3
 1 Cats are afraid of wolves.
 2 Mice are afraid of wolves.
 3 Wolves are afraid of mice.
@@ -654,10 +654,10 @@
 6 Gertrude is a cat.
 7 Emily is a cat.
 8 Sheep are afraid of cats.
-9 What is winona afraid of?	wolf	5 1
-10 What is gertrude afraid of?	wolf	6 1
-11 What is gertrude afraid of?	wolf	6 1
-12 What is gertrude afraid of?	wolf	6 1
+9 What is Winona afraid of?	wolf	5 1
+10 What is Gertrude afraid of?	wolf	6 1
+11 What is Gertrude afraid of?	wolf	6 1
+12 What is Gertrude afraid of?	wolf	6 1
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of mice.
 3 Mice are afraid of cats.
@@ -666,10 +666,10 @@
 6 Winona is a cat.
 7 Emily is a mouse.
 8 Jessica is a sheep.
-9 What is gertrude afraid of?	cat	5 3
-10 What is jessica afraid of?	mouse	8 2
-11 What is emily afraid of?	cat	7 3
-12 What is emily afraid of?	cat	7 3
+9 What is Gertrude afraid of?	cat	5 3
+10 What is Jessica afraid of?	mouse	8 2
+11 What is Emily afraid of?	cat	7 3
+12 What is Emily afraid of?	cat	7 3
 1 Mice are afraid of sheep.
 2 Winona is a mouse.
 3 Emily is a mouse.
@@ -678,10 +678,10 @@
 6 Sheep are afraid of wolves.
 7 Jessica is a sheep.
 8 Gertrude is a wolf.
-9 What is jessica afraid of?	wolf	7 6
-10 What is emily afraid of?	sheep	3 1
-11 What is gertrude afraid of?	mouse	8 5
-12 What is jessica afraid of?	wolf	7 6
+9 What is Jessica afraid of?	wolf	7 6
+10 What is Emily afraid of?	sheep	3 1
+11 What is Gertrude afraid of?	mouse	8 5
+12 What is Jessica afraid of?	wolf	7 6
 1 Sheep are afraid of wolves.
 2 Winona is a sheep.
 3 Gertrude is a sheep.
@@ -690,10 +690,10 @@
 6 Wolves are afraid of cats.
 7 Emily is a cat.
 8 Jessica is a cat.
-9 What is jessica afraid of?	mouse	8 4
-10 What is winona afraid of?	wolf	2 1
-11 What is jessica afraid of?	mouse	8 4
-12 What is jessica afraid of?	mouse	8 4
+9 What is Jessica afraid of?	mouse	8 4
+10 What is Winona afraid of?	wolf	2 1
+11 What is Jessica afraid of?	mouse	8 4
+12 What is Jessica afraid of?	mouse	8 4
 1 Cats are afraid of mice.
 2 Jessica is a cat.
 3 Sheep are afraid of mice.
@@ -702,10 +702,10 @@
 6 Emily is a cat.
 7 Winona is a sheep.
 8 Gertrude is a wolf.
-9 What is emily afraid of?	mouse	6 1
-10 What is gertrude afraid of?	mouse	8 5
-11 What is emily afraid of?	mouse	6 1
-12 What is jessica afraid of?	mouse	2 1
+9 What is Emily afraid of?	mouse	6 1
+10 What is Gertrude afraid of?	mouse	8 5
+11 What is Emily afraid of?	mouse	6 1
+12 What is Jessica afraid of?	mouse	2 1
 1 Wolves are afraid of sheep.
 2 Emily is a wolf.
 3 Sheep are afraid of mice.
@@ -714,10 +714,10 @@
 6 Jessica is a mouse.
 7 Gertrude is a cat.
 8 Winona is a sheep.
-9 What is winona afraid of?	mouse	8 3
-10 What is gertrude afraid of?	wolf	7 4
-11 What is gertrude afraid of?	wolf	7 4
-12 What is jessica afraid of?	sheep	6 5
+9 What is Winona afraid of?	mouse	8 3
+10 What is Gertrude afraid of?	wolf	7 4
+11 What is Gertrude afraid of?	wolf	7 4
+12 What is Jessica afraid of?	sheep	6 5
 1 Mice are afraid of cats.
 2 Cats are afraid of sheep.
 3 Wolves are afraid of cats.
@@ -726,10 +726,10 @@
 6 Sheep are afraid of wolves.
 7 Emily is a mouse.
 8 Jessica is a wolf.
-9 What is gertrude afraid of?	cat	5 1
-10 What is jessica afraid of?	cat	8 3
-11 What is gertrude afraid of?	cat	5 1
-12 What is winona afraid of?	sheep	4 2
+9 What is Gertrude afraid of?	cat	5 1
+10 What is Jessica afraid of?	cat	8 3
+11 What is Gertrude afraid of?	cat	5 1
+12 What is Winona afraid of?	sheep	4 2
 1 Wolves are afraid of sheep.
 2 Cats are afraid of wolves.
 3 Gertrude is a wolf.
@@ -738,10 +738,10 @@
 6 Emily is a cat.
 7 Winona is a cat.
 8 Jessica is a cat.
-9 What is emily afraid of?	wolf	6 2
-10 What is winona afraid of?	wolf	7 2
-11 What is gertrude afraid of?	sheep	3 1
-12 What is jessica afraid of?	wolf	8 2
+9 What is Emily afraid of?	wolf	6 2
+10 What is Winona afraid of?	wolf	7 2
+11 What is Gertrude afraid of?	sheep	3 1
+12 What is Jessica afraid of?	wolf	8 2
 1 Cats are afraid of sheep.
 2 Sheep are afraid of wolves.
 3 Winona is a sheep.
@@ -750,10 +750,10 @@
 6 Wolves are afraid of mice.
 7 Emily is a sheep.
 8 Mice are afraid of cats.
-9 What is winona afraid of?	wolf	3 2
-10 What is emily afraid of?	wolf	7 2
-11 What is gertrude afraid of?	sheep	5 1
-12 What is emily afraid of?	wolf	7 2
+9 What is Winona afraid of?	wolf	3 2
+10 What is Emily afraid of?	wolf	7 2
+11 What is Gertrude afraid of?	sheep	5 1
+12 What is Emily afraid of?	wolf	7 2
 1 Sheep are afraid of mice.
 2 Mice are afraid of wolves.
 3 Wolves are afraid of mice.
@@ -762,10 +762,10 @@
 6 Jessica is a sheep.
 7 Winona is a cat.
 8 Gertrude is a wolf.
-9 What is winona afraid of?	wolf	7 5
-10 What is emily afraid of?	mouse	4 1
-11 What is gertrude afraid of?	mouse	8 3
-12 What is jessica afraid of?	mouse	6 1
+9 What is Winona afraid of?	wolf	7 5
+10 What is Emily afraid of?	mouse	4 1
+11 What is Gertrude afraid of?	mouse	8 3
+12 What is Jessica afraid of?	mouse	6 1
 1 Cats are afraid of mice.
 2 Mice are afraid of cats.
 3 Winona is a cat.
@@ -774,10 +774,10 @@
 6 Jessica is a wolf.
 7 Sheep are afraid of cats.
 8 Gertrude is a cat.
-9 What is emily afraid of?	cat	4 2
-10 What is winona afraid of?	mouse	3 1
-11 What is gertrude afraid of?	mouse	8 1
-12 What is winona afraid of?	mouse	3 1
+9 What is Emily afraid of?	cat	4 2
+10 What is Winona afraid of?	mouse	3 1
+11 What is Gertrude afraid of?	mouse	8 1
+12 What is Winona afraid of?	mouse	3 1
 1 Wolves are afraid of sheep.
 2 Cats are afraid of wolves.
 3 Emily is a wolf.
@@ -786,10 +786,10 @@
 6 Mice are afraid of wolves.
 7 Gertrude is a wolf.
 8 Winona is a cat.
-9 What is gertrude afraid of?	sheep	7 1
-10 What is winona afraid of?	wolf	8 2
-11 What is jessica afraid of?	wolf	5 2
-12 What is jessica afraid of?	wolf	5 2
+9 What is Gertrude afraid of?	sheep	7 1
+10 What is Winona afraid of?	wolf	8 2
+11 What is Jessica afraid of?	wolf	5 2
+12 What is Jessica afraid of?	wolf	5 2
 1 Sheep are afraid of cats.
 2 Wolves are afraid of mice.
 3 Mice are afraid of wolves.
@@ -798,10 +798,10 @@
 6 Winona is a mouse.
 7 Gertrude is a sheep.
 8 Emily is a mouse.
-9 What is gertrude afraid of?	cat	7 1
-10 What is winona afraid of?	wolf	6 3
-11 What is gertrude afraid of?	cat	7 1
-12 What is emily afraid of?	wolf	8 3
+9 What is Gertrude afraid of?	cat	7 1
+10 What is Winona afraid of?	wolf	6 3
+11 What is Gertrude afraid of?	cat	7 1
+12 What is Emily afraid of?	wolf	8 3
 1 Wolves are afraid of cats.
 2 Jessica is a wolf.
 3 Winona is a wolf.
@@ -810,10 +810,10 @@
 6 Mice are afraid of sheep.
 7 Emily is a sheep.
 8 Gertrude is a cat.
-9 What is winona afraid of?	cat	3 1
-10 What is jessica afraid of?	cat	2 1
-11 What is gertrude afraid of?	wolf	8 4
-12 What is winona afraid of?	cat	3 1
+9 What is Winona afraid of?	cat	3 1
+10 What is Jessica afraid of?	cat	2 1
+11 What is Gertrude afraid of?	wolf	8 4
+12 What is Winona afraid of?	cat	3 1
 1 Wolves are afraid of mice.
 2 Winona is a wolf.
 3 Jessica is a wolf.
@@ -822,10 +822,10 @@
 6 Emily is a mouse.
 7 Cats are afraid of sheep.
 8 Gertrude is a wolf.
-9 What is emily afraid of?	cat	6 5
-10 What is jessica afraid of?	mouse	3 1
-11 What is emily afraid of?	cat	6 5
-12 What is emily afraid of?	cat	6 5
+9 What is Emily afraid of?	cat	6 5
+10 What is Jessica afraid of?	mouse	3 1
+11 What is Emily afraid of?	cat	6 5
+12 What is Emily afraid of?	cat	6 5
 1 Wolves are afraid of mice.
 2 Mice are afraid of cats.
 3 Sheep are afraid of wolves.
@@ -834,10 +834,10 @@
 6 Gertrude is a mouse.
 7 Cats are afraid of sheep.
 8 Winona is a mouse.
-9 What is winona afraid of?	cat	8 2
-10 What is winona afraid of?	cat	8 2
-11 What is winona afraid of?	cat	8 2
-12 What is jessica afraid of?	cat	5 2
+9 What is Winona afraid of?	cat	8 2
+10 What is Winona afraid of?	cat	8 2
+11 What is Winona afraid of?	cat	8 2
+12 What is Jessica afraid of?	cat	5 2
 1 Mice are afraid of wolves.
 2 Jessica is a mouse.
 3 Wolves are afraid of cats.
@@ -846,10 +846,10 @@
 6 Emily is a mouse.
 7 Cats are afraid of mice.
 8 Winona is a cat.
-9 What is winona afraid of?	mouse	8 7
-10 What is emily afraid of?	wolf	6 1
-11 What is jessica afraid of?	wolf	2 1
-12 What is jessica afraid of?	wolf	2 1
+9 What is Winona afraid of?	mouse	8 7
+10 What is Emily afraid of?	wolf	6 1
+11 What is Jessica afraid of?	wolf	2 1
+12 What is Jessica afraid of?	wolf	2 1
 1 Mice are afraid of sheep.
 2 Cats are afraid of mice.
 3 Wolves are afraid of mice.
@@ -858,10 +858,10 @@
 6 Winona is a wolf.
 7 Sheep are afraid of cats.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	mouse	4 2
-10 What is jessica afraid of?	mouse	5 2
-11 What is gertrude afraid of?	sheep	8 1
-12 What is gertrude afraid of?	sheep	8 1
+9 What is Emily afraid of?	mouse	4 2
+10 What is Jessica afraid of?	mouse	5 2
+11 What is Gertrude afraid of?	sheep	8 1
+12 What is Gertrude afraid of?	sheep	8 1
 1 Mice are afraid of sheep.
 2 Gertrude is a mouse.
 3 Cats are afraid of mice.
@@ -870,10 +870,10 @@
 6 Emily is a mouse.
 7 Winona is a cat.
 8 Sheep are afraid of cats.
-9 What is emily afraid of?	sheep	6 1
-10 What is winona afraid of?	mouse	7 3
-11 What is jessica afraid of?	mouse	5 3
-12 What is gertrude afraid of?	sheep	2 1
+9 What is Emily afraid of?	sheep	6 1
+10 What is Winona afraid of?	mouse	7 3
+11 What is Jessica afraid of?	mouse	5 3
+12 What is Gertrude afraid of?	sheep	2 1
 1 Sheep are afraid of mice.
 2 Wolves are afraid of sheep.
 3 Gertrude is a sheep.
@@ -882,10 +882,10 @@
 6 Emily is a cat.
 7 Winona is a wolf.
 8 Mice are afraid of sheep.
-9 What is gertrude afraid of?	mouse	3 1
-10 What is gertrude afraid of?	mouse	3 1
-11 What is emily afraid of?	wolf	6 4
-12 What is jessica afraid of?	mouse	5 1
+9 What is Gertrude afraid of?	mouse	3 1
+10 What is Gertrude afraid of?	mouse	3 1
+11 What is Emily afraid of?	wolf	6 4
+12 What is Jessica afraid of?	mouse	5 1
 1 Cats are afraid of mice.
 2 Mice are afraid of sheep.
 3 Wolves are afraid of cats.
@@ -894,10 +894,10 @@
 6 Gertrude is a mouse.
 7 Winona is a cat.
 8 Emily is a mouse.
-9 What is winona afraid of?	mouse	7 1
-10 What is jessica afraid of?	sheep	5 2
-11 What is gertrude afraid of?	sheep	6 2
-12 What is emily afraid of?	sheep	8 2
+9 What is Winona afraid of?	mouse	7 1
+10 What is Jessica afraid of?	sheep	5 2
+11 What is Gertrude afraid of?	sheep	6 2
+12 What is Emily afraid of?	sheep	8 2
 1 Cats are afraid of mice.
 2 Mice are afraid of cats.
 3 Sheep are afraid of wolves.
@@ -906,10 +906,10 @@
 6 Jessica is a sheep.
 7 Emily is a mouse.
 8 Wolves are afraid of sheep.
-9 What is jessica afraid of?	wolf	6 3
-10 What is emily afraid of?	cat	7 2
-11 What is winona afraid of?	mouse	4 1
-12 What is winona afraid of?	mouse	4 1
+9 What is Jessica afraid of?	wolf	6 3
+10 What is Emily afraid of?	cat	7 2
+11 What is Winona afraid of?	mouse	4 1
+12 What is Winona afraid of?	mouse	4 1
 1 Mice are afraid of sheep.
 2 Cats are afraid of mice.
 3 Wolves are afraid of mice.
@@ -918,10 +918,10 @@
 6 Gertrude is a cat.
 7 Sheep are afraid of mice.
 8 Jessica is a mouse.
-9 What is winona afraid of?	mouse	5 3
-10 What is emily afraid of?	mouse	4 3
-11 What is gertrude afraid of?	mouse	6 2
-12 What is gertrude afraid of?	mouse	6 2
+9 What is Winona afraid of?	mouse	5 3
+10 What is Emily afraid of?	mouse	4 3
+11 What is Gertrude afraid of?	mouse	6 2
+12 What is Gertrude afraid of?	mouse	6 2
 1 Sheep are afraid of mice.
 2 Winona is a sheep.
 3 Mice are afraid of wolves.
@@ -930,10 +930,10 @@
 6 Wolves are afraid of sheep.
 7 Emily is a cat.
 8 Gertrude is a wolf.
-9 What is jessica afraid of?	wolf	4 3
-10 What is emily afraid of?	mouse	7 5
-11 What is winona afraid of?	mouse	2 1
-12 What is winona afraid of?	mouse	2 1
+9 What is Jessica afraid of?	wolf	4 3
+10 What is Emily afraid of?	mouse	7 5
+11 What is Winona afraid of?	mouse	2 1
+12 What is Winona afraid of?	mouse	2 1
 1 Cats are afraid of sheep.
 2 Wolves are afraid of cats.
 3 Mice are afraid of sheep.
@@ -942,10 +942,10 @@
 6 Emily is a wolf.
 7 Winona is a mouse.
 8 Jessica is a mouse.
-9 What is jessica afraid of?	sheep	8 3
-10 What is winona afraid of?	sheep	7 3
-11 What is gertrude afraid of?	sheep	5 3
-12 What is gertrude afraid of?	sheep	5 3
+9 What is Jessica afraid of?	sheep	8 3
+10 What is Winona afraid of?	sheep	7 3
+11 What is Gertrude afraid of?	sheep	5 3
+12 What is Gertrude afraid of?	sheep	5 3
 1 Wolves are afraid of sheep.
 2 Mice are afraid of cats.
 3 Gertrude is a mouse.
@@ -954,10 +954,10 @@
 6 Emily is a mouse.
 7 Winona is a mouse.
 8 Sheep are afraid of cats.
-9 What is jessica afraid of?	sheep	5 4
-10 What is winona afraid of?	cat	7 2
-11 What is gertrude afraid of?	cat	3 2
-12 What is emily afraid of?	cat	6 2
+9 What is Jessica afraid of?	sheep	5 4
+10 What is Winona afraid of?	cat	7 2
+11 What is Gertrude afraid of?	cat	3 2
+12 What is Emily afraid of?	cat	6 2
 1 Wolves are afraid of mice.
 2 Mice are afraid of wolves.
 3 Sheep are afraid of cats.
@@ -966,10 +966,10 @@
 6 Jessica is a wolf.
 7 Gertrude is a cat.
 8 Winona is a sheep.
-9 What is jessica afraid of?	mouse	6 1
-10 What is jessica afraid of?	mouse	6 1
-11 What is winona afraid of?	cat	8 3
-12 What is gertrude afraid of?	mouse	7 4
+9 What is Jessica afraid of?	mouse	6 1
+10 What is Jessica afraid of?	mouse	6 1
+11 What is Winona afraid of?	cat	8 3
+12 What is Gertrude afraid of?	mouse	7 4
 1 Cats are afraid of wolves.
 2 Jessica is a cat.
 3 Mice are afraid of cats.
@@ -978,10 +978,10 @@
 6 Winona is a sheep.
 7 Emily is a sheep.
 8 Gertrude is a wolf.
-9 What is emily afraid of?	wolf	7 5
-10 What is jessica afraid of?	wolf	2 1
-11 What is gertrude afraid of?	cat	8 4
-12 What is jessica afraid of?	wolf	2 1
+9 What is Emily afraid of?	wolf	7 5
+10 What is Jessica afraid of?	wolf	2 1
+11 What is Gertrude afraid of?	cat	8 4
+12 What is Jessica afraid of?	wolf	2 1
 1 Sheep are afraid of mice.
 2 Mice are afraid of sheep.
 3 Gertrude is a sheep.
@@ -990,10 +990,10 @@
 6 Emily is a mouse.
 7 Wolves are afraid of cats.
 8 Jessica is a sheep.
-9 What is emily afraid of?	sheep	6 2
-10 What is winona afraid of?	mouse	5 1
-11 What is emily afraid of?	sheep	6 2
-12 What is gertrude afraid of?	mouse	3 1
+9 What is Emily afraid of?	sheep	6 2
+10 What is Winona afraid of?	mouse	5 1
+11 What is Emily afraid of?	sheep	6 2
+12 What is Gertrude afraid of?	mouse	3 1
 1 Cats are afraid of wolves.
 2 Mice are afraid of cats.
 3 Winona is a cat.
@@ -1002,10 +1002,10 @@
 6 Jessica is a wolf.
 7 Emily is a sheep.
 8 Gertrude is a cat.
-9 What is jessica afraid of?	sheep	6 4
-10 What is winona afraid of?	wolf	3 1
-11 What is jessica afraid of?	sheep	6 4
-12 What is gertrude afraid of?	wolf	8 1
+9 What is Jessica afraid of?	sheep	6 4
+10 What is Winona afraid of?	wolf	3 1
+11 What is Jessica afraid of?	sheep	6 4
+12 What is Gertrude afraid of?	wolf	8 1
 1 Cats are afraid of sheep.
 2 Mice are afraid of cats.
 3 Wolves are afraid of mice.
@@ -1014,10 +1014,10 @@
 6 Sheep are afraid of mice.
 7 Jessica is a sheep.
 8 Emily is a cat.
-9 What is emily afraid of?	sheep	8 1
-10 What is jessica afraid of?	mouse	7 6
-11 What is gertrude afraid of?	cat	4 2
-12 What is jessica afraid of?	mouse	7 6
+9 What is Emily afraid of?	sheep	8 1
+10 What is Jessica afraid of?	mouse	7 6
+11 What is Gertrude afraid of?	cat	4 2
+12 What is Jessica afraid of?	mouse	7 6
 1 Mice are afraid of sheep.
 2 Cats are afraid of sheep.
 3 Gertrude is a mouse.
@@ -1026,10 +1026,10 @@
 6 Wolves are afraid of cats.
 7 Emily is a cat.
 8 Sheep are afraid of wolves.
-9 What is gertrude afraid of?	sheep	3 1
-10 What is jessica afraid of?	sheep	5 2
-11 What is gertrude afraid of?	sheep	3 1
-12 What is jessica afraid of?	sheep	5 2
+9 What is Gertrude afraid of?	sheep	3 1
+10 What is Jessica afraid of?	sheep	5 2
+11 What is Gertrude afraid of?	sheep	3 1
+12 What is Jessica afraid of?	sheep	5 2
 1 Sheep are afraid of wolves.
 2 Gertrude is a sheep.
 3 Mice are afraid of sheep.
@@ -1038,10 +1038,10 @@
 6 Wolves are afraid of sheep.
 7 Winona is a mouse.
 8 Cats are afraid of wolves.
-9 What is gertrude afraid of?	wolf	2 1
-10 What is emily afraid of?	sheep	4 3
-11 What is gertrude afraid of?	wolf	2 1
-12 What is jessica afraid of?	sheep	5 3
+9 What is Gertrude afraid of?	wolf	2 1
+10 What is Emily afraid of?	sheep	4 3
+11 What is Gertrude afraid of?	wolf	2 1
+12 What is Jessica afraid of?	sheep	5 3
 1 Mice are afraid of cats.
 2 Winona is a mouse.
 3 Sheep are afraid of wolves.
@@ -1050,10 +1050,10 @@
 6 Emily is a mouse.
 7 Cats are afraid of sheep.
 8 Jessica is a cat.
-9 What is emily afraid of?	cat	6 1
-10 What is winona afraid of?	cat	2 1
-11 What is jessica afraid of?	sheep	8 7
-12 What is jessica afraid of?	sheep	8 7
+9 What is Emily afraid of?	cat	6 1
+10 What is Winona afraid of?	cat	2 1
+11 What is Jessica afraid of?	sheep	8 7
+12 What is Jessica afraid of?	sheep	8 7
 1 Mice are afraid of sheep.
 2 Wolves are afraid of mice.
 3 Cats are afraid of wolves.
@@ -1062,10 +1062,10 @@
 6 Winona is a wolf.
 7 Gertrude is a cat.
 8 Emily is a sheep.
-9 What is jessica afraid of?	wolf	4 3
-10 What is gertrude afraid of?	wolf	7 3
-11 What is winona afraid of?	mouse	6 2
-12 What is jessica afraid of?	wolf	4 3
+9 What is Jessica afraid of?	wolf	4 3
+10 What is Gertrude afraid of?	wolf	7 3
+11 What is Winona afraid of?	mouse	6 2
+12 What is Jessica afraid of?	wolf	4 3
 1 Wolves are afraid of sheep.
 2 Winona is a wolf.
 3 Mice are afraid of wolves.
@@ -1074,10 +1074,10 @@
 6 Emily is a wolf.
 7 Sheep are afraid of mice.
 8 Jessica is a cat.
-9 What is jessica afraid of?	wolf	8 4
-10 What is jessica afraid of?	wolf	8 4
-11 What is gertrude afraid of?	sheep	5 1
-12 What is winona afraid of?	sheep	2 1
+9 What is Jessica afraid of?	wolf	8 4
+10 What is Jessica afraid of?	wolf	8 4
+11 What is Gertrude afraid of?	sheep	5 1
+12 What is Winona afraid of?	sheep	2 1
 1 Cats are afraid of mice.
 2 Gertrude is a cat.
 3 Sheep are afraid of cats.
@@ -1086,10 +1086,10 @@
 6 Mice are afraid of sheep.
 7 Jessica is a wolf.
 8 Emily is a sheep.
-9 What is jessica afraid of?	sheep	7 4
-10 What is emily afraid of?	cat	8 3
-11 What is emily afraid of?	cat	8 3
-12 What is emily afraid of?	cat	8 3
+9 What is Jessica afraid of?	sheep	7 4
+10 What is Emily afraid of?	cat	8 3
+11 What is Emily afraid of?	cat	8 3
+12 What is Emily afraid of?	cat	8 3
 1 Sheep are afraid of cats.
 2 Mice are afraid of cats.
 3 Emily is a sheep.
@@ -1098,10 +1098,10 @@
 6 Gertrude is a sheep.
 7 Cats are afraid of wolves.
 8 Winona is a sheep.
-9 What is winona afraid of?	cat	8 1
-10 What is emily afraid of?	cat	3 1
-11 What is jessica afraid of?	cat	4 2
-12 What is jessica afraid of?	cat	4 2
+9 What is Winona afraid of?	cat	8 1
+10 What is Emily afraid of?	cat	3 1
+11 What is Jessica afraid of?	cat	4 2
+12 What is Jessica afraid of?	cat	4 2
 1 Cats are afraid of sheep.
 2 Wolves are afraid of cats.
 3 Emily is a wolf.
@@ -1110,10 +1110,10 @@
 6 Mice are afraid of cats.
 7 Winona is a mouse.
 8 Jessica is a sheep.
-9 What is emily afraid of?	cat	3 2
-10 What is gertrude afraid of?	sheep	4 1
-11 What is jessica afraid of?	wolf	8 5
-12 What is emily afraid of?	cat	3 2
+9 What is Emily afraid of?	cat	3 2
+10 What is Gertrude afraid of?	sheep	4 1
+11 What is Jessica afraid of?	wolf	8 5
+12 What is Emily afraid of?	cat	3 2
 1 Cats are afraid of wolves.
 2 Sheep are afraid of wolves.
 3 Mice are afraid of sheep.
@@ -1122,10 +1122,10 @@
 6 Wolves are afraid of mice.
 7 Emily is a wolf.
 8 Gertrude is a wolf.
-9 What is gertrude afraid of?	mouse	8 6
-10 What is jessica afraid of?	wolf	4 2
-11 What is emily afraid of?	mouse	7 6
-12 What is gertrude afraid of?	mouse	8 6
+9 What is Gertrude afraid of?	mouse	8 6
+10 What is Jessica afraid of?	wolf	4 2
+11 What is Emily afraid of?	mouse	7 6
+12 What is Gertrude afraid of?	mouse	8 6
 1 Wolves are afraid of cats.
 2 Mice are afraid of wolves.
 3 Jessica is a mouse.
@@ -1134,10 +1134,10 @@
 6 Winona is a wolf.
 7 Cats are afraid of mice.
 8 Emily is a sheep.
-9 What is jessica afraid of?	wolf	3 2
-10 What is winona afraid of?	cat	6 1
-11 What is winona afraid of?	cat	6 1
-12 What is winona afraid of?	cat	6 1
+9 What is Jessica afraid of?	wolf	3 2
+10 What is Winona afraid of?	cat	6 1
+11 What is Winona afraid of?	cat	6 1
+12 What is Winona afraid of?	cat	6 1
 1 Sheep are afraid of cats.
 2 Cats are afraid of wolves.
 3 Emily is a cat.
@@ -1146,10 +1146,10 @@
 6 Wolves are afraid of sheep.
 7 Jessica is a mouse.
 8 Winona is a cat.
-9 What is jessica afraid of?	sheep	7 4
-10 What is emily afraid of?	wolf	3 2
-11 What is emily afraid of?	wolf	3 2
-12 What is jessica afraid of?	sheep	7 4
+9 What is Jessica afraid of?	sheep	7 4
+10 What is Emily afraid of?	wolf	3 2
+11 What is Emily afraid of?	wolf	3 2
+12 What is Jessica afraid of?	sheep	7 4
 1 Sheep are afraid of wolves.
 2 Mice are afraid of sheep.
 3 Cats are afraid of sheep.
@@ -1158,10 +1158,10 @@
 6 Winona is a mouse.
 7 Jessica is a sheep.
 8 Emily is a cat.
-9 What is gertrude afraid of?	wolf	5 1
-10 What is gertrude afraid of?	wolf	5 1
-11 What is winona afraid of?	sheep	6 2
-12 What is gertrude afraid of?	wolf	5 1
+9 What is Gertrude afraid of?	wolf	5 1
+10 What is Gertrude afraid of?	wolf	5 1
+11 What is Winona afraid of?	sheep	6 2
+12 What is Gertrude afraid of?	wolf	5 1
 1 Sheep are afraid of cats.
 2 Emily is a sheep.
 3 Mice are afraid of sheep.
@@ -1170,10 +1170,10 @@
 6 Wolves are afraid of sheep.
 7 Cats are afraid of wolves.
 8 Gertrude is a sheep.
-9 What is winona afraid of?	sheep	5 3
-10 What is gertrude afraid of?	cat	8 1
-11 What is jessica afraid of?	sheep	4 3
-12 What is gertrude afraid of?	cat	8 1
+9 What is Winona afraid of?	sheep	5 3
+10 What is Gertrude afraid of?	cat	8 1
+11 What is Jessica afraid of?	sheep	4 3
+12 What is Gertrude afraid of?	cat	8 1
 1 Cats are afraid of wolves.
 2 Sheep are afraid of mice.
 3 Wolves are afraid of cats.
@@ -1182,10 +1182,10 @@
 6 Winona is a sheep.
 7 Mice are afraid of cats.
 8 Gertrude is a mouse.
-9 What is winona afraid of?	mouse	6 2
-10 What is winona afraid of?	mouse	6 2
-11 What is emily afraid of?	cat	5 3
-12 What is winona afraid of?	mouse	6 2
+9 What is Winona afraid of?	mouse	6 2
+10 What is Winona afraid of?	mouse	6 2
+11 What is Emily afraid of?	cat	5 3
+12 What is Winona afraid of?	mouse	6 2
 1 Wolves are afraid of mice.
 2 Cats are afraid of mice.
 3 Mice are afraid of cats.
@@ -1194,10 +1194,10 @@
 6 Jessica is a wolf.
 7 Sheep are afraid of cats.
 8 Emily is a sheep.
-9 What is emily afraid of?	cat	8 7
-10 What is jessica afraid of?	mouse	6 1
-11 What is emily afraid of?	cat	8 7
-12 What is jessica afraid of?	mouse	6 1
+9 What is Emily afraid of?	cat	8 7
+10 What is Jessica afraid of?	mouse	6 1
+11 What is Emily afraid of?	cat	8 7
+12 What is Jessica afraid of?	mouse	6 1
 1 Cats are afraid of wolves.
 2 Mice are afraid of cats.
 3 Jessica is a cat.
@@ -1206,10 +1206,10 @@
 6 Winona is a mouse.
 7 Gertrude is a mouse.
 8 Sheep are afraid of cats.
-9 What is winona afraid of?	cat	6 2
-10 What is jessica afraid of?	wolf	3 1
-11 What is emily afraid of?	sheep	5 4
-12 What is winona afraid of?	cat	6 2
+9 What is Winona afraid of?	cat	6 2
+10 What is Jessica afraid of?	wolf	3 1
+11 What is Emily afraid of?	sheep	5 4
+12 What is Winona afraid of?	cat	6 2
 1 Sheep are afraid of cats.
 2 Mice are afraid of cats.
 3 Jessica is a mouse.
@@ -1218,10 +1218,10 @@
 6 Gertrude is a wolf.
 7 Emily is a mouse.
 8 Cats are afraid of wolves.
-9 What is jessica afraid of?	cat	3 2
-10 What is emily afraid of?	cat	7 2
-11 What is gertrude afraid of?	sheep	6 5
-12 What is jessica afraid of?	cat	3 2
+9 What is Jessica afraid of?	cat	3 2
+10 What is Emily afraid of?	cat	7 2
+11 What is Gertrude afraid of?	sheep	6 5
+12 What is Jessica afraid of?	cat	3 2
 1 Mice are afraid of cats.
 2 Gertrude is a mouse.
 3 Cats are afraid of wolves.
@@ -1230,10 +1230,10 @@
 6 Emily is a cat.
 7 Wolves are afraid of sheep.
 8 Winona is a sheep.
-9 What is jessica afraid of?	wolf	5 3
-10 What is jessica afraid of?	wolf	5 3
-11 What is jessica afraid of?	wolf	5 3
-12 What is emily afraid of?	wolf	6 3
+9 What is Jessica afraid of?	wolf	5 3
+10 What is Jessica afraid of?	wolf	5 3
+11 What is Jessica afraid of?	wolf	5 3
+12 What is Emily afraid of?	wolf	6 3
 1 Mice are afraid of sheep.
 2 Sheep are afraid of wolves.
 3 Cats are afraid of sheep.
@@ -1242,10 +1242,10 @@
 6 Gertrude is a mouse.
 7 Emily is a sheep.
 8 Wolves are afraid of mice.
-9 What is gertrude afraid of?	sheep	6 1
-10 What is emily afraid of?	wolf	7 2
-11 What is emily afraid of?	wolf	7 2
-12 What is emily afraid of?	wolf	7 2
+9 What is Gertrude afraid of?	sheep	6 1
+10 What is Emily afraid of?	wolf	7 2
+11 What is Emily afraid of?	wolf	7 2
+12 What is Emily afraid of?	wolf	7 2
 1 Cats are afraid of sheep.
 2 Gertrude is a cat.
 3 Jessica is a cat.
@@ -1254,10 +1254,10 @@
 6 Emily is a sheep.
 7 Wolves are afraid of cats.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	sheep	2 1
-10 What is jessica afraid of?	sheep	3 1
-11 What is winona afraid of?	wolf	8 4
-12 What is winona afraid of?	wolf	8 4
+9 What is Gertrude afraid of?	sheep	2 1
+10 What is Jessica afraid of?	sheep	3 1
+11 What is Winona afraid of?	wolf	8 4
+12 What is Winona afraid of?	wolf	8 4
 1 Wolves are afraid of mice.
 2 Sheep are afraid of cats.
 3 Winona is a sheep.
@@ -1266,10 +1266,10 @@
 6 Cats are afraid of sheep.
 7 Gertrude is a wolf.
 8 Emily is a wolf.
-9 What is winona afraid of?	cat	3 2
-10 What is jessica afraid of?	cat	5 2
-11 What is jessica afraid of?	cat	5 2
-12 What is gertrude afraid of?	mouse	7 1
+9 What is Winona afraid of?	cat	3 2
+10 What is Jessica afraid of?	cat	5 2
+11 What is Jessica afraid of?	cat	5 2
+12 What is Gertrude afraid of?	mouse	7 1
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of cats.
 3 Cats are afraid of wolves.
@@ -1278,10 +1278,10 @@
 6 Jessica is a sheep.
 7 Gertrude is a cat.
 8 Emily is a sheep.
-9 What is jessica afraid of?	cat	6 2
-10 What is gertrude afraid of?	wolf	7 3
-11 What is jessica afraid of?	cat	6 2
-12 What is emily afraid of?	cat	8 2
+9 What is Jessica afraid of?	cat	6 2
+10 What is Gertrude afraid of?	wolf	7 3
+11 What is Jessica afraid of?	cat	6 2
+12 What is Emily afraid of?	cat	8 2
 1 Sheep are afraid of mice.
 2 Wolves are afraid of sheep.
 3 Jessica is a sheep.
@@ -1290,10 +1290,10 @@
 6 Cats are afraid of sheep.
 7 Emily is a wolf.
 8 Mice are afraid of sheep.
-9 What is emily afraid of?	sheep	7 2
-10 What is emily afraid of?	sheep	7 2
-11 What is emily afraid of?	sheep	7 2
-12 What is winona afraid of?	sheep	5 2
+9 What is Emily afraid of?	sheep	7 2
+10 What is Emily afraid of?	sheep	7 2
+11 What is Emily afraid of?	sheep	7 2
+12 What is Winona afraid of?	sheep	5 2
 1 Cats are afraid of wolves.
 2 Wolves are afraid of mice.
 3 Sheep are afraid of mice.
@@ -1302,10 +1302,10 @@
 6 Gertrude is a mouse.
 7 Emily is a cat.
 8 Winona is a sheep.
-9 What is winona afraid of?	mouse	8 3
-10 What is emily afraid of?	wolf	7 1
-11 What is emily afraid of?	wolf	7 1
-12 What is gertrude afraid of?	sheep	6 4
+9 What is Winona afraid of?	mouse	8 3
+10 What is Emily afraid of?	wolf	7 1
+11 What is Emily afraid of?	wolf	7 1
+12 What is Gertrude afraid of?	sheep	6 4
 1 Cats are afraid of mice.
 2 Gertrude is a cat.
 3 Mice are afraid of wolves.
@@ -1314,10 +1314,10 @@
 6 Emily is a mouse.
 7 Winona is a wolf.
 8 Sheep are afraid of cats.
-9 What is jessica afraid of?	wolf	4 3
-10 What is winona afraid of?	sheep	7 5
-11 What is jessica afraid of?	wolf	4 3
-12 What is gertrude afraid of?	mouse	2 1
+9 What is Jessica afraid of?	wolf	4 3
+10 What is Winona afraid of?	sheep	7 5
+11 What is Jessica afraid of?	wolf	4 3
+12 What is Gertrude afraid of?	mouse	2 1
 1 Sheep are afraid of cats.
 2 Mice are afraid of sheep.
 3 Cats are afraid of mice.
@@ -1326,10 +1326,10 @@
 6 Jessica is a sheep.
 7 Winona is a wolf.
 8 Gertrude is a cat.
-9 What is emily afraid of?	cat	4 1
-10 What is jessica afraid of?	cat	6 1
-11 What is winona afraid of?	mouse	7 5
-12 What is jessica afraid of?	cat	6 1
+9 What is Emily afraid of?	cat	4 1
+10 What is Jessica afraid of?	cat	6 1
+11 What is Winona afraid of?	mouse	7 5
+12 What is Jessica afraid of?	cat	6 1
 1 Wolves are afraid of mice.
 2 Mice are afraid of cats.
 3 Cats are afraid of sheep.
@@ -1338,10 +1338,10 @@
 6 Emily is a cat.
 7 Winona is a wolf.
 8 Gertrude is a wolf.
-9 What is emily afraid of?	sheep	6 3
-10 What is jessica afraid of?	mouse	5 4
-11 What is emily afraid of?	sheep	6 3
-12 What is gertrude afraid of?	mouse	8 1
+9 What is Emily afraid of?	sheep	6 3
+10 What is Jessica afraid of?	mouse	5 4
+11 What is Emily afraid of?	sheep	6 3
+12 What is Gertrude afraid of?	mouse	8 1
 1 Cats are afraid of wolves.
 2 Wolves are afraid of mice.
 3 Emily is a wolf.
@@ -1350,10 +1350,10 @@
 6 Jessica is a cat.
 7 Sheep are afraid of wolves.
 8 Winona is a wolf.
-9 What is gertrude afraid of?	wolf	4 1
-10 What is emily afraid of?	mouse	3 2
-11 What is jessica afraid of?	wolf	6 1
-12 What is emily afraid of?	mouse	3 2
+9 What is Gertrude afraid of?	wolf	4 1
+10 What is Emily afraid of?	mouse	3 2
+11 What is Jessica afraid of?	wolf	6 1
+12 What is Emily afraid of?	mouse	3 2
 1 Cats are afraid of mice.
 2 Sheep are afraid of cats.
 3 Mice are afraid of wolves.
@@ -1362,10 +1362,10 @@
 6 Wolves are afraid of mice.
 7 Gertrude is a wolf.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	mouse	7 6
-10 What is emily afraid of?	cat	4 2
-11 What is gertrude afraid of?	mouse	7 6
-12 What is jessica afraid of?	mouse	5 1
+9 What is Gertrude afraid of?	mouse	7 6
+10 What is Emily afraid of?	cat	4 2
+11 What is Gertrude afraid of?	mouse	7 6
+12 What is Jessica afraid of?	mouse	5 1
 1 Cats are afraid of wolves.
 2 Wolves are afraid of mice.
 3 Mice are afraid of cats.
@@ -1374,10 +1374,10 @@
 6 Sheep are afraid of cats.
 7 Emily is a mouse.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	cat	4 3
-10 What is winona afraid of?	cat	8 3
-11 What is winona afraid of?	cat	8 3
-12 What is winona afraid of?	cat	8 3
+9 What is Gertrude afraid of?	cat	4 3
+10 What is Winona afraid of?	cat	8 3
+11 What is Winona afraid of?	cat	8 3
+12 What is Winona afraid of?	cat	8 3
 1 Cats are afraid of wolves.
 2 Winona is a cat.
 3 Mice are afraid of cats.
@@ -1386,10 +1386,10 @@
 6 Emily is a mouse.
 7 Sheep are afraid of wolves.
 8 Jessica is a mouse.
-9 What is emily afraid of?	cat	6 3
-10 What is jessica afraid of?	cat	8 3
-11 What is emily afraid of?	cat	6 3
-12 What is gertrude afraid of?	mouse	5 4
+9 What is Emily afraid of?	cat	6 3
+10 What is Jessica afraid of?	cat	8 3
+11 What is Emily afraid of?	cat	6 3
+12 What is Gertrude afraid of?	mouse	5 4
 1 Mice are afraid of wolves.
 2 Sheep are afraid of cats.
 3 Wolves are afraid of sheep.
@@ -1398,10 +1398,10 @@
 6 Gertrude is a wolf.
 7 Emily is a mouse.
 8 Jessica is a sheep.
-9 What is gertrude afraid of?	sheep	6 3
-10 What is gertrude afraid of?	sheep	6 3
-11 What is jessica afraid of?	cat	8 2
-12 What is winona afraid of?	wolf	5 1
+9 What is Gertrude afraid of?	sheep	6 3
+10 What is Gertrude afraid of?	sheep	6 3
+11 What is Jessica afraid of?	cat	8 2
+12 What is Winona afraid of?	wolf	5 1
 1 Wolves are afraid of mice.
 2 Mice are afraid of sheep.
 3 Sheep are afraid of cats.
@@ -1410,10 +1410,10 @@
 6 Jessica is a sheep.
 7 Winona is a sheep.
 8 Gertrude is a mouse.
-9 What is winona afraid of?	cat	7 3
-10 What is gertrude afraid of?	sheep	8 2
-11 What is jessica afraid of?	cat	6 3
-12 What is jessica afraid of?	cat	6 3
+9 What is Winona afraid of?	cat	7 3
+10 What is Gertrude afraid of?	sheep	8 2
+11 What is Jessica afraid of?	cat	6 3
+12 What is Jessica afraid of?	cat	6 3
 1 Mice are afraid of sheep.
 2 Gertrude is a mouse.
 3 Sheep are afraid of cats.
@@ -1422,10 +1422,10 @@
 6 Winona is a sheep.
 7 Emily is a mouse.
 8 Cats are afraid of sheep.
-9 What is jessica afraid of?	cat	5 3
-10 What is emily afraid of?	sheep	7 1
-11 What is jessica afraid of?	cat	5 3
-12 What is emily afraid of?	sheep	7 1
+9 What is Jessica afraid of?	cat	5 3
+10 What is Emily afraid of?	sheep	7 1
+11 What is Jessica afraid of?	cat	5 3
+12 What is Emily afraid of?	sheep	7 1
 1 Wolves are afraid of cats.
 2 Cats are afraid of sheep.
 3 Mice are afraid of cats.
@@ -1434,10 +1434,10 @@
 6 Sheep are afraid of cats.
 7 Jessica is a wolf.
 8 Emily is a cat.
-9 What is winona afraid of?	cat	5 3
-10 What is emily afraid of?	sheep	8 2
-11 What is emily afraid of?	sheep	8 2
-12 What is jessica afraid of?	cat	7 1
+9 What is Winona afraid of?	cat	5 3
+10 What is Emily afraid of?	sheep	8 2
+11 What is Emily afraid of?	sheep	8 2
+12 What is Jessica afraid of?	cat	7 1
 1 Sheep are afraid of cats.
 2 Cats are afraid of wolves.
 3 Jessica is a cat.
@@ -1446,10 +1446,10 @@
 6 Winona is a sheep.
 7 Mice are afraid of sheep.
 8 Gertrude is a mouse.
-9 What is jessica afraid of?	wolf	3 2
-10 What is jessica afraid of?	wolf	3 2
-11 What is gertrude afraid of?	sheep	8 7
-12 What is gertrude afraid of?	sheep	8 7
+9 What is Jessica afraid of?	wolf	3 2
+10 What is Jessica afraid of?	wolf	3 2
+11 What is Gertrude afraid of?	sheep	8 7
+12 What is Gertrude afraid of?	sheep	8 7
 1 Cats are afraid of wolves.
 2 Sheep are afraid of wolves.
 3 Emily is a cat.
@@ -1458,10 +1458,10 @@
 6 Jessica is a sheep.
 7 Wolves are afraid of mice.
 8 Gertrude is a wolf.
-9 What is emily afraid of?	wolf	3 1
-10 What is emily afraid of?	wolf	3 1
-11 What is jessica afraid of?	wolf	6 2
-12 What is gertrude afraid of?	mouse	8 7
+9 What is Emily afraid of?	wolf	3 1
+10 What is Emily afraid of?	wolf	3 1
+11 What is Jessica afraid of?	wolf	6 2
+12 What is Gertrude afraid of?	mouse	8 7
 1 Cats are afraid of wolves.
 2 Wolves are afraid of sheep.
 3 Mice are afraid of sheep.
@@ -1470,10 +1470,10 @@
 6 Jessica is a wolf.
 7 Gertrude is a sheep.
 8 Winona is a cat.
-9 What is jessica afraid of?	sheep	6 2
-10 What is gertrude afraid of?	cat	7 4
-11 What is gertrude afraid of?	cat	7 4
-12 What is gertrude afraid of?	cat	7 4
+9 What is Jessica afraid of?	sheep	6 2
+10 What is Gertrude afraid of?	cat	7 4
+11 What is Gertrude afraid of?	cat	7 4
+12 What is Gertrude afraid of?	cat	7 4
 1 Mice are afraid of cats.
 2 Sheep are afraid of mice.
 3 Gertrude is a mouse.
@@ -1482,10 +1482,10 @@
 6 Cats are afraid of wolves.
 7 Jessica is a sheep.
 8 Wolves are afraid of sheep.
-9 What is jessica afraid of?	mouse	7 2
-10 What is jessica afraid of?	mouse	7 2
-11 What is gertrude afraid of?	cat	3 1
-12 What is winona afraid of?	cat	4 1
+9 What is Jessica afraid of?	mouse	7 2
+10 What is Jessica afraid of?	mouse	7 2
+11 What is Gertrude afraid of?	cat	3 1
+12 What is Winona afraid of?	cat	4 1
 1 Cats are afraid of mice.
 2 Emily is a cat.
 3 Wolves are afraid of mice.
@@ -1494,10 +1494,10 @@
 6 Mice are afraid of cats.
 7 Winona is a cat.
 8 Jessica is a wolf.
-9 What is jessica afraid of?	mouse	8 3
-10 What is gertrude afraid of?	mouse	4 1
-11 What is emily afraid of?	mouse	2 1
-12 What is emily afraid of?	mouse	2 1
+9 What is Jessica afraid of?	mouse	8 3
+10 What is Gertrude afraid of?	mouse	4 1
+11 What is Emily afraid of?	mouse	2 1
+12 What is Emily afraid of?	mouse	2 1
 1 Sheep are afraid of wolves.
 2 Mice are afraid of cats.
 3 Cats are afraid of sheep.
@@ -1506,10 +1506,10 @@
 6 Gertrude is a cat.
 7 Emily is a sheep.
 8 Winona is a wolf.
-9 What is winona afraid of?	cat	8 4
-10 What is emily afraid of?	wolf	7 1
-11 What is gertrude afraid of?	sheep	6 3
-12 What is winona afraid of?	cat	8 4
+9 What is Winona afraid of?	cat	8 4
+10 What is Emily afraid of?	wolf	7 1
+11 What is Gertrude afraid of?	sheep	6 3
+12 What is Winona afraid of?	cat	8 4
 1 Sheep are afraid of mice.
 2 Wolves are afraid of mice.
 3 Winona is a sheep.
@@ -1518,10 +1518,10 @@
 6 Emily is a wolf.
 7 Gertrude is a wolf.
 8 Jessica is a cat.
-9 What is gertrude afraid of?	mouse	7 2
-10 What is gertrude afraid of?	mouse	7 2
-11 What is winona afraid of?	mouse	3 1
-12 What is gertrude afraid of?	mouse	7 2
+9 What is Gertrude afraid of?	mouse	7 2
+10 What is Gertrude afraid of?	mouse	7 2
+11 What is Winona afraid of?	mouse	3 1
+12 What is Gertrude afraid of?	mouse	7 2
 1 Sheep are afraid of mice.
 2 Wolves are afraid of cats.
 3 Cats are afraid of wolves.
@@ -1530,10 +1530,10 @@
 6 Jessica is a wolf.
 7 Emily is a wolf.
 8 Gertrude is a wolf.
-9 What is gertrude afraid of?	cat	8 2
-10 What is jessica afraid of?	cat	6 2
-11 What is emily afraid of?	cat	7 2
-12 What is emily afraid of?	cat	7 2
+9 What is Gertrude afraid of?	cat	8 2
+10 What is Jessica afraid of?	cat	6 2
+11 What is Emily afraid of?	cat	7 2
+12 What is Emily afraid of?	cat	7 2
 1 Wolves are afraid of sheep.
 2 Cats are afraid of mice.
 3 Jessica is a wolf.
@@ -1542,10 +1542,10 @@
 6 Emily is a mouse.
 7 Winona is a cat.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	wolf	6 4
-10 What is jessica afraid of?	sheep	3 1
-11 What is winona afraid of?	mouse	7 2
-12 What is jessica afraid of?	sheep	3 1
+9 What is Emily afraid of?	wolf	6 4
+10 What is Jessica afraid of?	sheep	3 1
+11 What is Winona afraid of?	mouse	7 2
+12 What is Jessica afraid of?	sheep	3 1
 1 Wolves are afraid of sheep.
 2 Cats are afraid of sheep.
 3 Jessica is a cat.
@@ -1554,10 +1554,10 @@
 6 Sheep are afraid of mice.
 7 Gertrude is a mouse.
 8 Winona is a wolf.
-9 What is winona afraid of?	sheep	8 1
-10 What is emily afraid of?	sheep	4 2
-11 What is gertrude afraid of?	wolf	7 5
-12 What is jessica afraid of?	sheep	3 2
+9 What is Winona afraid of?	sheep	8 1
+10 What is Emily afraid of?	sheep	4 2
+11 What is Gertrude afraid of?	wolf	7 5
+12 What is Jessica afraid of?	sheep	3 2
 1 Sheep are afraid of wolves.
 2 Wolves are afraid of mice.
 3 Gertrude is a sheep.
@@ -1566,10 +1566,10 @@
 6 Mice are afraid of cats.
 7 Emily is a mouse.
 8 Winona is a wolf.
-9 What is gertrude afraid of?	wolf	3 1
-10 What is jessica afraid of?	mouse	4 2
-11 What is winona afraid of?	mouse	8 2
-12 What is gertrude afraid of?	wolf	3 1
+9 What is Gertrude afraid of?	wolf	3 1
+10 What is Jessica afraid of?	mouse	4 2
+11 What is Winona afraid of?	mouse	8 2
+12 What is Gertrude afraid of?	wolf	3 1
 1 Cats are afraid of sheep.
 2 Wolves are afraid of sheep.
 3 Sheep are afraid of mice.
@@ -1578,10 +1578,10 @@
 6 Emily is a cat.
 7 Mice are afraid of wolves.
 8 Winona is a cat.
-9 What is jessica afraid of?	sheep	4 1
-10 What is winona afraid of?	sheep	8 1
-11 What is gertrude afraid of?	sheep	5 2
-12 What is winona afraid of?	sheep	8 1
+9 What is Jessica afraid of?	sheep	4 1
+10 What is Winona afraid of?	sheep	8 1
+11 What is Gertrude afraid of?	sheep	5 2
+12 What is Winona afraid of?	sheep	8 1
 1 Mice are afraid of cats.
 2 Sheep are afraid of wolves.
 3 Cats are afraid of sheep.
@@ -1590,10 +1590,10 @@
 6 Gertrude is a sheep.
 7 Emily is a sheep.
 8 Winona is a mouse.
-9 What is emily afraid of?	wolf	7 2
-10 What is jessica afraid of?	wolf	5 2
-11 What is jessica afraid of?	wolf	5 2
-12 What is gertrude afraid of?	wolf	6 2
+9 What is Emily afraid of?	wolf	7 2
+10 What is Jessica afraid of?	wolf	5 2
+11 What is Jessica afraid of?	wolf	5 2
+12 What is Gertrude afraid of?	wolf	6 2
 1 Sheep are afraid of cats.
 2 Mice are afraid of sheep.
 3 Cats are afraid of wolves.
@@ -1602,10 +1602,10 @@
 6 Wolves are afraid of sheep.
 7 Winona is a mouse.
 8 Jessica is a mouse.
-9 What is jessica afraid of?	sheep	8 2
-10 What is winona afraid of?	sheep	7 2
-11 What is winona afraid of?	sheep	7 2
-12 What is jessica afraid of?	sheep	8 2
+9 What is Jessica afraid of?	sheep	8 2
+10 What is Winona afraid of?	sheep	7 2
+11 What is Winona afraid of?	sheep	7 2
+12 What is Jessica afraid of?	sheep	8 2
 1 Sheep are afraid of wolves.
 2 Mice are afraid of wolves.
 3 Winona is a mouse.
@@ -1614,10 +1614,10 @@
 6 Gertrude is a cat.
 7 Emily is a cat.
 8 Wolves are afraid of sheep.
-9 What is gertrude afraid of?	sheep	6 5
-10 What is jessica afraid of?	wolf	4 2
-11 What is winona afraid of?	wolf	3 2
-12 What is jessica afraid of?	wolf	4 2
+9 What is Gertrude afraid of?	sheep	6 5
+10 What is Jessica afraid of?	wolf	4 2
+11 What is Winona afraid of?	wolf	3 2
+12 What is Jessica afraid of?	wolf	4 2
 1 Wolves are afraid of sheep.
 2 Emily is a wolf.
 3 Cats are afraid of mice.
@@ -1626,10 +1626,10 @@
 6 Sheep are afraid of cats.
 7 Winona is a wolf.
 8 Gertrude is a sheep.
-9 What is gertrude afraid of?	cat	8 6
-10 What is winona afraid of?	sheep	7 1
-11 What is jessica afraid of?	cat	5 4
-12 What is jessica afraid of?	cat	5 4
+9 What is Gertrude afraid of?	cat	8 6
+10 What is Winona afraid of?	sheep	7 1
+11 What is Jessica afraid of?	cat	5 4
+12 What is Jessica afraid of?	cat	5 4
 1 Sheep are afraid of wolves.
 2 Cats are afraid of mice.
 3 Jessica is a cat.
@@ -1638,10 +1638,10 @@
 6 Emily is a sheep.
 7 Mice are afraid of cats.
 8 Winona is a mouse.
-9 What is jessica afraid of?	mouse	3 2
-10 What is emily afraid of?	wolf	6 1
-11 What is winona afraid of?	cat	8 7
-12 What is gertrude afraid of?	mouse	4 2
+9 What is Jessica afraid of?	mouse	3 2
+10 What is Emily afraid of?	wolf	6 1
+11 What is Winona afraid of?	cat	8 7
+12 What is Gertrude afraid of?	mouse	4 2
 1 Wolves are afraid of sheep.
 2 Winona is a wolf.
 3 Cats are afraid of wolves.
@@ -1650,10 +1650,10 @@
 6 Jessica is a mouse.
 7 Emily is a wolf.
 8 Sheep are afraid of cats.
-9 What is winona afraid of?	sheep	2 1
-10 What is jessica afraid of?	wolf	6 5
-11 What is jessica afraid of?	wolf	6 5
-12 What is gertrude afraid of?	wolf	4 3
+9 What is Winona afraid of?	sheep	2 1
+10 What is Jessica afraid of?	wolf	6 5
+11 What is Jessica afraid of?	wolf	6 5
+12 What is Gertrude afraid of?	wolf	4 3
 1 Cats are afraid of mice.
 2 Sheep are afraid of wolves.
 3 Wolves are afraid of mice.
@@ -1662,10 +1662,10 @@
 6 Emily is a sheep.
 7 Jessica is a sheep.
 8 Mice are afraid of wolves.
-9 What is emily afraid of?	wolf	6 2
-10 What is gertrude afraid of?	mouse	5 1
-11 What is emily afraid of?	wolf	6 2
-12 What is winona afraid of?	wolf	4 2
+9 What is Emily afraid of?	wolf	6 2
+10 What is Gertrude afraid of?	mouse	5 1
+11 What is Emily afraid of?	wolf	6 2
+12 What is Winona afraid of?	wolf	4 2
 1 Mice are afraid of wolves.
 2 Cats are afraid of wolves.
 3 Jessica is a cat.
@@ -1674,10 +1674,10 @@
 6 Emily is a mouse.
 7 Winona is a cat.
 8 Wolves are afraid of cats.
-9 What is gertrude afraid of?	wolf	5 2
-10 What is gertrude afraid of?	wolf	5 2
-11 What is jessica afraid of?	wolf	3 2
-12 What is gertrude afraid of?	wolf	5 2
+9 What is Gertrude afraid of?	wolf	5 2
+10 What is Gertrude afraid of?	wolf	5 2
+11 What is Jessica afraid of?	wolf	3 2
+12 What is Gertrude afraid of?	wolf	5 2
 1 Mice are afraid of wolves.
 2 Wolves are afraid of mice.
 3 Cats are afraid of mice.
@@ -1686,10 +1686,10 @@
 6 Sheep are afraid of cats.
 7 Gertrude is a mouse.
 8 Emily is a mouse.
-9 What is jessica afraid of?	wolf	5 1
-10 What is winona afraid of?	mouse	4 2
-11 What is jessica afraid of?	wolf	5 1
-12 What is jessica afraid of?	wolf	5 1
+9 What is Jessica afraid of?	wolf	5 1
+10 What is Winona afraid of?	mouse	4 2
+11 What is Jessica afraid of?	wolf	5 1
+12 What is Jessica afraid of?	wolf	5 1
 1 Sheep are afraid of mice.
 2 Wolves are afraid of sheep.
 3 Cats are afraid of mice.
@@ -1698,10 +1698,10 @@
 6 Gertrude is a cat.
 7 Mice are afraid of sheep.
 8 Emily is a sheep.
-9 What is gertrude afraid of?	mouse	6 3
-10 What is gertrude afraid of?	mouse	6 3
-11 What is emily afraid of?	mouse	8 1
-12 What is winona afraid of?	sheep	5 2
+9 What is Gertrude afraid of?	mouse	6 3
+10 What is Gertrude afraid of?	mouse	6 3
+11 What is Emily afraid of?	mouse	8 1
+12 What is Winona afraid of?	sheep	5 2
 1 Sheep are afraid of mice.
 2 Wolves are afraid of sheep.
 3 Winona is a sheep.
@@ -1710,10 +1710,10 @@
 6 Cats are afraid of sheep.
 7 Jessica is a mouse.
 8 Emily is a wolf.
-9 What is gertrude afraid of?	mouse	5 1
-10 What is winona afraid of?	mouse	3 1
-11 What is gertrude afraid of?	mouse	5 1
-12 What is jessica afraid of?	wolf	7 4
+9 What is Gertrude afraid of?	mouse	5 1
+10 What is Winona afraid of?	mouse	3 1
+11 What is Gertrude afraid of?	mouse	5 1
+12 What is Jessica afraid of?	wolf	7 4
 1 Sheep are afraid of cats.
 2 Cats are afraid of sheep.
 3 Jessica is a cat.
@@ -1722,10 +1722,10 @@
 6 Winona is a mouse.
 7 Wolves are afraid of mice.
 8 Emily is a sheep.
-9 What is winona afraid of?	wolf	6 5
-10 What is jessica afraid of?	sheep	3 2
-11 What is emily afraid of?	cat	8 1
-12 What is emily afraid of?	cat	8 1
+9 What is Winona afraid of?	wolf	6 5
+10 What is Jessica afraid of?	sheep	3 2
+11 What is Emily afraid of?	cat	8 1
+12 What is Emily afraid of?	cat	8 1
 1 Mice are afraid of cats.
 2 Wolves are afraid of mice.
 3 Emily is a wolf.
@@ -1734,10 +1734,10 @@
 6 Winona is a mouse.
 7 Sheep are afraid of mice.
 8 Jessica is a mouse.
-9 What is jessica afraid of?	cat	8 1
-10 What is winona afraid of?	cat	6 1
-11 What is gertrude afraid of?	cat	4 1
-12 What is winona afraid of?	cat	6 1
+9 What is Jessica afraid of?	cat	8 1
+10 What is Winona afraid of?	cat	6 1
+11 What is Gertrude afraid of?	cat	4 1
+12 What is Winona afraid of?	cat	6 1
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of wolves.
 3 Mice are afraid of sheep.
@@ -1746,10 +1746,10 @@
 6 Gertrude is a cat.
 7 Jessica is a cat.
 8 Winona is a mouse.
-9 What is winona afraid of?	sheep	8 3
-10 What is winona afraid of?	sheep	8 3
-11 What is winona afraid of?	sheep	8 3
-12 What is jessica afraid of?	mouse	7 5
+9 What is Winona afraid of?	sheep	8 3
+10 What is Winona afraid of?	sheep	8 3
+11 What is Winona afraid of?	sheep	8 3
+12 What is Jessica afraid of?	mouse	7 5
 1 Cats are afraid of mice.
 2 Wolves are afraid of sheep.
 3 Gertrude is a wolf.
@@ -1758,10 +1758,10 @@
 6 Jessica is a sheep.
 7 Mice are afraid of cats.
 8 Winona is a sheep.
-9 What is gertrude afraid of?	sheep	3 2
-10 What is emily afraid of?	sheep	5 2
-11 What is winona afraid of?	cat	8 4
-12 What is winona afraid of?	cat	8 4
+9 What is Gertrude afraid of?	sheep	3 2
+10 What is Emily afraid of?	sheep	5 2
+11 What is Winona afraid of?	cat	8 4
+12 What is Winona afraid of?	cat	8 4
 1 Mice are afraid of wolves.
 2 Cats are afraid of sheep.
 3 Wolves are afraid of cats.
@@ -1770,10 +1770,10 @@
 6 Sheep are afraid of cats.
 7 Gertrude is a mouse.
 8 Emily is a sheep.
-9 What is winona afraid of?	cat	5 3
-10 What is jessica afraid of?	sheep	4 2
-11 What is winona afraid of?	cat	5 3
-12 What is winona afraid of?	cat	5 3
+9 What is Winona afraid of?	cat	5 3
+10 What is Jessica afraid of?	sheep	4 2
+11 What is Winona afraid of?	cat	5 3
+12 What is Winona afraid of?	cat	5 3
 1 Mice are afraid of cats.
 2 Cats are afraid of sheep.
 3 Gertrude is a cat.
@@ -1782,10 +1782,10 @@
 6 Jessica is a cat.
 7 Emily is a mouse.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	sheep	3 2
-10 What is emily afraid of?	cat	7 1
-11 What is winona afraid of?	cat	8 1
-12 What is jessica afraid of?	sheep	6 2
+9 What is Gertrude afraid of?	sheep	3 2
+10 What is Emily afraid of?	cat	7 1
+11 What is Winona afraid of?	cat	8 1
+12 What is Jessica afraid of?	sheep	6 2
 1 Sheep are afraid of wolves.
 2 Mice are afraid of sheep.
 3 Wolves are afraid of sheep.
@@ -1794,10 +1794,10 @@
 6 Emily is a sheep.
 7 Jessica is a cat.
 8 Gertrude is a sheep.
-9 What is winona afraid of?	sheep	4 2
-10 What is winona afraid of?	sheep	4 2
-11 What is jessica afraid of?	mouse	7 5
-12 What is winona afraid of?	sheep	4 2
+9 What is Winona afraid of?	sheep	4 2
+10 What is Winona afraid of?	sheep	4 2
+11 What is Jessica afraid of?	mouse	7 5
+12 What is Winona afraid of?	sheep	4 2
 1 Cats are afraid of wolves.
 2 Mice are afraid of cats.
 3 Jessica is a cat.
@@ -1806,10 +1806,10 @@
 6 Wolves are afraid of sheep.
 7 Emily is a mouse.
 8 Gertrude is a mouse.
-9 What is gertrude afraid of?	cat	8 2
-10 What is gertrude afraid of?	cat	8 2
-11 What is winona afraid of?	wolf	5 1
-12 What is gertrude afraid of?	cat	8 2
+9 What is Gertrude afraid of?	cat	8 2
+10 What is Gertrude afraid of?	cat	8 2
+11 What is Winona afraid of?	wolf	5 1
+12 What is Gertrude afraid of?	cat	8 2
 1 Sheep are afraid of cats.
 2 Mice are afraid of cats.
 3 Wolves are afraid of mice.
@@ -1818,10 +1818,10 @@
 6 Jessica is a cat.
 7 Gertrude is a wolf.
 8 Winona is a cat.
-9 What is jessica afraid of?	sheep	6 4
-10 What is gertrude afraid of?	mouse	7 3
-11 What is gertrude afraid of?	mouse	7 3
-12 What is gertrude afraid of?	mouse	7 3
+9 What is Jessica afraid of?	sheep	6 4
+10 What is Gertrude afraid of?	mouse	7 3
+11 What is Gertrude afraid of?	mouse	7 3
+12 What is Gertrude afraid of?	mouse	7 3
 1 Cats are afraid of sheep.
 2 Sheep are afraid of cats.
 3 Gertrude is a sheep.
@@ -1830,10 +1830,10 @@
 6 Emily is a sheep.
 7 Wolves are afraid of mice.
 8 Winona is a wolf.
-9 What is jessica afraid of?	cat	5 4
-10 What is winona afraid of?	mouse	8 7
-11 What is winona afraid of?	mouse	8 7
-12 What is jessica afraid of?	cat	5 4
+9 What is Jessica afraid of?	cat	5 4
+10 What is Winona afraid of?	mouse	8 7
+11 What is Winona afraid of?	mouse	8 7
+12 What is Jessica afraid of?	cat	5 4
 1 Wolves are afraid of cats.
 2 Sheep are afraid of cats.
 3 Emily is a sheep.
@@ -1842,10 +1842,10 @@
 6 Mice are afraid of wolves.
 7 Gertrude is a wolf.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	cat	7 1
-10 What is jessica afraid of?	sheep	5 4
-11 What is emily afraid of?	cat	3 2
-12 What is winona afraid of?	wolf	8 6
+9 What is Gertrude afraid of?	cat	7 1
+10 What is Jessica afraid of?	sheep	5 4
+11 What is Emily afraid of?	cat	3 2
+12 What is Winona afraid of?	wolf	8 6
 1 Cats are afraid of sheep.
 2 Jessica is a cat.
 3 Sheep are afraid of mice.
@@ -1854,10 +1854,10 @@
 6 Winona is a mouse.
 7 Emily is a wolf.
 8 Gertrude is a mouse.
-9 What is jessica afraid of?	sheep	2 1
-10 What is emily afraid of?	mouse	7 4
-11 What is gertrude afraid of?	wolf	8 5
-12 What is gertrude afraid of?	wolf	8 5
+9 What is Jessica afraid of?	sheep	2 1
+10 What is Emily afraid of?	mouse	7 4
+11 What is Gertrude afraid of?	wolf	8 5
+12 What is Gertrude afraid of?	wolf	8 5
 1 Cats are afraid of mice.
 2 Wolves are afraid of mice.
 3 Gertrude is a wolf.
@@ -1866,10 +1866,10 @@
 6 Mice are afraid of wolves.
 7 Emily is a wolf.
 8 Jessica is a cat.
-9 What is gertrude afraid of?	mouse	3 2
-10 What is gertrude afraid of?	mouse	3 2
-11 What is jessica afraid of?	mouse	8 1
-12 What is emily afraid of?	mouse	7 2
+9 What is Gertrude afraid of?	mouse	3 2
+10 What is Gertrude afraid of?	mouse	3 2
+11 What is Jessica afraid of?	mouse	8 1
+12 What is Emily afraid of?	mouse	7 2
 1 Mice are afraid of wolves.
 2 Sheep are afraid of cats.
 3 Cats are afraid of wolves.
@@ -1878,10 +1878,10 @@
 6 Winona is a sheep.
 7 Gertrude is a wolf.
 8 Emily is a cat.
-9 What is winona afraid of?	cat	6 2
-10 What is emily afraid of?	wolf	8 3
-11 What is jessica afraid of?	cat	5 2
-12 What is emily afraid of?	wolf	8 3
+9 What is Winona afraid of?	cat	6 2
+10 What is Emily afraid of?	wolf	8 3
+11 What is Jessica afraid of?	cat	5 2
+12 What is Emily afraid of?	wolf	8 3
 1 Wolves are afraid of sheep.
 2 Cats are afraid of sheep.
 3 Emily is a wolf.
@@ -1890,10 +1890,10 @@
 6 Gertrude is a sheep.
 7 Winona is a sheep.
 8 Jessica is a cat.
-9 What is emily afraid of?	sheep	3 1
-10 What is emily afraid of?	sheep	3 1
-11 What is winona afraid of?	cat	7 4
-12 What is gertrude afraid of?	cat	6 4
+9 What is Emily afraid of?	sheep	3 1
+10 What is Emily afraid of?	sheep	3 1
+11 What is Winona afraid of?	cat	7 4
+12 What is Gertrude afraid of?	cat	6 4
 1 Mice are afraid of cats.
 2 Jessica is a mouse.
 3 Cats are afraid of mice.
@@ -1902,10 +1902,10 @@
 6 Gertrude is a mouse.
 7 Sheep are afraid of cats.
 8 Wolves are afraid of mice.
-9 What is gertrude afraid of?	cat	6 1
-10 What is emily afraid of?	cat	4 1
-11 What is gertrude afraid of?	cat	6 1
-12 What is emily afraid of?	cat	4 1
+9 What is Gertrude afraid of?	cat	6 1
+10 What is Emily afraid of?	cat	4 1
+11 What is Gertrude afraid of?	cat	6 1
+12 What is Emily afraid of?	cat	4 1
 1 Sheep are afraid of wolves.
 2 Cats are afraid of mice.
 3 Wolves are afraid of sheep.
@@ -1914,10 +1914,10 @@
 6 Mice are afraid of cats.
 7 Emily is a mouse.
 8 Winona is a cat.
-9 What is emily afraid of?	cat	7 6
-10 What is jessica afraid of?	wolf	4 1
-11 What is gertrude afraid of?	wolf	5 1
-12 What is jessica afraid of?	wolf	4 1
+9 What is Emily afraid of?	cat	7 6
+10 What is Jessica afraid of?	wolf	4 1
+11 What is Gertrude afraid of?	wolf	5 1
+12 What is Jessica afraid of?	wolf	4 1
 1 Mice are afraid of cats.
 2 Sheep are afraid of wolves.
 3 Cats are afraid of mice.
@@ -1926,10 +1926,10 @@
 6 Jessica is a cat.
 7 Wolves are afraid of cats.
 8 Winona is a sheep.
-9 What is gertrude afraid of?	wolf	4 2
-10 What is jessica afraid of?	mouse	6 3
-11 What is winona afraid of?	wolf	8 2
-12 What is jessica afraid of?	mouse	6 3
+9 What is Gertrude afraid of?	wolf	4 2
+10 What is Jessica afraid of?	mouse	6 3
+11 What is Winona afraid of?	wolf	8 2
+12 What is Jessica afraid of?	mouse	6 3
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of cats.
 3 Emily is a wolf.
@@ -1938,10 +1938,10 @@
 6 Mice are afraid of sheep.
 7 Winona is a sheep.
 8 Gertrude is a sheep.
-9 What is emily afraid of?	sheep	3 1
-10 What is jessica afraid of?	cat	4 2
-11 What is winona afraid of?	cat	7 2
-12 What is gertrude afraid of?	cat	8 2
+9 What is Emily afraid of?	sheep	3 1
+10 What is Jessica afraid of?	cat	4 2
+11 What is Winona afraid of?	cat	7 2
+12 What is Gertrude afraid of?	cat	8 2
 1 Mice are afraid of sheep.
 2 Cats are afraid of mice.
 3 Jessica is a cat.
@@ -1950,10 +1950,10 @@
 6 Emily is a cat.
 7 Sheep are afraid of cats.
 8 Gertrude is a cat.
-9 What is emily afraid of?	mouse	6 2
-10 What is gertrude afraid of?	mouse	8 2
-11 What is winona afraid of?	mouse	5 2
-12 What is gertrude afraid of?	mouse	8 2
+9 What is Emily afraid of?	mouse	6 2
+10 What is Gertrude afraid of?	mouse	8 2
+11 What is Winona afraid of?	mouse	5 2
+12 What is Gertrude afraid of?	mouse	8 2
 1 Wolves are afraid of cats.
 2 Cats are afraid of mice.
 3 Mice are afraid of cats.
@@ -1962,10 +1962,10 @@
 6 Sheep are afraid of mice.
 7 Jessica is a mouse.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	cat	4 1
-10 What is gertrude afraid of?	cat	4 1
-11 What is emily afraid of?	mouse	5 2
-12 What is gertrude afraid of?	cat	4 1
+9 What is Gertrude afraid of?	cat	4 1
+10 What is Gertrude afraid of?	cat	4 1
+11 What is Emily afraid of?	mouse	5 2
+12 What is Gertrude afraid of?	cat	4 1
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of mice.
 3 Cats are afraid of mice.
@@ -1974,10 +1974,10 @@
 6 Winona is a mouse.
 7 Jessica is a mouse.
 8 Emily is a mouse.
-9 What is winona afraid of?	wolf	6 5
-10 What is jessica afraid of?	wolf	7 5
-11 What is emily afraid of?	wolf	8 5
-12 What is jessica afraid of?	wolf	7 5
+9 What is Winona afraid of?	wolf	6 5
+10 What is Jessica afraid of?	wolf	7 5
+11 What is Emily afraid of?	wolf	8 5
+12 What is Jessica afraid of?	wolf	7 5
 1 Cats are afraid of sheep.
 2 Mice are afraid of sheep.
 3 Emily is a mouse.
@@ -1986,10 +1986,10 @@
 6 Winona is a mouse.
 7 Sheep are afraid of mice.
 8 Jessica is a cat.
-9 What is gertrude afraid of?	sheep	4 1
-10 What is winona afraid of?	sheep	6 2
-11 What is emily afraid of?	sheep	3 2
-12 What is gertrude afraid of?	sheep	4 1
+9 What is Gertrude afraid of?	sheep	4 1
+10 What is Winona afraid of?	sheep	6 2
+11 What is Emily afraid of?	sheep	3 2
+12 What is Gertrude afraid of?	sheep	4 1
 1 Cats are afraid of mice.
 2 Emily is a cat.
 3 Winona is a cat.
@@ -1998,10 +1998,10 @@
 6 Jessica is a cat.
 7 Wolves are afraid of mice.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	mouse	2 1
-10 What is gertrude afraid of?	cat	8 4
-11 What is jessica afraid of?	mouse	6 1
-12 What is emily afraid of?	mouse	2 1
+9 What is Emily afraid of?	mouse	2 1
+10 What is Gertrude afraid of?	cat	8 4
+11 What is Jessica afraid of?	mouse	6 1
+12 What is Emily afraid of?	mouse	2 1
 1 Mice are afraid of sheep.
 2 Sheep are afraid of wolves.
 3 Cats are afraid of sheep.
@@ -2010,10 +2010,10 @@
 6 Emily is a cat.
 7 Gertrude is a mouse.
 8 Winona is a sheep.
-9 What is gertrude afraid of?	sheep	7 1
-10 What is gertrude afraid of?	sheep	7 1
-11 What is emily afraid of?	sheep	6 3
-12 What is winona afraid of?	wolf	8 2
+9 What is Gertrude afraid of?	sheep	7 1
+10 What is Gertrude afraid of?	sheep	7 1
+11 What is Emily afraid of?	sheep	6 3
+12 What is Winona afraid of?	wolf	8 2
 1 Wolves are afraid of mice.
 2 Sheep are afraid of cats.
 3 Emily is a sheep.
@@ -2022,10 +2022,10 @@
 6 Jessica is a cat.
 7 Mice are afraid of cats.
 8 Gertrude is a wolf.
-9 What is winona afraid of?	cat	4 2
-10 What is gertrude afraid of?	mouse	8 1
-11 What is jessica afraid of?	wolf	6 5
-12 What is winona afraid of?	cat	4 2
+9 What is Winona afraid of?	cat	4 2
+10 What is Gertrude afraid of?	mouse	8 1
+11 What is Jessica afraid of?	wolf	6 5
+12 What is Winona afraid of?	cat	4 2
 1 Mice are afraid of wolves.
 2 Sheep are afraid of cats.
 3 Wolves are afraid of cats.
@@ -2034,10 +2034,10 @@
 6 Winona is a wolf.
 7 Cats are afraid of wolves.
 8 Gertrude is a sheep.
-9 What is jessica afraid of?	wolf	5 1
-10 What is gertrude afraid of?	cat	8 2
-11 What is gertrude afraid of?	cat	8 2
-12 What is gertrude afraid of?	cat	8 2
+9 What is Jessica afraid of?	wolf	5 1
+10 What is Gertrude afraid of?	cat	8 2
+11 What is Gertrude afraid of?	cat	8 2
+12 What is Gertrude afraid of?	cat	8 2
 1 Mice are afraid of cats.
 2 Wolves are afraid of mice.
 3 Sheep are afraid of cats.
@@ -2046,10 +2046,10 @@
 6 Jessica is a sheep.
 7 Cats are afraid of wolves.
 8 Winona is a wolf.
-9 What is emily afraid of?	mouse	5 2
-10 What is jessica afraid of?	cat	6 3
-11 What is winona afraid of?	mouse	8 2
-12 What is jessica afraid of?	cat	6 3
+9 What is Emily afraid of?	mouse	5 2
+10 What is Jessica afraid of?	cat	6 3
+11 What is Winona afraid of?	mouse	8 2
+12 What is Jessica afraid of?	cat	6 3
 1 Mice are afraid of cats.
 2 Sheep are afraid of mice.
 3 Winona is a sheep.
@@ -2058,10 +2058,10 @@
 6 Cats are afraid of sheep.
 7 Emily is a cat.
 8 Wolves are afraid of mice.
-9 What is gertrude afraid of?	mouse	4 2
-10 What is gertrude afraid of?	mouse	4 2
-11 What is gertrude afraid of?	mouse	4 2
-12 What is emily afraid of?	sheep	7 6
+9 What is Gertrude afraid of?	mouse	4 2
+10 What is Gertrude afraid of?	mouse	4 2
+11 What is Gertrude afraid of?	mouse	4 2
+12 What is Emily afraid of?	sheep	7 6
 1 Wolves are afraid of cats.
 2 Cats are afraid of mice.
 3 Sheep are afraid of cats.
@@ -2070,10 +2070,10 @@
 6 Gertrude is a wolf.
 7 Winona is a cat.
 8 Mice are afraid of wolves.
-9 What is emily afraid of?	mouse	5 2
-10 What is winona afraid of?	mouse	7 2
-11 What is winona afraid of?	mouse	7 2
-12 What is jessica afraid of?	mouse	4 2
+9 What is Emily afraid of?	mouse	5 2
+10 What is Winona afraid of?	mouse	7 2
+11 What is Winona afraid of?	mouse	7 2
+12 What is Jessica afraid of?	mouse	4 2
 1 Mice are afraid of cats.
 2 Winona is a mouse.
 3 Cats are afraid of wolves.
@@ -2082,10 +2082,10 @@
 6 Emily is a sheep.
 7 Gertrude is a cat.
 8 Jessica is a cat.
-9 What is emily afraid of?	mouse	6 4
-10 What is winona afraid of?	cat	2 1
-11 What is winona afraid of?	cat	2 1
-12 What is emily afraid of?	mouse	6 4
+9 What is Emily afraid of?	mouse	6 4
+10 What is Winona afraid of?	cat	2 1
+11 What is Winona afraid of?	cat	2 1
+12 What is Emily afraid of?	mouse	6 4
 1 Cats are afraid of sheep.
 2 Emily is a cat.
 3 Sheep are afraid of mice.
@@ -2094,10 +2094,10 @@
 6 Mice are afraid of sheep.
 7 Winona is a mouse.
 8 Gertrude is a cat.
-9 What is emily afraid of?	sheep	2 1
-10 What is jessica afraid of?	sheep	5 4
-11 What is winona afraid of?	sheep	7 6
-12 What is gertrude afraid of?	sheep	8 1
+9 What is Emily afraid of?	sheep	2 1
+10 What is Jessica afraid of?	sheep	5 4
+11 What is Winona afraid of?	sheep	7 6
+12 What is Gertrude afraid of?	sheep	8 1
 1 Mice are afraid of cats.
 2 Gertrude is a mouse.
 3 Cats are afraid of mice.
@@ -2106,10 +2106,10 @@
 6 Jessica is a sheep.
 7 Emily is a mouse.
 8 Winona is a mouse.
-9 What is jessica afraid of?	mouse	6 4
-10 What is emily afraid of?	cat	7 1
-11 What is jessica afraid of?	mouse	6 4
-12 What is winona afraid of?	cat	8 1
+9 What is Jessica afraid of?	mouse	6 4
+10 What is Emily afraid of?	cat	7 1
+11 What is Jessica afraid of?	mouse	6 4
+12 What is Winona afraid of?	cat	8 1
 1 Mice are afraid of wolves.
 2 Wolves are afraid of sheep.
 3 Sheep are afraid of mice.
@@ -2118,10 +2118,10 @@
 6 Jessica is a sheep.
 7 Winona is a sheep.
 8 Gertrude is a wolf.
-9 What is emily afraid of?	mouse	5 4
-10 What is winona afraid of?	mouse	7 3
-11 What is gertrude afraid of?	sheep	8 2
-12 What is jessica afraid of?	mouse	6 3
+9 What is Emily afraid of?	mouse	5 4
+10 What is Winona afraid of?	mouse	7 3
+11 What is Gertrude afraid of?	sheep	8 2
+12 What is Jessica afraid of?	mouse	6 3
 1 Cats are afraid of wolves.
 2 Mice are afraid of cats.
 3 Sheep are afraid of mice.
@@ -2130,10 +2130,10 @@
 6 Winona is a mouse.
 7 Jessica is a sheep.
 8 Emily is a wolf.
-9 What is winona afraid of?	cat	6 2
-10 What is winona afraid of?	cat	6 2
-11 What is jessica afraid of?	mouse	7 3
-12 What is emily afraid of?	sheep	8 5
+9 What is Winona afraid of?	cat	6 2
+10 What is Winona afraid of?	cat	6 2
+11 What is Jessica afraid of?	mouse	7 3
+12 What is Emily afraid of?	sheep	8 5
 1 Mice are afraid of cats.
 2 Cats are afraid of wolves.
 3 Winona is a cat.
@@ -2142,10 +2142,10 @@
 6 Emily is a mouse.
 7 Gertrude is a sheep.
 8 Wolves are afraid of mice.
-9 What is winona afraid of?	wolf	3 2
-10 What is gertrude afraid of?	wolf	7 5
-11 What is jessica afraid of?	cat	4 1
-12 What is jessica afraid of?	cat	4 1
+9 What is Winona afraid of?	wolf	3 2
+10 What is Gertrude afraid of?	wolf	7 5
+11 What is Jessica afraid of?	cat	4 1
+12 What is Jessica afraid of?	cat	4 1
 1 Wolves are afraid of mice.
 2 Mice are afraid of wolves.
 3 Cats are afraid of sheep.
@@ -2154,10 +2154,10 @@
 6 Emily is a wolf.
 7 Winona is a cat.
 8 Jessica is a mouse.
-9 What is winona afraid of?	sheep	7 3
-10 What is winona afraid of?	sheep	7 3
-11 What is emily afraid of?	mouse	6 1
-12 What is jessica afraid of?	wolf	8 2
+9 What is Winona afraid of?	sheep	7 3
+10 What is Winona afraid of?	sheep	7 3
+11 What is Emily afraid of?	mouse	6 1
+12 What is Jessica afraid of?	wolf	8 2
 1 Sheep are afraid of wolves.
 2 Jessica is a sheep.
 3 Wolves are afraid of sheep.
@@ -2166,10 +2166,10 @@
 6 Gertrude is a cat.
 7 Winona is a wolf.
 8 Mice are afraid of wolves.
-9 What is gertrude afraid of?	sheep	6 4
-10 What is gertrude afraid of?	sheep	6 4
-11 What is winona afraid of?	sheep	7 3
-12 What is jessica afraid of?	wolf	2 1
+9 What is Gertrude afraid of?	sheep	6 4
+10 What is Gertrude afraid of?	sheep	6 4
+11 What is Winona afraid of?	sheep	7 3
+12 What is Jessica afraid of?	wolf	2 1
 1 Mice are afraid of wolves.
 2 Wolves are afraid of cats.
 3 Sheep are afraid of cats.
@@ -2178,10 +2178,10 @@
 6 Cats are afraid of mice.
 7 Gertrude is a cat.
 8 Jessica is a cat.
-9 What is emily afraid of?	cat	4 3
-10 What is winona afraid of?	cat	5 3
-11 What is jessica afraid of?	mouse	8 6
-12 What is gertrude afraid of?	mouse	7 6
+9 What is Emily afraid of?	cat	4 3
+10 What is Winona afraid of?	cat	5 3
+11 What is Jessica afraid of?	mouse	8 6
+12 What is Gertrude afraid of?	mouse	7 6
 1 Wolves are afraid of cats.
 2 Mice are afraid of cats.
 3 Cats are afraid of wolves.
@@ -2190,10 +2190,10 @@
 6 Winona is a mouse.
 7 Emily is a mouse.
 8 Sheep are afraid of wolves.
-9 What is emily afraid of?	cat	7 2
-10 What is jessica afraid of?	cat	4 1
-11 What is emily afraid of?	cat	7 2
-12 What is jessica afraid of?	cat	4 1
+9 What is Emily afraid of?	cat	7 2
+10 What is Jessica afraid of?	cat	4 1
+11 What is Emily afraid of?	cat	7 2
+12 What is Jessica afraid of?	cat	4 1
 1 Mice are afraid of wolves.
 2 Jessica is a mouse.
 3 Wolves are afraid of sheep.
@@ -2202,10 +2202,10 @@
 6 Cats are afraid of mice.
 7 Sheep are afraid of cats.
 8 Gertrude is a sheep.
-9 What is gertrude afraid of?	cat	8 7
-10 What is emily afraid of?	sheep	4 3
-11 What is emily afraid of?	sheep	4 3
-12 What is emily afraid of?	sheep	4 3
+9 What is Gertrude afraid of?	cat	8 7
+10 What is Emily afraid of?	sheep	4 3
+11 What is Emily afraid of?	sheep	4 3
+12 What is Emily afraid of?	sheep	4 3
 1 Mice are afraid of cats.
 2 Wolves are afraid of mice.
 3 Sheep are afraid of mice.
@@ -2214,10 +2214,10 @@
 6 Cats are afraid of wolves.
 7 Jessica is a sheep.
 8 Gertrude is a cat.
-9 What is emily afraid of?	mouse	4 3
-10 What is emily afraid of?	mouse	4 3
-11 What is emily afraid of?	mouse	4 3
-12 What is emily afraid of?	mouse	4 3
+9 What is Emily afraid of?	mouse	4 3
+10 What is Emily afraid of?	mouse	4 3
+11 What is Emily afraid of?	mouse	4 3
+12 What is Emily afraid of?	mouse	4 3
 1 Sheep are afraid of cats.
 2 Wolves are afraid of sheep.
 3 Cats are afraid of mice.
@@ -2226,10 +2226,10 @@
 6 Winona is a wolf.
 7 Jessica is a mouse.
 8 Gertrude is a mouse.
-9 What is jessica afraid of?	wolf	7 5
-10 What is gertrude afraid of?	wolf	8 5
-11 What is gertrude afraid of?	wolf	8 5
-12 What is emily afraid of?	cat	4 1
+9 What is Jessica afraid of?	wolf	7 5
+10 What is Gertrude afraid of?	wolf	8 5
+11 What is Gertrude afraid of?	wolf	8 5
+12 What is Emily afraid of?	cat	4 1
 1 Cats are afraid of mice.
 2 Sheep are afraid of cats.
 3 Wolves are afraid of cats.
@@ -2238,10 +2238,10 @@
 6 Gertrude is a cat.
 7 Winona is a sheep.
 8 Emily is a cat.
-9 What is emily afraid of?	mouse	8 1
-10 What is jessica afraid of?	cat	5 3
-11 What is gertrude afraid of?	mouse	6 1
-12 What is winona afraid of?	cat	7 2
+9 What is Emily afraid of?	mouse	8 1
+10 What is Jessica afraid of?	cat	5 3
+11 What is Gertrude afraid of?	mouse	6 1
+12 What is Winona afraid of?	cat	7 2
 1 Mice are afraid of wolves.
 2 Cats are afraid of mice.
 3 Wolves are afraid of sheep.
@@ -2250,10 +2250,10 @@
 6 Jessica is a cat.
 7 Sheep are afraid of cats.
 8 Gertrude is a cat.
-9 What is gertrude afraid of?	mouse	8 2
-10 What is jessica afraid of?	mouse	6 2
-11 What is jessica afraid of?	mouse	6 2
-12 What is gertrude afraid of?	mouse	8 2
+9 What is Gertrude afraid of?	mouse	8 2
+10 What is Jessica afraid of?	mouse	6 2
+11 What is Jessica afraid of?	mouse	6 2
+12 What is Gertrude afraid of?	mouse	8 2
 1 Mice are afraid of sheep.
 2 Gertrude is a mouse.
 3 Sheep are afraid of mice.
@@ -2262,10 +2262,10 @@
 6 Jessica is a sheep.
 7 Winona is a wolf.
 8 Cats are afraid of wolves.
-9 What is emily afraid of?	sheep	5 1
-10 What is gertrude afraid of?	sheep	2 1
-11 What is jessica afraid of?	mouse	6 3
-12 What is emily afraid of?	sheep	5 1
+9 What is Emily afraid of?	sheep	5 1
+10 What is Gertrude afraid of?	sheep	2 1
+11 What is Jessica afraid of?	mouse	6 3
+12 What is Emily afraid of?	sheep	5 1
 1 Mice are afraid of wolves.
 2 Emily is a mouse.
 3 Cats are afraid of sheep.
@@ -2274,10 +2274,10 @@
 6 Wolves are afraid of sheep.
 7 Jessica is a cat.
 8 Sheep are afraid of wolves.
-9 What is jessica afraid of?	sheep	7 3
-10 What is winona afraid of?	sheep	5 3
-11 What is winona afraid of?	sheep	5 3
-12 What is emily afraid of?	wolf	2 1
+9 What is Jessica afraid of?	sheep	7 3
+10 What is Winona afraid of?	sheep	5 3
+11 What is Winona afraid of?	sheep	5 3
+12 What is Emily afraid of?	wolf	2 1
 1 Cats are afraid of mice.
 2 Sheep are afraid of wolves.
 3 Wolves are afraid of sheep.
@@ -2286,10 +2286,10 @@
 6 Mice are afraid of cats.
 7 Jessica is a wolf.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	sheep	4 3
-10 What is winona afraid of?	cat	8 6
-11 What is gertrude afraid of?	sheep	4 3
-12 What is jessica afraid of?	sheep	7 3
+9 What is Gertrude afraid of?	sheep	4 3
+10 What is Winona afraid of?	cat	8 6
+11 What is Gertrude afraid of?	sheep	4 3
+12 What is Jessica afraid of?	sheep	7 3
 1 Wolves are afraid of mice.
 2 Cats are afraid of mice.
 3 Sheep are afraid of cats.
@@ -2298,10 +2298,10 @@
 6 Jessica is a cat.
 7 Emily is a cat.
 8 Gertrude is a sheep.
-9 What is winona afraid of?	mouse	5 2
-10 What is gertrude afraid of?	cat	8 3
-11 What is jessica afraid of?	mouse	6 2
-12 What is emily afraid of?	mouse	7 2
+9 What is Winona afraid of?	mouse	5 2
+10 What is Gertrude afraid of?	cat	8 3
+11 What is Jessica afraid of?	mouse	6 2
+12 What is Emily afraid of?	mouse	7 2
 1 Cats are afraid of sheep.
 2 Wolves are afraid of cats.
 3 Gertrude is a cat.
@@ -2310,10 +2310,10 @@
 6 Jessica is a wolf.
 7 Sheep are afraid of mice.
 8 Emily is a mouse.
-9 What is gertrude afraid of?	sheep	3 1
-10 What is jessica afraid of?	cat	6 2
-11 What is jessica afraid of?	cat	6 2
-12 What is winona afraid of?	sheep	5 1
+9 What is Gertrude afraid of?	sheep	3 1
+10 What is Jessica afraid of?	cat	6 2
+11 What is Jessica afraid of?	cat	6 2
+12 What is Winona afraid of?	sheep	5 1
 1 Mice are afraid of cats.
 2 Wolves are afraid of cats.
 3 Gertrude is a mouse.
@@ -2322,10 +2322,10 @@
 6 Winona is a mouse.
 7 Sheep are afraid of wolves.
 8 Emily is a mouse.
-9 What is emily afraid of?	cat	8 1
-10 What is jessica afraid of?	cat	4 2
-11 What is emily afraid of?	cat	8 1
-12 What is jessica afraid of?	cat	4 2
+9 What is Emily afraid of?	cat	8 1
+10 What is Jessica afraid of?	cat	4 2
+11 What is Emily afraid of?	cat	8 1
+12 What is Jessica afraid of?	cat	4 2
 1 Mice are afraid of cats.
 2 Jessica is a mouse.
 3 Winona is a mouse.
@@ -2334,10 +2334,10 @@
 6 Emily is a wolf.
 7 Sheep are afraid of cats.
 8 Cats are afraid of sheep.
-9 What is jessica afraid of?	cat	2 1
-10 What is winona afraid of?	cat	3 1
-11 What is emily afraid of?	cat	6 4
-12 What is winona afraid of?	cat	3 1
+9 What is Jessica afraid of?	cat	2 1
+10 What is Winona afraid of?	cat	3 1
+11 What is Emily afraid of?	cat	6 4
+12 What is Winona afraid of?	cat	3 1
 1 Cats are afraid of mice.
 2 Mice are afraid of cats.
 3 Jessica is a cat.
@@ -2346,10 +2346,10 @@
 6 Wolves are afraid of cats.
 7 Emily is a mouse.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	cat	7 2
-10 What is emily afraid of?	cat	7 2
-11 What is gertrude afraid of?	cat	8 2
-12 What is emily afraid of?	cat	7 2
+9 What is Emily afraid of?	cat	7 2
+10 What is Emily afraid of?	cat	7 2
+11 What is Gertrude afraid of?	cat	8 2
+12 What is Emily afraid of?	cat	7 2
 1 Sheep are afraid of mice.
 2 Wolves are afraid of cats.
 3 Gertrude is a wolf.
@@ -2358,10 +2358,10 @@
 6 Winona is a sheep.
 7 Cats are afraid of sheep.
 8 Emily is a mouse.
-9 What is emily afraid of?	sheep	8 5
-10 What is emily afraid of?	sheep	8 5
-11 What is emily afraid of?	sheep	8 5
-12 What is emily afraid of?	sheep	8 5
+9 What is Emily afraid of?	sheep	8 5
+10 What is Emily afraid of?	sheep	8 5
+11 What is Emily afraid of?	sheep	8 5
+12 What is Emily afraid of?	sheep	8 5
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of mice.
 3 Winona is a wolf.
@@ -2370,10 +2370,10 @@
 6 Jessica is a sheep.
 7 Emily is a cat.
 8 Gertrude is a cat.
-9 What is emily afraid of?	mouse	7 4
-10 What is jessica afraid of?	mouse	6 2
-11 What is gertrude afraid of?	mouse	8 4
-12 What is gertrude afraid of?	mouse	8 4
+9 What is Emily afraid of?	mouse	7 4
+10 What is Jessica afraid of?	mouse	6 2
+11 What is Gertrude afraid of?	mouse	8 4
+12 What is Gertrude afraid of?	mouse	8 4
 1 Wolves are afraid of mice.
 2 Mice are afraid of sheep.
 3 Winona is a wolf.
@@ -2382,10 +2382,10 @@
 6 Cats are afraid of mice.
 7 Emily is a mouse.
 8 Sheep are afraid of mice.
-9 What is gertrude afraid of?	mouse	4 1
-10 What is winona afraid of?	mouse	3 1
-11 What is gertrude afraid of?	mouse	4 1
-12 What is emily afraid of?	sheep	7 2
+9 What is Gertrude afraid of?	mouse	4 1
+10 What is Winona afraid of?	mouse	3 1
+11 What is Gertrude afraid of?	mouse	4 1
+12 What is Emily afraid of?	sheep	7 2
 1 Wolves are afraid of cats.
 2 Winona is a wolf.
 3 Cats are afraid of sheep.
@@ -2394,10 +2394,10 @@
 6 Sheep are afraid of mice.
 7 Mice are afraid of cats.
 8 Jessica is a sheep.
-9 What is winona afraid of?	cat	2 1
-10 What is emily afraid of?	sheep	4 3
-11 What is winona afraid of?	cat	2 1
-12 What is jessica afraid of?	mouse	8 6
+9 What is Winona afraid of?	cat	2 1
+10 What is Emily afraid of?	sheep	4 3
+11 What is Winona afraid of?	cat	2 1
+12 What is Jessica afraid of?	mouse	8 6
 1 Wolves are afraid of sheep.
 2 Winona is a wolf.
 3 Mice are afraid of cats.
@@ -2406,10 +2406,10 @@
 6 Gertrude is a wolf.
 7 Sheep are afraid of mice.
 8 Cats are afraid of mice.
-9 What is winona afraid of?	sheep	2 1
-10 What is jessica afraid of?	sheep	5 1
-11 What is emily afraid of?	cat	4 3
-12 What is winona afraid of?	sheep	2 1
+9 What is Winona afraid of?	sheep	2 1
+10 What is Jessica afraid of?	sheep	5 1
+11 What is Emily afraid of?	cat	4 3
+12 What is Winona afraid of?	sheep	2 1
 1 Sheep are afraid of wolves.
 2 Wolves are afraid of sheep.
 3 Winona is a sheep.
@@ -2418,10 +2418,10 @@
 6 Mice are afraid of wolves.
 7 Gertrude is a cat.
 8 Jessica is a mouse.
-9 What is gertrude afraid of?	mouse	7 4
-10 What is emily afraid of?	wolf	5 1
-11 What is jessica afraid of?	wolf	8 6
-12 What is gertrude afraid of?	mouse	7 4
+9 What is Gertrude afraid of?	mouse	7 4
+10 What is Emily afraid of?	wolf	5 1
+11 What is Jessica afraid of?	wolf	8 6
+12 What is Gertrude afraid of?	mouse	7 4
 1 Wolves are afraid of mice.
 2 Sheep are afraid of mice.
 3 Cats are afraid of sheep.
@@ -2430,10 +2430,10 @@
 6 Gertrude is a cat.
 7 Mice are afraid of wolves.
 8 Emily is a cat.
-9 What is winona afraid of?	sheep	5 3
-10 What is winona afraid of?	sheep	5 3
-11 What is winona afraid of?	sheep	5 3
-12 What is jessica afraid of?	mouse	4 2
+9 What is Winona afraid of?	sheep	5 3
+10 What is Winona afraid of?	sheep	5 3
+11 What is Winona afraid of?	sheep	5 3
+12 What is Jessica afraid of?	mouse	4 2
 1 Wolves are afraid of cats.
 2 Cats are afraid of wolves.
 3 Gertrude is a wolf.
@@ -2442,10 +2442,10 @@
 6 Emily is a sheep.
 7 Jessica is a sheep.
 8 Mice are afraid of cats.
-9 What is winona afraid of?	cat	4 1
-10 What is winona afraid of?	cat	4 1
-11 What is emily afraid of?	mouse	6 5
-12 What is gertrude afraid of?	cat	3 1
+9 What is Winona afraid of?	cat	4 1
+10 What is Winona afraid of?	cat	4 1
+11 What is Emily afraid of?	mouse	6 5
+12 What is Gertrude afraid of?	cat	3 1
 1 Wolves are afraid of mice.
 2 Sheep are afraid of wolves.
 3 Mice are afraid of sheep.
@@ -2454,10 +2454,10 @@
 6 Cats are afraid of wolves.
 7 Emily is a sheep.
 8 Winona is a wolf.
-9 What is gertrude afraid of?	sheep	5 3
-10 What is gertrude afraid of?	sheep	5 3
-11 What is winona afraid of?	mouse	8 1
-12 What is emily afraid of?	wolf	7 2
+9 What is Gertrude afraid of?	sheep	5 3
+10 What is Gertrude afraid of?	sheep	5 3
+11 What is Winona afraid of?	mouse	8 1
+12 What is Emily afraid of?	wolf	7 2
 1 Cats are afraid of mice.
 2 Mice are afraid of wolves.
 3 Wolves are afraid of cats.
@@ -2466,10 +2466,10 @@
 6 Jessica is a cat.
 7 Gertrude is a wolf.
 8 Winona is a wolf.
-9 What is winona afraid of?	cat	8 3
-10 What is gertrude afraid of?	cat	7 3
-11 What is gertrude afraid of?	cat	7 3
-12 What is jessica afraid of?	mouse	6 1
+9 What is Winona afraid of?	cat	8 3
+10 What is Gertrude afraid of?	cat	7 3
+11 What is Gertrude afraid of?	cat	7 3
+12 What is Jessica afraid of?	mouse	6 1
 1 Mice are afraid of cats.
 2 Sheep are afraid of cats.
 3 Emily is a sheep.
@@ -2478,10 +2478,10 @@
 6 Gertrude is a wolf.
 7 Jessica is a wolf.
 8 Cats are afraid of mice.
-9 What is winona afraid of?	cat	4 1
-10 What is jessica afraid of?	cat	7 5
-11 What is winona afraid of?	cat	4 1
-12 What is emily afraid of?	cat	3 2
+9 What is Winona afraid of?	cat	4 1
+10 What is Jessica afraid of?	cat	7 5
+11 What is Winona afraid of?	cat	4 1
+12 What is Emily afraid of?	cat	3 2
 1 Mice are afraid of cats.
 2 Gertrude is a mouse.
 3 Jessica is a mouse.
@@ -2490,10 +2490,10 @@
 6 Cats are afraid of mice.
 7 Sheep are afraid of wolves.
 8 Emily is a wolf.
-9 What is gertrude afraid of?	cat	2 1
-10 What is gertrude afraid of?	cat	2 1
-11 What is emily afraid of?	cat	8 5
-12 What is emily afraid of?	cat	8 5
+9 What is Gertrude afraid of?	cat	2 1
+10 What is Gertrude afraid of?	cat	2 1
+11 What is Emily afraid of?	cat	8 5
+12 What is Emily afraid of?	cat	8 5
 1 Cats are afraid of mice.
 2 Sheep are afraid of mice.
 3 Winona is a cat.
@@ -2502,10 +2502,10 @@
 6 Mice are afraid of cats.
 7 Wolves are afraid of mice.
 8 Jessica is a mouse.
-9 What is winona afraid of?	mouse	3 1
-10 What is winona afraid of?	mouse	3 1
-11 What is winona afraid of?	mouse	3 1
-12 What is winona afraid of?	mouse	3 1
+9 What is Winona afraid of?	mouse	3 1
+10 What is Winona afraid of?	mouse	3 1
+11 What is Winona afraid of?	mouse	3 1
+12 What is Winona afraid of?	mouse	3 1
 1 Cats are afraid of wolves.
 2 Sheep are afraid of cats.
 3 Gertrude is a cat.
@@ -2514,10 +2514,10 @@
 6 Emily is a sheep.
 7 Mice are afraid of sheep.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	wolf	3 1
-10 What is winona afraid of?	sheep	8 7
-11 What is jessica afraid of?	cat	4 2
-12 What is emily afraid of?	cat	6 2
+9 What is Gertrude afraid of?	wolf	3 1
+10 What is Winona afraid of?	sheep	8 7
+11 What is Jessica afraid of?	cat	4 2
+12 What is Emily afraid of?	cat	6 2
 1 Mice are afraid of cats.
 2 Wolves are afraid of mice.
 3 Emily is a mouse.
@@ -2526,10 +2526,10 @@
 6 Jessica is a mouse.
 7 Sheep are afraid of wolves.
 8 Gertrude is a cat.
-9 What is winona afraid of?	mouse	4 2
-10 What is winona afraid of?	mouse	4 2
-11 What is winona afraid of?	mouse	4 2
-12 What is jessica afraid of?	cat	6 1
+9 What is Winona afraid of?	mouse	4 2
+10 What is Winona afraid of?	mouse	4 2
+11 What is Winona afraid of?	mouse	4 2
+12 What is Jessica afraid of?	cat	6 1
 1 Sheep are afraid of mice.
 2 Jessica is a sheep.
 3 Cats are afraid of mice.
@@ -2538,10 +2538,10 @@
 6 Winona is a wolf.
 7 Gertrude is a sheep.
 8 Mice are afraid of wolves.
-9 What is winona afraid of?	cat	6 4
-10 What is winona afraid of?	cat	6 4
-11 What is jessica afraid of?	mouse	2 1
-12 What is winona afraid of?	cat	6 4
+9 What is Winona afraid of?	cat	6 4
+10 What is Winona afraid of?	cat	6 4
+11 What is Jessica afraid of?	mouse	2 1
+12 What is Winona afraid of?	cat	6 4
 1 Cats are afraid of mice.
 2 Mice are afraid of cats.
 3 Jessica is a mouse.
@@ -2550,10 +2550,10 @@
 6 Gertrude is a wolf.
 7 Sheep are afraid of cats.
 8 Winona is a mouse.
-9 What is jessica afraid of?	cat	3 2
-10 What is jessica afraid of?	cat	3 2
-11 What is gertrude afraid of?	cat	6 4
-12 What is jessica afraid of?	cat	3 2
+9 What is Jessica afraid of?	cat	3 2
+10 What is Jessica afraid of?	cat	3 2
+11 What is Gertrude afraid of?	cat	6 4
+12 What is Jessica afraid of?	cat	3 2
 1 Sheep are afraid of mice.
 2 Mice are afraid of sheep.
 3 Cats are afraid of sheep.
@@ -2562,10 +2562,10 @@
 6 Wolves are afraid of mice.
 7 Emily is a wolf.
 8 Jessica is a cat.
-9 What is emily afraid of?	mouse	7 6
-10 What is winona afraid of?	sheep	4 3
-11 What is winona afraid of?	sheep	4 3
-12 What is gertrude afraid of?	sheep	5 2
+9 What is Emily afraid of?	mouse	7 6
+10 What is Winona afraid of?	sheep	4 3
+11 What is Winona afraid of?	sheep	4 3
+12 What is Gertrude afraid of?	sheep	5 2
 1 Mice are afraid of cats.
 2 Gertrude is a mouse.
 3 Sheep are afraid of wolves.
@@ -2574,10 +2574,10 @@
 6 Jessica is a sheep.
 7 Cats are afraid of sheep.
 8 Emily is a mouse.
-9 What is emily afraid of?	cat	8 1
-10 What is gertrude afraid of?	cat	2 1
-11 What is gertrude afraid of?	cat	2 1
-12 What is gertrude afraid of?	cat	2 1
+9 What is Emily afraid of?	cat	8 1
+10 What is Gertrude afraid of?	cat	2 1
+11 What is Gertrude afraid of?	cat	2 1
+12 What is Gertrude afraid of?	cat	2 1
 1 Mice are afraid of cats.
 2 Sheep are afraid of mice.
 3 Emily is a sheep.
@@ -2586,10 +2586,10 @@
 6 Gertrude is a sheep.
 7 Cats are afraid of wolves.
 8 Winona is a cat.
-9 What is winona afraid of?	wolf	8 7
-10 What is emily afraid of?	mouse	3 2
-11 What is winona afraid of?	wolf	8 7
-12 What is emily afraid of?	mouse	3 2
+9 What is Winona afraid of?	wolf	8 7
+10 What is Emily afraid of?	mouse	3 2
+11 What is Winona afraid of?	wolf	8 7
+12 What is Emily afraid of?	mouse	3 2
 1 Wolves are afraid of cats.
 2 Cats are afraid of sheep.
 3 Mice are afraid of sheep.
@@ -2598,10 +2598,10 @@
 6 Jessica is a sheep.
 7 Gertrude is a mouse.
 8 Emily is a cat.
-9 What is winona afraid of?	wolf	5 4
-10 What is gertrude afraid of?	sheep	7 3
-11 What is gertrude afraid of?	sheep	7 3
-12 What is gertrude afraid of?	sheep	7 3
+9 What is Winona afraid of?	wolf	5 4
+10 What is Gertrude afraid of?	sheep	7 3
+11 What is Gertrude afraid of?	sheep	7 3
+12 What is Gertrude afraid of?	sheep	7 3
 1 Wolves are afraid of mice.
 2 Sheep are afraid of cats.
 3 Winona is a sheep.
@@ -2610,10 +2610,10 @@
 6 Emily is a sheep.
 7 Jessica is a sheep.
 8 Mice are afraid of wolves.
-9 What is jessica afraid of?	cat	7 2
-10 What is gertrude afraid of?	cat	4 2
-11 What is gertrude afraid of?	cat	4 2
-12 What is jessica afraid of?	cat	7 2
+9 What is Jessica afraid of?	cat	7 2
+10 What is Gertrude afraid of?	cat	4 2
+11 What is Gertrude afraid of?	cat	4 2
+12 What is Jessica afraid of?	cat	7 2
 1 Sheep are afraid of wolves.
 2 Wolves are afraid of mice.
 3 Mice are afraid of wolves.
@@ -2622,10 +2622,10 @@
 6 Emily is a sheep.
 7 Jessica is a wolf.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	wolf	4 3
-10 What is emily afraid of?	wolf	6 1
-11 What is gertrude afraid of?	wolf	4 3
-12 What is emily afraid of?	wolf	6 1
+9 What is Gertrude afraid of?	wolf	4 3
+10 What is Emily afraid of?	wolf	6 1
+11 What is Gertrude afraid of?	wolf	4 3
+12 What is Emily afraid of?	wolf	6 1
 1 Mice are afraid of wolves.
 2 Cats are afraid of wolves.
 3 Jessica is a mouse.
@@ -2634,10 +2634,10 @@
 6 Gertrude is a cat.
 7 Winona is a mouse.
 8 Emily is a cat.
-9 What is winona afraid of?	wolf	7 1
-10 What is gertrude afraid of?	wolf	6 2
-11 What is jessica afraid of?	wolf	3 1
-12 What is winona afraid of?	wolf	7 1
+9 What is Winona afraid of?	wolf	7 1
+10 What is Gertrude afraid of?	wolf	6 2
+11 What is Jessica afraid of?	wolf	3 1
+12 What is Winona afraid of?	wolf	7 1
 1 Wolves are afraid of cats.
 2 Mice are afraid of sheep.
 3 Cats are afraid of mice.
@@ -2646,10 +2646,10 @@
 6 Jessica is a cat.
 7 Emily is a mouse.
 8 Winona is a mouse.
-9 What is winona afraid of?	sheep	8 2
-10 What is emily afraid of?	sheep	7 2
-11 What is jessica afraid of?	mouse	6 3
-12 What is gertrude afraid of?	cat	5 4
+9 What is Winona afraid of?	sheep	8 2
+10 What is Emily afraid of?	sheep	7 2
+11 What is Jessica afraid of?	mouse	6 3
+12 What is Gertrude afraid of?	cat	5 4
 1 Sheep are afraid of cats.
 2 Cats are afraid of mice.
 3 Wolves are afraid of mice.
@@ -2658,10 +2658,10 @@
 6 Winona is a sheep.
 7 Emily is a cat.
 8 Mice are afraid of cats.
-9 What is winona afraid of?	cat	6 1
-10 What is gertrude afraid of?	cat	5 1
-11 What is jessica afraid of?	cat	4 1
-12 What is jessica afraid of?	cat	4 1
+9 What is Winona afraid of?	cat	6 1
+10 What is Gertrude afraid of?	cat	5 1
+11 What is Jessica afraid of?	cat	4 1
+12 What is Jessica afraid of?	cat	4 1
 1 Wolves are afraid of cats.
 2 Cats are afraid of sheep.
 3 Mice are afraid of sheep.
@@ -2670,10 +2670,10 @@
 6 Sheep are afraid of mice.
 7 Gertrude is a wolf.
 8 Winona is a wolf.
-9 What is jessica afraid of?	cat	5 1
-10 What is gertrude afraid of?	cat	7 1
-11 What is gertrude afraid of?	cat	7 1
-12 What is gertrude afraid of?	cat	7 1
+9 What is Jessica afraid of?	cat	5 1
+10 What is Gertrude afraid of?	cat	7 1
+11 What is Gertrude afraid of?	cat	7 1
+12 What is Gertrude afraid of?	cat	7 1
 1 Sheep are afraid of mice.
 2 Jessica is a sheep.
 3 Cats are afraid of wolves.
@@ -2682,10 +2682,10 @@
 6 Emily is a wolf.
 7 Winona is a sheep.
 8 Mice are afraid of cats.
-9 What is gertrude afraid of?	mouse	5 1
-10 What is gertrude afraid of?	mouse	5 1
-11 What is emily afraid of?	mouse	6 4
-12 What is emily afraid of?	mouse	6 4
+9 What is Gertrude afraid of?	mouse	5 1
+10 What is Gertrude afraid of?	mouse	5 1
+11 What is Emily afraid of?	mouse	6 4
+12 What is Emily afraid of?	mouse	6 4
 1 Sheep are afraid of cats.
 2 Cats are afraid of sheep.
 3 Emily is a cat.
@@ -2694,10 +2694,10 @@
 6 Mice are afraid of cats.
 7 Wolves are afraid of mice.
 8 Jessica is a cat.
-9 What is gertrude afraid of?	sheep	5 2
-10 What is emily afraid of?	sheep	3 2
-11 What is winona afraid of?	sheep	4 2
-12 What is jessica afraid of?	sheep	8 2
+9 What is Gertrude afraid of?	sheep	5 2
+10 What is Emily afraid of?	sheep	3 2
+11 What is Winona afraid of?	sheep	4 2
+12 What is Jessica afraid of?	sheep	8 2
 1 Mice are afraid of sheep.
 2 Sheep are afraid of cats.
 3 Wolves are afraid of cats.
@@ -2706,10 +2706,10 @@
 6 Winona is a mouse.
 7 Cats are afraid of sheep.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	cat	4 2
-10 What is emily afraid of?	cat	4 2
-11 What is gertrude afraid of?	sheep	8 1
-12 What is jessica afraid of?	cat	5 2
+9 What is Emily afraid of?	cat	4 2
+10 What is Emily afraid of?	cat	4 2
+11 What is Gertrude afraid of?	sheep	8 1
+12 What is Jessica afraid of?	cat	5 2
 1 Sheep are afraid of wolves.
 2 Wolves are afraid of mice.
 3 Emily is a sheep.
@@ -2718,10 +2718,10 @@
 6 Winona is a sheep.
 7 Mice are afraid of sheep.
 8 Gertrude is a wolf.
-9 What is gertrude afraid of?	mouse	8 2
-10 What is jessica afraid of?	mouse	5 2
-11 What is jessica afraid of?	mouse	5 2
-12 What is emily afraid of?	wolf	3 1
+9 What is Gertrude afraid of?	mouse	8 2
+10 What is Jessica afraid of?	mouse	5 2
+11 What is Jessica afraid of?	mouse	5 2
+12 What is Emily afraid of?	wolf	3 1
 1 Mice are afraid of cats.
 2 Sheep are afraid of cats.
 3 Emily is a sheep.
@@ -2730,10 +2730,10 @@
 6 Gertrude is a cat.
 7 Jessica is a mouse.
 8 Winona is a cat.
-9 What is winona afraid of?	sheep	8 5
-10 What is gertrude afraid of?	sheep	6 5
-11 What is gertrude afraid of?	sheep	6 5
-12 What is emily afraid of?	cat	3 2
+9 What is Winona afraid of?	sheep	8 5
+10 What is Gertrude afraid of?	sheep	6 5
+11 What is Gertrude afraid of?	sheep	6 5
+12 What is Emily afraid of?	cat	3 2
 1 Wolves are afraid of mice.
 2 Mice are afraid of wolves.
 3 Cats are afraid of wolves.
@@ -2742,10 +2742,10 @@
 6 Jessica is a cat.
 7 Sheep are afraid of cats.
 8 Winona is a mouse.
-9 What is gertrude afraid of?	wolf	5 3
-10 What is winona afraid of?	wolf	8 2
-11 What is emily afraid of?	mouse	4 1
-12 What is winona afraid of?	wolf	8 2
+9 What is Gertrude afraid of?	wolf	5 3
+10 What is Winona afraid of?	wolf	8 2
+11 What is Emily afraid of?	mouse	4 1
+12 What is Winona afraid of?	wolf	8 2
 1 Cats are afraid of sheep.
 2 Sheep are afraid of mice.
 3 Wolves are afraid of sheep.
@@ -2754,10 +2754,10 @@
 6 Emily is a sheep.
 7 Gertrude is a cat.
 8 Mice are afraid of cats.
-9 What is emily afraid of?	mouse	6 2
-10 What is jessica afraid of?	sheep	4 3
-11 What is jessica afraid of?	sheep	4 3
-12 What is gertrude afraid of?	sheep	7 1
+9 What is Emily afraid of?	mouse	6 2
+10 What is Jessica afraid of?	sheep	4 3
+11 What is Jessica afraid of?	sheep	4 3
+12 What is Gertrude afraid of?	sheep	7 1
 1 Mice are afraid of cats.
 2 Wolves are afraid of cats.
 3 Cats are afraid of wolves.
@@ -2766,10 +2766,10 @@
 6 Emily is a cat.
 7 Winona is a cat.
 8 Gertrude is a cat.
-9 What is gertrude afraid of?	wolf	8 3
-10 What is gertrude afraid of?	wolf	8 3
-11 What is emily afraid of?	wolf	6 3
-12 What is jessica afraid of?	cat	5 2
+9 What is Gertrude afraid of?	wolf	8 3
+10 What is Gertrude afraid of?	wolf	8 3
+11 What is Emily afraid of?	wolf	6 3
+12 What is Jessica afraid of?	cat	5 2
 1 Wolves are afraid of mice.
 2 Sheep are afraid of mice.
 3 Gertrude is a wolf.
@@ -2778,10 +2778,10 @@
 6 Jessica is a sheep.
 7 Emily is a cat.
 8 Mice are afraid of cats.
-9 What is emily afraid of?	wolf	7 5
-10 What is emily afraid of?	wolf	7 5
-11 What is jessica afraid of?	mouse	6 2
-12 What is winona afraid of?	mouse	4 1
+9 What is Emily afraid of?	wolf	7 5
+10 What is Emily afraid of?	wolf	7 5
+11 What is Jessica afraid of?	mouse	6 2
+12 What is Winona afraid of?	mouse	4 1
 1 Sheep are afraid of cats.
 2 Mice are afraid of sheep.
 3 Jessica is a mouse.
@@ -2790,10 +2790,10 @@
 6 Cats are afraid of mice.
 7 Emily is a cat.
 8 Gertrude is a wolf.
-9 What is winona afraid of?	cat	5 4
-10 What is emily afraid of?	mouse	7 6
-11 What is emily afraid of?	mouse	7 6
-12 What is gertrude afraid of?	cat	8 4
+9 What is Winona afraid of?	cat	5 4
+10 What is Emily afraid of?	mouse	7 6
+11 What is Emily afraid of?	mouse	7 6
+12 What is Gertrude afraid of?	cat	8 4
 1 Cats are afraid of wolves.
 2 Gertrude is a cat.
 3 Wolves are afraid of mice.
@@ -2802,10 +2802,10 @@
 6 Winona is a sheep.
 7 Emily is a sheep.
 8 Jessica is a sheep.
-9 What is winona afraid of?	wolf	6 4
-10 What is emily afraid of?	wolf	7 4
-11 What is jessica afraid of?	wolf	8 4
-12 What is emily afraid of?	wolf	7 4
+9 What is Winona afraid of?	wolf	6 4
+10 What is Emily afraid of?	wolf	7 4
+11 What is Jessica afraid of?	wolf	8 4
+12 What is Emily afraid of?	wolf	7 4
 1 Mice are afraid of wolves.
 2 Wolves are afraid of cats.
 3 Cats are afraid of mice.
@@ -2814,10 +2814,10 @@
 6 Winona is a cat.
 7 Jessica is a sheep.
 8 Gertrude is a cat.
-9 What is emily afraid of?	cat	4 2
-10 What is emily afraid of?	cat	4 2
-11 What is jessica afraid of?	cat	7 5
-12 What is emily afraid of?	cat	4 2
+9 What is Emily afraid of?	cat	4 2
+10 What is Emily afraid of?	cat	4 2
+11 What is Jessica afraid of?	cat	7 5
+12 What is Emily afraid of?	cat	4 2
 1 Cats are afraid of wolves.
 2 Gertrude is a cat.
 3 Sheep are afraid of cats.
@@ -2826,10 +2826,10 @@
 6 Mice are afraid of wolves.
 7 Wolves are afraid of mice.
 8 Winona is a cat.
-9 What is gertrude afraid of?	wolf	2 1
-10 What is jessica afraid of?	cat	4 3
-11 What is jessica afraid of?	cat	4 3
-12 What is gertrude afraid of?	wolf	2 1
+9 What is Gertrude afraid of?	wolf	2 1
+10 What is Jessica afraid of?	cat	4 3
+11 What is Jessica afraid of?	cat	4 3
+12 What is Gertrude afraid of?	wolf	2 1
 1 Cats are afraid of wolves.
 2 Jessica is a cat.
 3 Wolves are afraid of mice.
@@ -2838,10 +2838,10 @@
 6 Emily is a mouse.
 7 Gertrude is a sheep.
 8 Winona is a mouse.
-9 What is emily afraid of?	wolf	6 4
-10 What is winona afraid of?	wolf	8 4
-11 What is emily afraid of?	wolf	6 4
-12 What is winona afraid of?	wolf	8 4
+9 What is Emily afraid of?	wolf	6 4
+10 What is Winona afraid of?	wolf	8 4
+11 What is Emily afraid of?	wolf	6 4
+12 What is Winona afraid of?	wolf	8 4
 1 Mice are afraid of wolves.
 2 Sheep are afraid of mice.
 3 Gertrude is a mouse.
@@ -2850,10 +2850,10 @@
 6 Jessica is a sheep.
 7 Wolves are afraid of cats.
 8 Emily is a wolf.
-9 What is emily afraid of?	cat	8 7
-10 What is jessica afraid of?	mouse	6 2
-11 What is emily afraid of?	cat	8 7
-12 What is emily afraid of?	cat	8 7
+9 What is Emily afraid of?	cat	8 7
+10 What is Jessica afraid of?	mouse	6 2
+11 What is Emily afraid of?	cat	8 7
+12 What is Emily afraid of?	cat	8 7
 1 Wolves are afraid of cats.
 2 Jessica is a wolf.
 3 Emily is a wolf.
@@ -2862,10 +2862,10 @@
 6 Winona is a wolf.
 7 Cats are afraid of mice.
 8 Mice are afraid of sheep.
-9 What is emily afraid of?	cat	3 1
-10 What is winona afraid of?	cat	6 1
-11 What is gertrude afraid of?	cat	4 1
-12 What is gertrude afraid of?	cat	4 1
+9 What is Emily afraid of?	cat	3 1
+10 What is Winona afraid of?	cat	6 1
+11 What is Gertrude afraid of?	cat	4 1
+12 What is Gertrude afraid of?	cat	4 1
 1 Mice are afraid of cats.
 2 Jessica is a mouse.
 3 Sheep are afraid of cats.
@@ -2874,10 +2874,10 @@
 6 Cats are afraid of sheep.
 7 Emily is a sheep.
 8 Gertrude is a mouse.
-9 What is gertrude afraid of?	cat	8 1
-10 What is winona afraid of?	cat	4 3
-11 What is emily afraid of?	cat	7 3
-12 What is gertrude afraid of?	cat	8 1
+9 What is Gertrude afraid of?	cat	8 1
+10 What is Winona afraid of?	cat	4 3
+11 What is Emily afraid of?	cat	7 3
+12 What is Gertrude afraid of?	cat	8 1
 1 Sheep are afraid of mice.
 2 Winona is a sheep.
 3 Mice are afraid of cats.
@@ -2886,10 +2886,10 @@
 6 Wolves are afraid of cats.
 7 Gertrude is a mouse.
 8 Jessica is a wolf.
-9 What is winona afraid of?	mouse	2 1
-10 What is gertrude afraid of?	cat	7 3
-11 What is emily afraid of?	cat	4 3
-12 What is jessica afraid of?	cat	8 6
+9 What is Winona afraid of?	mouse	2 1
+10 What is Gertrude afraid of?	cat	7 3
+11 What is Emily afraid of?	cat	4 3
+12 What is Jessica afraid of?	cat	8 6
 1 Wolves are afraid of sheep.
 2 Sheep are afraid of cats.
 3 Jessica is a wolf.
@@ -2898,10 +2898,10 @@
 6 Gertrude is a wolf.
 7 Winona is a cat.
 8 Mice are afraid of wolves.
-9 What is emily afraid of?	sheep	4 1
-10 What is gertrude afraid of?	sheep	6 1
-11 What is winona afraid of?	mouse	7 5
-12 What is winona afraid of?	mouse	7 5
+9 What is Emily afraid of?	sheep	4 1
+10 What is Gertrude afraid of?	sheep	6 1
+11 What is Winona afraid of?	mouse	7 5
+12 What is Winona afraid of?	mouse	7 5
 1 Mice are afraid of sheep.
 2 Sheep are afraid of wolves.
 3 Emily is a sheep.
@@ -2910,10 +2910,10 @@
 6 Gertrude is a mouse.
 7 Wolves are afraid of mice.
 8 Winona is a cat.
-9 What is winona afraid of?	mouse	8 4
-10 What is gertrude afraid of?	sheep	6 1
-11 What is winona afraid of?	mouse	8 4
-12 What is gertrude afraid of?	sheep	6 1
+9 What is Winona afraid of?	mouse	8 4
+10 What is Gertrude afraid of?	sheep	6 1
+11 What is Winona afraid of?	mouse	8 4
+12 What is Gertrude afraid of?	sheep	6 1
 1 Wolves are afraid of mice.
 2 Cats are afraid of sheep.
 3 Sheep are afraid of wolves.
@@ -2922,10 +2922,10 @@
 6 Emily is a sheep.
 7 Winona is a cat.
 8 Gertrude is a mouse.
-9 What is emily afraid of?	wolf	6 3
-10 What is winona afraid of?	sheep	7 2
-11 What is jessica afraid of?	sheep	4 2
-12 What is emily afraid of?	wolf	6 3
+9 What is Emily afraid of?	wolf	6 3
+10 What is Winona afraid of?	sheep	7 2
+11 What is Jessica afraid of?	sheep	4 2
+12 What is Emily afraid of?	wolf	6 3
 1 Sheep are afraid of cats.
 2 Cats are afraid of sheep.
 3 Jessica is a sheep.
@@ -2934,10 +2934,10 @@
 6 Wolves are afraid of sheep.
 7 Emily is a wolf.
 8 Winona is a cat.
-9 What is winona afraid of?	sheep	8 2
-10 What is gertrude afraid of?	cat	4 1
-11 What is winona afraid of?	sheep	8 2
-12 What is emily afraid of?	sheep	7 6
+9 What is Winona afraid of?	sheep	8 2
+10 What is Gertrude afraid of?	cat	4 1
+11 What is Winona afraid of?	sheep	8 2
+12 What is Emily afraid of?	sheep	7 6
 1 Cats are afraid of mice.
 2 Wolves are afraid of sheep.
 3 Winona is a wolf.
@@ -2946,10 +2946,10 @@
 6 Mice are afraid of cats.
 7 Gertrude is a cat.
 8 Emily is a mouse.
-9 What is gertrude afraid of?	mouse	7 1
-10 What is jessica afraid of?	mouse	5 1
-11 What is jessica afraid of?	mouse	5 1
-12 What is jessica afraid of?	mouse	5 1
+9 What is Gertrude afraid of?	mouse	7 1
+10 What is Jessica afraid of?	mouse	5 1
+11 What is Jessica afraid of?	mouse	5 1
+12 What is Jessica afraid of?	mouse	5 1
 1 Cats are afraid of sheep.
 2 Sheep are afraid of mice.
 3 Wolves are afraid of sheep.
@@ -2958,10 +2958,10 @@
 6 Emily is a sheep.
 7 Jessica is a cat.
 8 Mice are afraid of cats.
-9 What is winona afraid of?	sheep	5 1
-10 What is jessica afraid of?	sheep	7 1
-11 What is gertrude afraid of?	sheep	4 1
-12 What is emily afraid of?	mouse	6 2
+9 What is Winona afraid of?	sheep	5 1
+10 What is Jessica afraid of?	sheep	7 1
+11 What is Gertrude afraid of?	sheep	4 1
+12 What is Emily afraid of?	mouse	6 2
 1 Mice are afraid of cats.
 2 Cats are afraid of sheep.
 3 Sheep are afraid of wolves.
@@ -2970,10 +2970,10 @@
 6 Jessica is a mouse.
 7 Wolves are afraid of sheep.
 8 Gertrude is a wolf.
-9 What is gertrude afraid of?	sheep	8 7
-10 What is gertrude afraid of?	sheep	8 7
-11 What is emily afraid of?	sheep	5 2
-12 What is jessica afraid of?	cat	6 1
+9 What is Gertrude afraid of?	sheep	8 7
+10 What is Gertrude afraid of?	sheep	8 7
+11 What is Emily afraid of?	sheep	5 2
+12 What is Jessica afraid of?	cat	6 1
 1 Cats are afraid of sheep.
 2 Mice are afraid of cats.
 3 Gertrude is a cat.
@@ -2982,10 +2982,10 @@
 6 Jessica is a wolf.
 7 Emily is a sheep.
 8 Winona is a mouse.
-9 What is jessica afraid of?	mouse	6 5
-10 What is jessica afraid of?	mouse	6 5
-11 What is emily afraid of?	wolf	7 4
-12 What is emily afraid of?	wolf	7 4
+9 What is Jessica afraid of?	mouse	6 5
+10 What is Jessica afraid of?	mouse	6 5
+11 What is Emily afraid of?	wolf	7 4
+12 What is Emily afraid of?	wolf	7 4
 1 Wolves are afraid of cats.
 2 Sheep are afraid of mice.
 3 Mice are afraid of wolves.
@@ -2994,7 +2994,7 @@
 6 Emily is a wolf.
 7 Jessica is a mouse.
 8 Winona is a wolf.
-9 What is gertrude afraid of?	mouse	5 2
-10 What is gertrude afraid of?	mouse	5 2
-11 What is winona afraid of?	cat	8 1
-12 What is emily afraid of?	cat	6 1
+9 What is Gertrude afraid of?	mouse	5 2
+10 What is Gertrude afraid of?	mouse	5 2
+11 What is Winona afraid of?	cat	8 1
+12 What is Emily afraid of?	cat	6 1
