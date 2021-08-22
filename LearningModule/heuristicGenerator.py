@@ -4,12 +4,9 @@ class HeuristicGenerator:
 
     def maximumNumberOfVariables(self):
         if self.corpus.isEventCalculusNeeded:
-            numNeeded = 4
+            return 4
         else:
-            numNeeded = 3
-        if self.hasMBFluentWithMoreThan2NonConstArguments():
-            numNeeded += 1
-        return numNeeded
+            return 3
 
     def hasMBFluentWithMoreThan2NonConstArguments(self):
         for rule in self.corpus.nonECModeBias:
