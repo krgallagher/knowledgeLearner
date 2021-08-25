@@ -1,5 +1,4 @@
 import os
-
 from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure import Statement
 from StoryStructure.Corpus import Corpus
@@ -10,7 +9,8 @@ from TranslationalModule.DatasetParser import DatasetParser
 from Utilities.ILASPSyntax import createTimeRange
 
 
-def createExpressivityConstraint(sentence: Statement, questionWithAnswers):
+def createExpressivityConstraint(sentence: Question):
+    questionWithAnswers = sentence.getQuestionWithAnswers()
     constraint = ":- "
     for predicate in questionWithAnswers:
         if questionWithAnswers.index(predicate) != 0:
@@ -25,13 +25,17 @@ def createExpressivityConstraint(sentence: Statement, questionWithAnswers):
 
 def createYesNoMaybeRule(question: Question):
     if "yes" in question.getAnswer():
-        return question.getEventCalculusRepresentation()[0][0]
-    else:
+        return ":- not " + question.getEventCalculusRepresentation()[0][0]
+    if "no" in question.getAnswer():
         return ":- " + question.getEventCalculusRepresentation()[0][0]
+    else:
+        return question.getEventCalculusRepresentation()[0][0]
 
 
-def createChoiceRule(fluents):
+def createChoiceRule(fluents, statement, eventCalculusUsage=False):
     if len(fluents) == 1:
+        if statement.negatedVerb and not eventCalculusUsage:
+            return ":- " + fluents[0]
         return fluents[0]
     rule = "1{"
     for fluent in fluents:
@@ -42,46 +46,69 @@ def createChoiceRule(fluents):
     return rule
 
 
-def createExpressivityClingoFile(story: Story, corpus: Corpus, filename='/tmp/ClingoFile.lp' ):
+def createExpressivityFile(story: Story, corpus: Corpus, filename='/tmp/ILASPExpressivityFile.las'):
     file = open(filename, 'w')
-
     for rule in corpus.backgroundKnowledge:
         file.write(rule)
         file.write('\n')
+    inclusionOrExclusion = []
+    context = []
     for sentence in story:
         representation = sentence.getEventCalculusRepresentation()
         if isinstance(sentence, Question):
-            if sentence.answer:
-                if sentence.isYesNoMaybeQuestion():
-                    rule = createYesNoMaybeRule(sentence)
-                    file.write(rule)
-                    file.write('.\n')
+            if sentence.isYesNoMaybeQuestion():
+                rule = createYesNoMaybeRule(sentence)
+                if "yes" in sentence.getAnswer() or "no" in sentence.getAnswer():
+                    context.append(rule)
                 else:
-                    questionWithAnswers = sentence.getQuestionWithAnswers()
-                    for predicate in questionWithAnswers:
-                        file.write(predicate)
-                        file.write('.\n')
-                    expressivityConstraint = createExpressivityConstraint(sentence, questionWithAnswers)
-                    file.write(expressivityConstraint)
-                    file.write('.\n')
-
+                    inclusionOrExclusion.append(rule)
+            else:
+                questionWithAnswers = sentence.getQuestionWithAnswers()
+                for predicate in questionWithAnswers:
+                    context.append(predicate)
+                expressivityConstraint = createExpressivityConstraint(sentence)
+                context.append(expressivityConstraint)
         else:
             for i in range(0, len(representation)):
-                choiceRule = createChoiceRule(representation[i])
-                file.write(choiceRule)
-                file.write('.\n')
-
-    file.write(createTimeRange(len(story)))
-    file.write('.\n')
+                choiceRule = createChoiceRule(representation[i], sentence, eventCalculusUsage=True)
+                context.append(choiceRule)
+    context.append(createTimeRange(len(story)))
+    if not inclusionOrExclusion:
+        file.write(createPositiveExample([], [], context))
+        return filename
+    for element in inclusionOrExclusion:
+        file.write(createPositiveExample([element], [], context))
+        file.write(createPositiveExample([], [element], context))
     return filename
+
+
+def createPositiveExample(inclusionList, exclusionList, contextList):
+    inclusion = ""
+    for element in inclusionList:
+        if inclusion:
+            inclusion += ","
+        inclusion += element
+    exclusion = ""
+    for element in exclusionList:
+        if exclusion:
+            exclusion += ","
+        exclusion += element
+    context = ""
+    for element in contextList:
+        if context:
+            context += ".\n"
+        context += element
+    if context:
+        context += ".\n"
+    return "#pos({" + inclusion + "},{" + exclusion + "},{" + context + "}).\n"
 
 
 def isUnsatisfiable(output):
     return "UNSATISFIABLE" in output
 
 
-def runClingo(filename):
-    command = "Clingo -W none -n 0 " + filename
+def runILASP(filename):
+    command = "ILASP --version=4 " + filename
     output = os.popen(command).read()
     return output
 
@@ -94,22 +121,19 @@ def isEventCalculusNeeded(corpus: Corpus):
                 if semanticNetwork.hasTemporalAspect(rule.split(',')[1].split(')')[0]):
                     return False
     for story in corpus:
-        filename = createExpressivityClingoFile(story, corpus)
-
-        answerSets = runClingo(filename)
-
+        filename = createExpressivityFile(story, corpus)
+        answerSets = runILASP(filename)
         if isUnsatisfiable(answerSets):
             os.remove(filename)
             return True
-
         os.remove(filename)
     return False
 
 
 if __name__ == "__main__":
-    trainingSet = "../en/qa" + "16" + "_train.txt"
-    testingSet = "../en/qa" + "16" + "_test.txt"
-    train = bAbIReader(trainingSet)
-    test = bAbIReader(testingSet)
-    DatasetParser(train, test)
-    print(isEventCalculusNeeded(train))
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task10_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task10_test"
+    trainCorpus = bAbIReader(trainingSet)
+    testCorpus = bAbIReader(testingSet)
+    DatasetParser(trainCorpus, testCorpus, useSupervision=False)
+    print(isEventCalculusNeeded(trainCorpus))
