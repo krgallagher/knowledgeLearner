@@ -1,6 +1,5 @@
 import os
 from DatasetReader.bAbIReader import bAbIReader
-from StoryStructure import Statement
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
@@ -24,12 +23,13 @@ def createExpressivityConstraint(sentence: Question):
 
 
 def createYesNoMaybeRule(question: Question):
+    representation = question.getEventCalculusRepresentation()[0][0]
     if "yes" in question.getAnswer():
-        return ":- not " + question.getEventCalculusRepresentation()[0][0]
+        return ":- not " + representation
     if "no" in question.getAnswer():
-        return ":- " + question.getEventCalculusRepresentation()[0][0]
+        return ":- " + representation
     else:
-        return question.getEventCalculusRepresentation()[0][0]
+        return representation
 
 
 def createChoiceRule(fluents, statement, eventCalculusUsage=False):
@@ -52,55 +52,49 @@ def createExpressivityFile(story: Story, corpus: Corpus, filename='/tmp/ILASPExp
         file.write(rule)
         file.write('\n')
     inclusionOrExclusion = []
-    context = []
     for sentence in story:
         representation = sentence.getEventCalculusRepresentation()
         if isinstance(sentence, Question):
             if sentence.isYesNoMaybeQuestion():
                 rule = createYesNoMaybeRule(sentence)
-                if "yes" in sentence.getAnswer() or "no" in sentence.getAnswer():
-                    context.append(rule)
+                if "yes" in sentence.getAnswer():
+                    file.write(rule)
+                    file.write('.\n')
+                    file.write(sentence.getEventCalculusRepresentation()[0][0])
+                    file.write('.\n')
+                elif "no" in sentence.getAnswer():
+                    file.write(rule)
+                    file.write('.\n')
                 else:
+                    file.write("0{" + sentence.getEventCalculusRepresentation()[0][0] + "}1")
+                    file.write('.\n')
                     inclusionOrExclusion.append(rule)
             else:
                 questionWithAnswers = sentence.getQuestionWithAnswers()
                 for predicate in questionWithAnswers:
-                    context.append(predicate)
+                    file.write(predicate)
+                    file.write('.\n')
                 expressivityConstraint = createExpressivityConstraint(sentence)
-                context.append(expressivityConstraint)
+                file.write(expressivityConstraint)
+                file.write('.\n')
         else:
             for i in range(0, len(representation)):
                 choiceRule = createChoiceRule(representation[i], sentence, eventCalculusUsage=True)
-                context.append(choiceRule)
-    context.append(createTimeRange(len(story)))
+                file.write(choiceRule)
+                file.write('.\n')
+    file.write(createTimeRange(len(story)))
+    file.write('.\n')
     if not inclusionOrExclusion:
-        file.write(createPositiveExample([], [], context))
+        file.write(createPositiveExample())
         return filename
     for element in inclusionOrExclusion:
-        file.write(createPositiveExample([element], [], context))
-        file.write(createPositiveExample([], [element], context))
+        file.write(createPositiveExample(inclusion=element))
+        file.write(createPositiveExample(exclusion=element))
     return filename
 
 
-def createPositiveExample(inclusionList, exclusionList, contextList):
-    inclusion = ""
-    for element in inclusionList:
-        if inclusion:
-            inclusion += ","
-        inclusion += element
-    exclusion = ""
-    for element in exclusionList:
-        if exclusion:
-            exclusion += ","
-        exclusion += element
-    context = ""
-    for element in contextList:
-        if context:
-            context += ".\n"
-        context += element
-    if context:
-        context += ".\n"
-    return "#pos({" + inclusion + "},{" + exclusion + "},{" + context + "}).\n"
+def createPositiveExample(inclusion="", exclusion=""):
+    return "#pos({" + inclusion + "},{" + exclusion + "},{" + "}).\n"
 
 
 def isUnsatisfiable(output):
@@ -122,6 +116,9 @@ def isEventCalculusNeeded(corpus: Corpus):
                     return False
     for story in corpus:
         filename = createExpressivityFile(story, corpus)
+        file = open(filename, 'r')
+        for line in file:
+            print(line)
         answerSets = runILASP(filename)
         if isUnsatisfiable(answerSets):
             os.remove(filename)
@@ -131,8 +128,8 @@ def isEventCalculusNeeded(corpus: Corpus):
 
 
 if __name__ == "__main__":
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task10_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task10_test"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
     trainCorpus = bAbIReader(trainingSet)
     testCorpus = bAbIReader(testingSet)
     DatasetParser(trainCorpus, testCorpus, useSupervision=False)
