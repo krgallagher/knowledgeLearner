@@ -83,7 +83,7 @@ class ModeBiasGenerator:
             for bias in nonECModeBiasCopy:
                 bias = bias.replace("nnp", "nn")
                 self.corpus.nonECModeBias.add(bias)
-            ECModeBiasCopy = self.corpus.nonECModeBias.copy()
+            ECModeBiasCopy = self.corpus.ECModeBias.copy()
             self.corpus.ECModeBias = set()
             for bias in ECModeBiasCopy:
                 bias = bias.replace("nnp", "nn")
@@ -95,6 +95,7 @@ class ModeBiasGenerator:
             nonECBias, ECBias = self.generateBeAndQuestionBias("fluent2(var(nnp),var(nn))")
             self.corpus.nonECModeBias.update(nonECBias)
             self.corpus.ECModeBias.update(ECBias)
+
 
 
     def assembleModeBias(self):

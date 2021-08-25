@@ -5,7 +5,6 @@ class ConceptNetIntegration:
     def __init__(self):
         self.baseAddress = 'http://api.conceptnet.io/'
         self.synonymQuery = 'query?rel=/r/Synonym&start=/c/en/'
-        self.mannerOfQuery = 'query?rel=/r/MannerOf&start=/c/en/'
         self.synonym = 'query?rel=/r/Synonym'
         self.isArelation = 'query?rel=/r/IsA'
         self.mannerOf = 'query?rel=/r/MannerOf'
@@ -15,7 +14,7 @@ class ConceptNetIntegration:
         self.node = '&node=/c/en/'
         self.other = '&other=/c/en/'
 
-    def synonymFinder(self, concepts):
+    def similarPredicateFinder(self, concepts):
         conceptsCopy = concepts.copy()
         currentDictionary = {}
         for concept in concepts:
@@ -27,7 +26,6 @@ class ConceptNetIntegration:
                         currentDictionary[concept] = value
                         conceptsCopy.discard(concept)
                         break
-
             if concept in conceptsCopy:
                 for key in keys:
                     if self.isSynonym(concept, key):
@@ -41,19 +39,20 @@ class ConceptNetIntegration:
                         conceptsCopy.discard(concept)
                         break
         for concept in conceptsCopy:
-            self.isMannerOf(concept, currentDictionary)
+            for concept2 in currentDictionary.keys():
+                if self.isMannerOf(concept, concept2):
+                    currentDictionary[concept] = currentDictionary[concept2]
+                    break
         return currentDictionary
 
-    def isMannerOf(self, word, currentDictionary):
-        node = self.start + word
-        query = self.baseAddress + self.mannerOf + node
+    def isMannerOf(self, concept1, concept2):
+        node1 = self.start + concept1
+        node2 = self.end + concept2
+        query = self.baseAddress + self.mannerOf + node1 + node2
         obj = requests.get(query).json()
-        for edge in obj['edges']:
-            end = edge["end"]
-            for concept in currentDictionary.keys():
-                if end["label"].replace(" ", "_") == concept:
-                    currentDictionary[word] = currentDictionary[concept]
-                    return
+        if obj['edges']:
+            return True
+        return False
 
     def isSynonym(self, word1, word2):
         root1 = word1.split('_')[0]
@@ -77,7 +76,6 @@ class ConceptNetIntegration:
                 return True
         return False
 
-    # TODO refactor to
     def hasTemporalAspect(self, word):
         query = self.baseAddress + self.isArelation + self.start + word
         obj = requests.get(query).json()

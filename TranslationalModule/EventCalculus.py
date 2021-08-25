@@ -1,19 +1,24 @@
 from StoryStructure.Question import Question
 from StoryStructure.Statement import Statement
 
+
 def holdsAt(fluent, time):
     return "holdsAt(" + fluent + "," + str(time) + ")"
+
 
 def happensAt(fluent, time):
     return "happensAt(" + fluent + "," + str(time) + ")"
 
+
 def initiatedAt(fluent, time):
     return "initiatedAt(" + fluent + "," + str(time) + ")"
+
 
 def terminatedAt(fluent, time):
     return "terminatedAt(" + fluent + "," + str(time) + ")"
 
-#TODO fix so that it doesn't rely on there being one argument for the predicate.
+
+# TODO fix so that it doesn't rely on there being one argument for the predicate.
 def wrap(statement: Statement):
     fluents = statement.getFluents()
     eventCalculusPredicates = []

@@ -12,7 +12,8 @@ from TranslationalModule.ExpressivityChecker import isEventCalculusNeeded
 MAX_EXAMPLES = 1000
 
 
-def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervision=False):
+def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervision=False,
+                 useExpressivityChecker=(True, None)):
     startTime = time.time()
 
     if numExamples < MAX_EXAMPLES:
@@ -25,12 +26,14 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
 
     learner = Learner(trainCorpus, useSupervision=useSupervision)
 
-    trainCorpus.isEventCalculusNeeded = isEventCalculusNeeded(trainCorpus)
+    if useExpressivityChecker[0]:
+        trainCorpus.isEventCalculusNeeded = isEventCalculusNeeded(trainCorpus)
+    else:
+        trainCorpus.isEventCalculusNeeded = useExpressivityChecker[1]
 
     trainCorpus.choiceRulesPresent = choiceRulesPresent(trainCorpus)
 
     train(trainCorpus, reasoner, learner, useSupervision)
-
     learningTime = time.time()
 
     numQuestions = 0
@@ -43,11 +46,12 @@ def mainPipeline(trainCorpus, testCorpus, numExamples=MAX_EXAMPLES, useSupervisi
                 answerToQuestion = reasoner.computeAnswer(sentence, story)
                 if sentence.isCorrectAnswer(answerToQuestion):
                     numCorrect += 1
-                #print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
+                # print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
                 #      sentence.getAnswer(), answerToQuestion, sentence.getHints())
     print("Hypotheses: ", trainCorpus.getHypotheses())
-    print("Parsing Time: ", parseEndTime - startTime)
-    print("Learning Time: ", learningTime - parseEndTime)
+    # print("Parsing Time: ", parseEndTime - startTime)
+    # print("Learning Time: ", learningTime - parseEndTime)
+    # print("Accuracy: ", numCorrect/numQuestions)
     return numCorrect / numQuestions, parseEndTime - startTime, learningTime - parseEndTime
 
 
@@ -58,16 +62,16 @@ def train(corpus, reasoner, learner, useSupervision):
         for sentence in story:
             if isinstance(sentence, Question):
                 answerToQuestion = reasoner.computeAnswer(sentence, story)
-                #print(sentence.text, sentence.answer, answerToQuestion)
+                # print(sentence.text, sentence.answer, answerToQuestion)
                 if not sentence.isCorrectAnswer(answerToQuestion):
                     learner.learn(sentence, story, answerToQuestion)
 
 
 if __name__ == '__main__':
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task10_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task10_test"
-    trainingSet = "../en/qa" + "10" + "_train.txt"
-    testingSet = "../en/qa" + "10" + "_test.txt"
+    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_train"
+    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task20_test"
+    # trainingSet = "../en/qa" + "15" + "_train.txt"
+    # testingSet = "../en/qa" + "15" + "_test.txt"
     trainingCorpus = bAbIReader(trainingSet)
     testingCorpus = bAbIReader(testingSet)
-    mainPipeline(trainingCorpus, testingCorpus, useSupervision=False)
+    mainPipeline(trainingCorpus, testingCorpus, useSupervision=False, useExpressivityChecker=(False, True))

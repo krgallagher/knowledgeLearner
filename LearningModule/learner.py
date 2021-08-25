@@ -140,8 +140,8 @@ class Learner:
         ECRepresentation = statement.getEventCalculusRepresentation()
         nonECRepresentation = statement.getFluents()
         for i in range(0, len(ECRepresentation)):
-            ECRule = createChoiceRule(ECRepresentation[i])
-            nonECRule = createChoiceRule(nonECRepresentation[i])
+            ECRule = createChoiceRule(ECRepresentation[i], statement, eventCalculusUsage=True)
+            nonECRule = createChoiceRule(nonECRepresentation[i], statement, eventCalculusUsage=False)
             if nonECContext[-1] != '{' and nonECContext[-1] != '\n':
                 nonECContext += '.\n'
                 ECContext += '.\n'

@@ -39,11 +39,10 @@ class DatasetParser(BasicParser):
             for sentence in story:
                 if not isinstance(sentence, Question):
                     self.parse(sentence)
-        self.synonymDictionary.update(self.conceptNet.synonymFinder(self.conceptsToExplore))
+
+        self.synonymDictionary.update(self.conceptNet.similarPredicateFinder(self.conceptsToExplore))
         self.updateFluents()
         self.setEventCalculusRepresentation()
-        #self.assembleModeBias()
-        #self.checkAndReassembleModeBias()
 
 
     def coreferenceFinder(self, statement: Statement, story: Story):
@@ -72,14 +71,15 @@ class DatasetParser(BasicParser):
 
 
 if __name__ == '__main__':
-    trainingSet = "../en/qa" + "10" + "_train.txt"
-    testingSet = "../en/qa" + "10" + "_test.txt"
+    trainingSet = "../en/qa" + "8" + "_train.txt"
+    testingSet = "../en/qa" + "8" + "_test.txt"
 
     trainCorpus1 = bAbIReader(trainingSet)
     testCorpus1 = bAbIReader(testingSet)
 
     parser = DatasetParser(trainCorpus1, testCorpus1)
 
+    '''
     for story1 in trainCorpus1:
         for sentence1 in story1:
             print(sentence1.getText(), sentence1.getLineID(), sentence1.getFluents(),
@@ -95,3 +95,4 @@ if __name__ == '__main__':
                   sentence1.constantModeBias)
             if isinstance(sentence1, Question):
                 print(sentence1.getModeBiasFluents(), sentence1.getAnswer())
+    '''

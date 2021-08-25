@@ -21,7 +21,7 @@ def isDisjunctive(noun, statement: Statement):
     return "or" in conjunctives
 
 
-def hasDetChild(token):
+def hasWHDeterminerChild(token):
     for child in token.children:
         if child.tag_ == "WDT":
             return True
@@ -82,23 +82,23 @@ class BasicParser:
         if negation:
             statement.negatedVerb = True
 
+        predicate = self.createPredicate(usedTokens, statement)
+
+        fluent = predicate + "("
+        statement.setFluents([[fluent]])
+        statement.setModeBiasFluents([[fluent]])
+
+        if predicate.split('_')[0] != 'be':
+            if isinstance(statement, Question):
+                if len(predicate.split('_')) > 1:
+                    self.conceptsToExplore.add(predicate)
+            else:
+                self.conceptsToExplore.add(predicate)
+
         possibleArguments = [token for token in statement.doc if "NN" in token.tag_ or (
                 "JJ" in token.tag_ and "NN" not in token.head.tag_) or "W" in token.tag_]
 
         possibleArguments = self.orderNouns(possibleArguments, statement)
-
-        fluentBase = self.createFluentBase(usedTokens, statement)
-
-        fluent = fluentBase + "("
-        statement.setFluents([[fluent]])
-        statement.setModeBiasFluents([[fluent]])
-
-        if fluentBase.split('_')[0] != 'be':
-            if isinstance(statement, Question):
-                if len(fluentBase.split('_')) > 1:
-                    self.conceptsToExplore.add(fluentBase)
-            else:
-                self.conceptsToExplore.add(fluentBase)
 
         self.createMainPortionOfFluent(possibleArguments, statement, usedTokens)
 
@@ -201,8 +201,7 @@ class BasicParser:
                     for answer in question.answer:
                         question.addConstantModeBias(createConstantTerm("number", answer))
 
-    def createFluentBase(self, usedTokens, statement: Statement):
-        nouns = [token for token in statement.doc if "NN" in token.tag_]
+    def createPredicate(self, usedTokens, statement: Statement):
         root = [token for token in statement.doc if token.head == token][0]
         childVerb = [child for child in root.children if child.pos_ == 'VERB']
 
@@ -212,7 +211,7 @@ class BasicParser:
         usedTokens.append(root)
 
         if isinstance(statement, Question) and not statement.isYesNoMaybeQuestion():
-            typeDeterminer = [token.lemma_ for token in statement.doc if hasDetChild(token)]
+            typeDeterminer = [token.lemma_ for token in statement.doc if hasWHDeterminerChild(token)]
             if typeDeterminer:
                 fluentBase += "_" + typeDeterminer[0]
                 statement.variableTypes["V1"] = typeDeterminer[0]
@@ -220,6 +219,8 @@ class BasicParser:
                 return fluentBase
 
         verb_modifier = [token for token in statement.doc if token.tag_ == 'JJR' or token.dep_ == "acomp"]
+
+        nouns = [token for token in statement.doc if "NN" in token.tag_]
 
         adposition = [token for token in statement.doc if
                       token.pos_ == "ADP" and (token.head == root or len(nouns) <= 2)]
@@ -303,14 +304,12 @@ class BasicParser:
         for i in range(0, len(fluents)):
             currentFluents = []
             for j in range(0, len(fluents[i])):
-                splitFluent = fluents[i][j].split('(')
-                predicate = splitFluent[0]
+                predicate = fluents[i][j].split('(')[0]
                 if predicate in self.synonymDictionary.keys():
                     updatedFluent = self.synonymDictionary[predicate]
                 else:
                     updatedFluent = predicate
-                for index in range(1, len(splitFluent)):
-                    updatedFluent += '(' + splitFluent[index]
+                updatedFluent = fluents[i][j].replace(predicate + '(', updatedFluent + '(')
                 currentFluents.append(updatedFluent)
             newFluents.append(currentFluents)
         return newFluents
@@ -377,5 +376,3 @@ class BasicParser:
                 if child.tag_ == "WRB":
                     tag = 'wrb'
         return base, tag
-
-

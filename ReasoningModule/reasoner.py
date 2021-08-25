@@ -96,7 +96,7 @@ class Reasoner:
                 else:
                     representation = statement.getFluents()
                 for i in range(0, len(representation)):
-                    choiceRule = createChoiceRule(representation[i])
+                    choiceRule = createChoiceRule(representation[i], statement, eventCalculusUsage=self.corpus.isEventCalculusNeeded)
                     file.write(choiceRule)
                     file.write('.\n')
 

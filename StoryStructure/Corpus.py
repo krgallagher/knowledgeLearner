@@ -102,8 +102,8 @@ def pruneCorpus(corpus: Corpus, numExamples):
         currentStory = Story()
         newCorpus.append(currentStory)
         for sentence in story:
-            if numQuestions >= numExamples:
-                return newCorpus
             currentStory.addSentence(sentence)
             if isinstance(sentence, Question):
                 numQuestions += 1
+            if numQuestions >= numExamples:
+                return newCorpus
