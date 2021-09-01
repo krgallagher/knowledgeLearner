@@ -1,6 +1,6 @@
 # kLearner
 
-kLearner (Knowledge Learner) is a new logic-base learning system that uses the Learning from Answer Sets paradigm of 
+kLearner (Knowledge Learner) is a new story-based question and answering system that uses the Learning from Answer Sets paradigm of 
 Inductive Logic Programming to learn commonsense reasoning knowledge from story-based question and answering in English 
 across three discourse mediums: text, written dialogue, and spoken dialogue. 
 
