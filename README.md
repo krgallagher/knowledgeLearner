@@ -6,7 +6,7 @@ across three discourse mediums: text, written dialogue, and spoken dialogue.
 
 
 
-#Usage 
+# Usage 
 In order to use this system, the following must be installed: 
 * python 3.9.5
 * all python libraries in requirements.txt
@@ -25,7 +25,7 @@ after the required arguments:
 * -s                          use strong supervision for training 
 * -r=\[EventCalculus|Fluent\] use the specified representation for training and testing
 
-#Guide to Modules and their files
+# Guide to Modules and their files
 We describe the various modules and their python files below:
 * DatasetReader
    * bAbI reader: processes story-based Q\&A data files where the data is given in the same format as
