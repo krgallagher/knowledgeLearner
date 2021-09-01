@@ -120,13 +120,12 @@ class InteractivePipeline:
             myobj = gTTS(text=currentText, lang=self.language, slow=False)
             myobj.save(self.audioFilePath)
             os.system("mpg321 -q " + self.audioFilePath + ">/dev/null 2>&1")
-
         else:
             print(currentText)
 
     def processInput(self, currentInput):
         sentence = self.parser.createStatement(currentInput, self.currentStory)
-        # print(sentence.getText(), sentence.getLineID())
+
 
         self.doCoreferencingAndSetDoc(sentence)
 
@@ -135,9 +134,6 @@ class InteractivePipeline:
         wrap(sentence)
 
         self.doSynonymSearchAndUpdate(sentence)
-
-        # print(sentence.getText(), sentence.getEventCalculusRepresentation(), sentence.getLineID(),
-        #      sentence.getFluents(), sentence.getModeBiasFluents())
 
         if isinstance(sentence, Question):
             answerToQuestion = self.reasoner.computeAnswer(sentence, self.currentStory)

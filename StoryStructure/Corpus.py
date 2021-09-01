@@ -1,8 +1,9 @@
-from DatasetReader.BackgroundKnowledge import eventCalculusAxioms
+
 import random
 
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
+from TranslationalModule.EventCalculus import eventCalculusAxioms
 
 
 class Corpus:
