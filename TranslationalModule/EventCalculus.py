@@ -1,5 +1,5 @@
 from StoryStructure.Question import Question
-from StoryStructure.Statement import Statement
+from StoryStructure.Sentence import Sentence
 
 
 def holdsAt(fluent, time):
@@ -18,8 +18,7 @@ def terminatedAt(fluent, time):
     return "terminatedAt(" + fluent + "," + str(time) + ")"
 
 
-# TODO fix so that it doesn't rely on there being one argument for the predicate.
-def wrap(statement: Statement):
+def wrap(statement: Sentence):
     fluents = statement.getFluents()
     eventCalculusPredicates = []
     time = statement.getLineID()

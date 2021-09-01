@@ -1,7 +1,7 @@
 import os
 from LearningModule.heuristicGenerator import HeuristicGenerator
 from StoryStructure.Question import Question
-from StoryStructure.Statement import Statement
+from StoryStructure.Sentence import Sentence
 from StoryStructure.Story import Story
 from TranslationalModule.ExpressivityChecker import createChoiceRule
 from Utilities.ILASPSyntax import createTimeRange, maxVariables
@@ -41,19 +41,12 @@ class Learner:
         else:
             self.appendExamplesToLearningFile()
 
-        #file = open(self.filename, 'r')
-        #for line in file:
-        #    print(line)
-
         hypotheses = self.solveILASPTask()
 
-        #print("HYPOTHESES", hypotheses)
         if isSatisfiable(hypotheses):
             self.corpus.setHypotheses(hypotheses)
 
         self.eventCalculusNeededPreviously = self.corpus.isEventCalculusNeeded
-
-        #print("CURRENT HYPOTHESES: ", self.corpus.getHypotheses())
 
     def __del__(self):
         if os.path.exists(self.filename):
@@ -71,7 +64,6 @@ class Learner:
         else:
             self.createPositiveExclusion(question, story, answer)
 
-    #can shorten this to an or and an else statement
     def createNegativeExample(self, question: Question, story: Story, answer):
         if "yes" in question.getAnswer():
             self.createNegativeExclusion(question, story)
@@ -136,7 +128,7 @@ class Learner:
         ECContext += '}\n'
         return nonECContext, ECContext
 
-    def addRepresentation(self, statement: Statement, nonECContext, ECContext):
+    def addRepresentation(self, statement: Sentence, nonECContext, ECContext):
         ECRepresentation = statement.getEventCalculusRepresentation()
         nonECRepresentation = statement.getFluents()
         for i in range(0, len(ECRepresentation)):

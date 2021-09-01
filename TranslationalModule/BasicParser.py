@@ -3,7 +3,7 @@ import spacy
 from StoryStructure import Story
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
-from StoryStructure.Statement import Statement
+from StoryStructure.Sentence import Sentence
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
 from Utilities.ILASPSyntax import varWrapping, constWrapping, createConstantTerm
 
@@ -16,7 +16,7 @@ def createNameRegularExpression(name):
     return "\\1" + name + "\\2"
 
 
-def isDisjunctive(noun, statement: Statement):
+def isDisjunctive(noun, statement: Sentence):
     conjunctives = [token.text.lower() for token in statement.doc if token.head == noun and token.pos_ == "CCONJ"]
     return "or" in conjunctives
 
@@ -42,7 +42,7 @@ def createTypingAtom(word, tag):
     return tag + '(' + word + ')'
 
 
-def addConstantModeBias(self, sentence: Statement, corpus: Corpus):
+def addConstantModeBias(self, sentence: Sentence, corpus: Corpus):
     for constantBias in sentence.constantModeBias:
         corpus.addConstantModeBias(constantBias)
 
@@ -56,7 +56,7 @@ class BasicParser:
         self.determiningConcepts = {}
         self.temporalConstants = {}
 
-    def coreferenceFinder(self, statement: Statement, story: Story):
+    def coreferenceFinder(self, statement: Sentence, story: Story):
         index = story.getIndex(statement)
         sentenceDoc = self.nlp(statement.text)
         personalPronoun = [token for token in sentenceDoc if token.tag_ == "PRP"]
@@ -75,7 +75,7 @@ class BasicParser:
                     possibleReferences.append(replacementPhrase)
         return personalPronoun[0].text, possibleReferences
 
-    def parse(self, statement: Statement):
+    def parse(self, statement: Sentence):
         usedTokens = []
 
         negation = [token for token in statement.doc if token.dep_ == 'neg' and token.tag_ == 'RB']
@@ -201,7 +201,7 @@ class BasicParser:
                     for answer in question.answer:
                         question.addConstantModeBias(createConstantTerm("number", answer))
 
-    def createPredicate(self, usedTokens, statement: Statement):
+    def createPredicate(self, usedTokens, statement: Sentence):
         root = [token for token in statement.doc if token.head == token][0]
         childVerb = [child for child in root.children if child.pos_ == 'VERB']
 
@@ -239,7 +239,7 @@ class BasicParser:
             usedTokens.append(adposition[-1])
         return fluentBase
 
-    def addNounToFluent(self, statement: Statement, noun, fluent, modeBiasFluent, allNouns, usedTokens):
+    def addNounToFluent(self, statement: Sentence, noun, fluent, modeBiasFluent, allNouns, usedTokens):
         tag = noun.tag_.lower()
         if tag == 'nns':
             tag = 'nn'
@@ -294,7 +294,7 @@ class BasicParser:
         replacement = self.determiningConcepts[concept]["fluentBase"] + '('
         return fluent.replace(oldFluentBase, replacement), modeBiasFluent.replace(oldFluentBase, replacement)
 
-    def updateSentence(self, sentence: Statement):
+    def updateSentence(self, sentence: Sentence):
         fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
         sentence.setFluents(self.updateFluentAndMBFluent(fluents))
         sentence.setModeBiasFluents(self.updateFluentAndMBFluent(modeBiasFluents))
@@ -338,7 +338,7 @@ class BasicParser:
         properNouns = [token.text.lower() for token in sentence.doc if token.tag_ == "NNP"]
         return set(properNouns)
 
-    def orderNouns(self, nouns, statement: Statement):
+    def orderNouns(self, nouns, statement: Sentence):
         sortedNouns = []
         nounSubject = [token for token in statement.doc if token.dep_ == "nsubj"]
         if nounSubject:

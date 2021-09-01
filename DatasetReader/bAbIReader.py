@@ -1,5 +1,5 @@
 from StoryStructure.Corpus import Corpus
-from StoryStructure.Statement import Statement
+from StoryStructure.Sentence import Sentence
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 
@@ -31,7 +31,7 @@ def createStatement(line):
     data = line[index:].split("\t")
     text = data[0].strip()
     if len(data) == 1:
-        return Statement(identification, text)
+        return Sentence(identification, text)
     else:
         hints = data[2].strip('\n').split(" ")
         answer = data[1].split(',')

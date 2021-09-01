@@ -1,4 +1,4 @@
-class Statement:
+class Sentence:
     def __init__(self, lineId, text):
         self.text = text
         self.lineId = int(lineId)

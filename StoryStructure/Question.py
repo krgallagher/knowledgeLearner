@@ -1,9 +1,9 @@
-from StoryStructure.Statement import Statement
+from StoryStructure.Sentence import Sentence
 
 
-class Question(Statement):
+class Question(Sentence):
     def __init__(self, text, lineId, answer=None, hints=None):
-        Statement.__init__(self, text, lineId)
+        Sentence.__init__(self, text, lineId)
         if answer:
             self.answer = [ans.lower() for ans in answer]
         else:

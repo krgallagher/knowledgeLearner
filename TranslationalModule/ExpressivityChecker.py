@@ -1,10 +1,8 @@
 import os
-from DatasetReader.bAbIReader import bAbIReader
 from StoryStructure.Corpus import Corpus
 from StoryStructure.Question import Question
 from StoryStructure.Story import Story
 from TranslationalModule.ConceptNetIntegration import ConceptNetIntegration
-from TranslationalModule.DatasetParser import DatasetParser
 from Utilities.ILASPSyntax import createTimeRange
 
 
@@ -24,8 +22,6 @@ def createExpressivityConstraint(sentence: Question):
 
 def createYesNoMaybeRule(question: Question):
     representation = question.getEventCalculusRepresentation()[0][0]
-    if "yes" in question.getAnswer():
-        return ":- not " + representation
     if "no" in question.getAnswer():
         return ":- " + representation
     else:
@@ -57,12 +53,7 @@ def createExpressivityFile(story: Story, corpus: Corpus, filename='/tmp/ILASPExp
         if isinstance(sentence, Question):
             if sentence.isYesNoMaybeQuestion():
                 rule = createYesNoMaybeRule(sentence)
-                if "yes" in sentence.getAnswer():
-                    file.write(rule)
-                    file.write('.\n')
-                    file.write(sentence.getEventCalculusRepresentation()[0][0])
-                    file.write('.\n')
-                elif "no" in sentence.getAnswer():
+                if "yes" in sentence.getAnswer() or "no" in sentence.getAnswer():
                     file.write(rule)
                     file.write('.\n')
                 else:
@@ -116,21 +107,9 @@ def isEventCalculusNeeded(corpus: Corpus):
                     return False
     for story in corpus:
         filename = createExpressivityFile(story, corpus)
-        file = open(filename, 'r')
-        for line in file:
-            print(line)
         answerSets = runILASP(filename)
         if isUnsatisfiable(answerSets):
             os.remove(filename)
             return True
         os.remove(filename)
     return False
-
-
-if __name__ == "__main__":
-    trainingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_train"
-    testingSet = "/Users/katiegallagher/Desktop/smallerVersionOfTask/task18_test"
-    trainCorpus = bAbIReader(trainingSet)
-    testCorpus = bAbIReader(testingSet)
-    DatasetParser(trainCorpus, testCorpus, useSupervision=False)
-    print(isEventCalculusNeeded(trainCorpus))

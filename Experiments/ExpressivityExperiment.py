@@ -1,15 +1,16 @@
 import numpy as np
 
 from DatasetReader.bAbIReader import bAbIReader
-from SystemPipeline.DatasetPipeline import mainPipeline
+from SystemPipeline.DatasetPipeline import DatasetPipeline
 
 if __name__ == '__main__':
     numberOfExamples = 100
     numShuffles = 5
-    for j in [14]:
-        print("Task:", j)
-        train = "../en/qa" + str(j) + "_train.txt"
-        test = "../en/qa" + str(j) + "_test.txt"
+    tasks = [1, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20]
+    for task in tasks:
+        print("Task:", task)
+        train = "../en/qa" + str(task) + "_train.txt"
+        test = "../en/qa" + str(task) + "_test.txt"
         trainingCorpus = bAbIReader(train)
         testingCorpus = bAbIReader(test)
 
@@ -21,23 +22,21 @@ if __name__ == '__main__':
             trainingCorpus.reset()
             testingCorpus.reset()
             trainingCorpus.shuffle()
-            accuracy, parsingTime, learningTime = mainPipeline(trainingCorpus, testingCorpus, numberOfExamples,
-                                                               useSupervision=False,
-                                                               useExpressivityChecker=(False, False))
+            accuracy, parsingTime, learningTime = DatasetPipeline(trainingCorpus, testingCorpus, numberOfExamples,
+                                                                  useSupervision=False,
+                                                                  useExpressivityChecker=(False, False))
             accuracies[i][0] = accuracy
             parsingTimes[i][0] = parsingTime
             learningTimes[i][0] = learningTime
-            print("\nFluent Representation:\n", "Accuracy: ", accuracy, "\nLearning Time: ", learningTime)
 
             trainingCorpus.reset()
             testingCorpus.reset()
-            accuracy, parsingTime, learningTime = mainPipeline(trainingCorpus, testingCorpus, numberOfExamples,
-                                                               useSupervision=False,
-                                                               useExpressivityChecker=(False, True))
+            accuracy, parsingTime, learningTime = DatasetPipeline(trainingCorpus, testingCorpus, numberOfExamples,
+                                                                  useSupervision=False,
+                                                                  useExpressivityChecker=(False, True))
             accuracies[i][1] = accuracy
             parsingTimes[i][1] = parsingTime
             learningTimes[i][1] = learningTime
-            print("\nEvent Calculus Representation:\n", "Accuracy: ", accuracy, "\nLearning Time: ", learningTime)
 
         averageAccuracies = np.average(accuracies, axis=0)
         accuraciesStandardDeviations = np.std(accuracies, axis=0)
@@ -48,7 +47,6 @@ if __name__ == '__main__':
         averageParsingTimes = np.average(parsingTimes, axis=0)
         parsingTimesStandardDeviation = np.std(parsingTimes, axis=0)
 
-        print("----------------------------------------------------\n")
         print("Fluent Representation: ")
         print("Average accuracy: ", averageAccuracies[0])
         print("Standard deviation: ", accuraciesStandardDeviations[0])
@@ -64,3 +62,4 @@ if __name__ == '__main__':
         print("Standard deviation: ", learningTimesStandardDeviations[1])
         print("Average parsing time: ", averageParsingTimes[1])
         print("Standard deviation: ", parsingTimesStandardDeviation[1])
+        print("----------------------------------------------------\n")

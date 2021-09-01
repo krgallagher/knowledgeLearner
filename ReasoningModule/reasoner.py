@@ -96,7 +96,8 @@ class Reasoner:
                 else:
                     representation = statement.getFluents()
                 for i in range(0, len(representation)):
-                    choiceRule = createChoiceRule(representation[i], statement, eventCalculusUsage=self.corpus.isEventCalculusNeeded)
+                    choiceRule = createChoiceRule(representation[i], statement,
+                                                  eventCalculusUsage=self.corpus.isEventCalculusNeeded)
                     file.write(choiceRule)
                     file.write('.\n')
 
@@ -130,7 +131,6 @@ class Reasoner:
                 fullMatch = result[0]
                 answers.append(getAnswer(fullMatch, representation))
         return answers
-
 
     def representationSearch(self, question: Question, answerSets):
         representation = self.getRepresentation(question)

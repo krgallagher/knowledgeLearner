@@ -1,4 +1,4 @@
-from StoryStructure import Statement
+from StoryStructure import Sentence
 
 
 class Story:
@@ -14,7 +14,7 @@ class Story:
     def getSentences(self):
         return self.sentences
 
-    def getIndex(self, sentence: Statement):
+    def getIndex(self, sentence: Sentence):
         return self.sentences.index(sentence)
 
     def get(self, index):

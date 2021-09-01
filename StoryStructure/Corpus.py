@@ -47,9 +47,6 @@ class Corpus:
     def setHypotheses(self, newHypotheses):
         self.hypotheses = newHypotheses
 
-    def addHypotheses(self, newHypotheses):
-        self.hypotheses.update(newHypotheses)
-
     def getHypotheses(self):
         return self.hypotheses
 

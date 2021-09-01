@@ -1,5 +1,5 @@
 from StoryStructure.Question import Question
-from StoryStructure.Statement import Statement
+from StoryStructure.Sentence import Sentence
 from StoryStructure.Story import Story
 from TranslationalModule.BasicParser import BasicParser
 from TranslationalModule.EventCalculus import wrap
@@ -22,11 +22,11 @@ class InteractiveParser(BasicParser):
         if instanceOfQuestion(text):
             sentence = Question(lineID, text)
         else:
-            sentence = Statement(lineID, text)
+            sentence = Sentence(lineID, text)
         story.addSentence(sentence)
         return sentence
 
-    def setDoc(self, text, sentence: Statement):
+    def setDoc(self, text, sentence: Sentence):
         sentence.doc = self.nlp(text)
 
     def checkSynonyms(self, sentence):
@@ -36,10 +36,10 @@ class InteractiveParser(BasicParser):
             fluents, modeBiasFluents = sentence.getFluents(), sentence.getModeBiasFluents()
             sentence.setFluents(self.updateFluentAndMBFluent(fluents))
             sentence.setModeBiasFluents(self.updateFluentAndMBFluent(modeBiasFluents))
-            return []
+            return None, []
         if fluentBase in self.synonymDictionary.values():
             self.synonymDictionary[fluentBase] = fluentBase
-            return []
+            return None, []
         potentialSynonyms = []
 
         for key in self.synonymDictionary.keys():

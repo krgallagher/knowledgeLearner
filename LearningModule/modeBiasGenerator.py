@@ -1,5 +1,5 @@
 from StoryStructure.Question import Question
-from StoryStructure.Statement import Statement
+from StoryStructure.Sentence import Sentence
 from TranslationalModule.EventCalculus import initiatedAt, terminatedAt, holdsAt, happensAt
 from Utilities.ILASPSyntax import varWrapping, modeHWrapping, modeBWrapping
 
@@ -25,19 +25,15 @@ class ModeBiasGenerator:
         return nonECBias, ECBias
 
     @staticmethod
-    def generateNonBeBias(modeBiasFluent, isQuestion=True):
+    def generateNonBeBias(modeBiasFluent):
         nonECBias = set()
         ECBias = set()
         time = varWrapping("time")
         ECBias.add(modeBWrapping(happensAt(modeBiasFluent, time)))
-        if isQuestion:
-            nonECBias.add(modeHWrapping(modeBiasFluent))
-        else:
-            nonECBias.add(modeBWrapping(modeBiasFluent))
+        nonECBias.add(modeBWrapping(modeBiasFluent))
         return nonECBias, ECBias
 
-
-    def addStatementModeBias(self, statement: Statement):
+    def addStatementModeBias(self, statement: Sentence):
         modeBiasFluents = statement.getModeBiasFluents()
         ECModeBias = set()
         nonECModeBias = set()
@@ -49,18 +45,20 @@ class ModeBiasGenerator:
                     newNonECModeBias, newECModeBias = self.generateBeAndQuestionBias(modeBiasFluent,
                                                                                      isinstance(statement, Question))
                 else:
-                    newNonECModeBias, newECModeBias = self.generateNonBeBias(modeBiasFluent,
-                                                                             isinstance(statement, Question))
+                    newNonECModeBias, newECModeBias = self.generateNonBeBias(modeBiasFluent)
                 ECModeBias.update(newECModeBias)
                 nonECModeBias.update(newNonECModeBias)
         return nonECModeBias, ECModeBias
 
-    def addModeBias(self, sentence: Statement):
+    def addModeBias(self, sentence: Sentence):
         nonECModeBias, ECModeBias = self.addStatementModeBias(sentence)
         self.corpus.updateECModeBias(ECModeBias)
         self.corpus.updateNonECModeBias(nonECModeBias)
         self.corpus.updateConstantModeBias(sentence.getConstantModeBias())
 
+    # This function is used as a work around for a bug in ILASP (version 4.1.1) which causes only a fraction of the
+    # hypothesis space given by the mode declarations to be generated. The bug should be resolved in the next release
+    # of ILASP, which will render this function unnecessary.
     def checkAndReassembleModeBias(self):
         nounsInHead = False
         properNounsInHead = False
@@ -96,8 +94,6 @@ class ModeBiasGenerator:
             self.corpus.nonECModeBias.update(nonECBias)
             self.corpus.ECModeBias.update(ECBias)
 
-
-
     def assembleModeBias(self):
         if self.useSupervision:
             for story in self.corpus:
@@ -111,5 +107,3 @@ class ModeBiasGenerator:
                 for sentence in story:
                     self.addModeBias(sentence)
         self.checkAndReassembleModeBias()
-
-
