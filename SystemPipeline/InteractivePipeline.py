@@ -67,11 +67,11 @@ class InteractivePipeline:
             elif currentInput.lower() == "end":
                 break
 
-            elif currentInput.lower() == "print story":
+            elif currentInput.lower() == "print story" or currentInput.lower() == "tell me the story":
                 story = str(self.currentStory)
                 self.output(story)
 
-            elif currentInput.lower() == "print corpus":
+            elif currentInput.lower() == "print corpus" or currentInput.lower() == "tell me the corpus":
                 corpus = str(self.corpus)
                 self.output(corpus)
 
@@ -87,17 +87,19 @@ class InteractivePipeline:
     def outputHelpMenu(self):
         if self.audio:
             method = "Say "
+            outputMethod = "\"Tell me the "
         else:
             print("****************Help Menu****************")
             method = "Type "
+            outputMethod = "\"Print "
         self.output(
             "The following are special inputs for the system.\n"
             + method + "\"Help\" to display this menu.\n"
             + method + "\"End\" to end the program.\n"
             + method + "\"Check Hypotheses\" to display the current hypotheses for the corpus.\n"
             + method + "\"New Story\" to begin a new story.\n"
-            + method + "\"Print Story\" to print the current story.\n"
-            + method + "\"Print Corpus\" to print the current corpus.")
+            + method + outputMethod + "Story\" to print the current story.\n"
+            + method + outputMethod + "Corpus\" to print the current corpus.")
 
     def getInput(self, currentText=""):
         if self.audio:
@@ -125,7 +127,6 @@ class InteractivePipeline:
 
     def processInput(self, currentInput):
         sentence = self.parser.createStatement(currentInput, self.currentStory)
-
 
         self.doCoreferencingAndSetDoc(sentence)
 
@@ -168,7 +169,6 @@ class InteractivePipeline:
                 inputText = self.getInput(phrase)
                 if "y" in inputText:
                     statementText = getSubstitutedText(pronoun, possibleReferences[i], sentence)
-                    # print(statementText)
                     self.parser.setDoc(statementText, sentence)
                     return
         phrase = "Who does \"" + pronoun + "\" refer to?\n"
@@ -188,12 +188,9 @@ class InteractivePipeline:
     def formatHypothesesForAudio(self):
         hypotheses = list(self.corpus.getHypotheses())
         formattedHypotheses = ""
-        print(self.corpus.getHypotheses())
         for i in range(0, len(hypotheses)):
             formattedHypotheses += "Hypothesis number " + str(i)
             hypothesis = hypotheses[i].split(':-')
-            print(hypothesis)
-
 
 
 def printSystemHelpMenu():
